@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { cn } from "../lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,10 +14,15 @@ import {
 import { Button } from "./button";
 
 export function AlertDialogDemo() {
+  const [hover, setHover] = useState(false);
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="text-lime-500 " variant="outline">
+        <Button
+          onMouseOver={() => setHover(!hover)}
+          className={cn(hover && "text-lime-500 ")}
+          variant="outline"
+        >
           Show Dialog
         </Button>
       </AlertDialogTrigger>
