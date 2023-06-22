@@ -21,7 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table";
+} from "./ui/table";
 import { useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 // rowType = 'conferences'/'speakers'/'sessions',etc
