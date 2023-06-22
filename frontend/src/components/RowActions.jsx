@@ -1,6 +1,6 @@
 import { MoreHorizontal } from "lucide-react";
 
-import { Button } from "./button";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from "./ui/dropdown-menu";
 // takes in rowType - 'conference'/'speaker'/'session',etc
 export const RowActions = (rowType) => {
   return {

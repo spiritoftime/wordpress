@@ -1,14 +1,14 @@
 import { ChevronsUpDown, EyeOff, SortAsc, SortDesc } from "lucide-react";
 
 import { cn } from "../lib/utils";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from "./ui/dropdown-menu";
 
 export function SortableHeader({ column, title, className }) {
   if (!column.getCanSort()) {

@@ -11,9 +11,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
-import { Button } from "./button";
-import { Input } from "./Input";
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Table,
   TableBody,

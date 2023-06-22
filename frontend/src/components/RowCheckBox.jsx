@@ -1,4 +1,4 @@
-import { Checkbox } from "./checkbox";
+import { Checkbox } from "./ui/checkbox";
 export const RowCheckBox = {
   id: "select",
   header: ({ table }) => (

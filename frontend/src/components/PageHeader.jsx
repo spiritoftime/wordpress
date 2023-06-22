@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 // rowType - Conference/Speaker/Session,etc
 const PageHeader = ({ rowType }) => {

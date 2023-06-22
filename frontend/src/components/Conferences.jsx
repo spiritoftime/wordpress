@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";

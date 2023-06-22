@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./alert-dialog";
+} from "./ui/alert-dialog";
 import { Button } from "./button";
 
 export function AlertDialogDemo() {
