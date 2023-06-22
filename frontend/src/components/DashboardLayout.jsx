@@ -16,13 +16,13 @@ const DashboardLayout = () => {
       </div>
       <div className="flex ">
         <div className="min-h-screen border-r-2">
-          <div className="flex flex-col items-center gap-6 p-4 ">
+          <div className="flex flex-col items-center gap-6 px-6 pt-8 ">
             <div
               className={cn(
                 (pathname.endsWith("dashboard") ||
                   pathname.endsWith("conferences")) &&
-                  "text-[#0D05F2]",
-                "flex gap-2 w-[130px]"
+                  "text-[#0D05F2] bg-[#F9FAFB]",
+                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
               )}
             >
               <Home />
@@ -30,8 +30,8 @@ const DashboardLayout = () => {
             </div>
             <div
               className={cn(
-                pathname.endsWith("speakers") && "text-[#0D05F2]",
-                "flex gap-2 w-[130px]"
+                pathname.endsWith("speakers") && "text-[#0D05F2] bg-[#F9FAFB]",
+                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
               )}
             >
               <BarChart2 />
@@ -39,8 +39,8 @@ const DashboardLayout = () => {
             </div>
             <div
               className={cn(
-                pathname.endsWith("program"),
-                "flex gap-2 w-[130px]"
+                pathname.endsWith("program") && "text-[#0D05F2] bg-[#F9FAFB]",
+                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
               )}
             >
               <CheckSquare />
@@ -48,8 +48,8 @@ const DashboardLayout = () => {
             </div>
             <div
               className={cn(
-                pathname.endsWith("download"),
-                "flex gap-2 w-[130px]"
+                pathname.endsWith("download") && "text-[#0D05F2] bg-[#F9FAFB]",
+                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
               )}
             >
               <Flag />

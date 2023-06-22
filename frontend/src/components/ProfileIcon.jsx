@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function ProfileIcon({ imageURL = "https://github.com/shadcn.png" }) {
   return (
