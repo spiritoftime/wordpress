@@ -15,10 +15,10 @@ app.use(
     credentials: true,
   })
 );
-app.use(checkJwt());
+app.use(checkJwt);
 const port =
   process.env.NODE_ENV === "production"
     ? process.env.PROD_PORT
     : process.env.PORT;
 
-server.listen(port, () => console.log(`server running on port ${port}`));
+app.listen(port, () => console.log(`server running on port ${port}`));
