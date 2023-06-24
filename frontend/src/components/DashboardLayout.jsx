@@ -21,7 +21,7 @@ const DashboardLayout = () => {
   }, [user]);
 
   return (
-    <div className="flex flex-col layout">
+    <div className="flex flex-col min-h-screen layout">
       <div className="pt-4 pr-6 border bottom-2">
         <div className="flex items-center justify-end gap-2 mb-4 ">
           <p className="text-color">{userName}</p>
@@ -39,12 +39,13 @@ const DashboardLayout = () => {
           </DropdownMenu>
         </div>
       </div>
-      <div className="flex ">
-        <div className="min-h-screen border-r-2">
+      <div className="flex flex-1">
+        <div className="border-r-2 ">
           <div className="flex flex-col items-center gap-6 px-6 pt-8 ">
             <div
               className={cn(
                 (pathname.endsWith("dashboard") ||
+                  pathname.endsWith("/") ||
                   pathname.endsWith("conferences")) &&
                   "text-[#0D05F2] bg-[#F9FAFB]",
                 "flex gap-2 w-[200px] h-[50px] cursor-pointer"
