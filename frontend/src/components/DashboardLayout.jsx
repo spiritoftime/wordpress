@@ -1,17 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ProfileIcon } from "./ProfileIcon";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
 import { Home, BarChart2, CheckSquare, Flag } from "lucide-react";
 import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
+import { useAuth0 } from "@auth0/auth0-react";
 const DashboardLayout = () => {
   const { pathname } = useLocation();
+  const { logout, user } = useAuth0();
+
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    setUserName(user.name);
+  }, [user]);
 
   return (
     <div className="flex flex-col layout">
       <div className="pt-4 pr-6 border bottom-2">
         <div className="flex items-center justify-end gap-2 mb-4 ">
-          <p className="text-color">Name</p>
-          <ProfileIcon />
+          <p className="text-color">{userName}</p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button>
+                <ProfileIcon />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <div className="flex ">
