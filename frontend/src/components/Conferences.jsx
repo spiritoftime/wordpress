@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";
@@ -30,6 +31,8 @@ const columns = [
   RowActions("Conference"),
 ];
 const Conferences = () => {
+  const navigate = useNavigate();
+
   const data = [
     {
       id: "728ed52f",
@@ -40,9 +43,14 @@ const Conferences = () => {
     },
     // ...
   ];
+
   return (
     <div className="container py-10 mx-auto">
-      <PageHeader rowType="Conference" />
+      <PageHeader
+        rowType="Conference"
+        handleClick={() => navigate("/add-conference")}
+        hasButton={true}
+      />
       <DataTable
         columns={columns}
         data={data}
