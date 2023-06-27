@@ -19,6 +19,7 @@ function App() {
       {isAuthenticated ? (
         <Route path="/" element={<DashboardLayout />}>
           <Route path="/" element={<Conferences />} />
+          <Route path="/add-conference" element={<AddConference />} />
         </Route>
       ) : (
         <Route path="/" element={<Login />} />
