@@ -29,9 +29,8 @@ function initConference(sequelize) {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      wordpressUrl: {
+      wordpressApi: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
     },
     { underscored: true, timestamps: false }

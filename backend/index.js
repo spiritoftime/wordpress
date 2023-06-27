@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { auth } = require("express-oauth2-jwt-bearer");
-
+const conferenceRouter = require("./routes/ConferenceRouter");
 const app = express();
 app.use(express.json());
 const checkJwt = auth({
@@ -15,7 +15,9 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(checkJwt);
+app.use("/conferences", conferenceRouter);
 const port =
   process.env.NODE_ENV === "production"
     ? process.env.PROD_PORT
