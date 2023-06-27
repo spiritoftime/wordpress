@@ -3,6 +3,8 @@ import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";
 import { SortableHeader } from "./SortableHeader";
@@ -63,7 +65,11 @@ const Conferences = () => {
 
   return (
     <div className="container py-10 mx-auto">
-      <PageHeader rowType="Conference" />
+      <PageHeader
+        rowType="Conference"
+        handleClick={() => navigate("/add-conference")}
+        hasButton={true}
+      />
       <DataTable
         columns={columns}
         data={conferences}
