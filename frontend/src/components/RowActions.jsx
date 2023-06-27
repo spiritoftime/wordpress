@@ -10,12 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 // takes in rowType - 'conference'/'speaker'/'session',etc
-export const RowActions = (rowType) => {
+export const RowActions = (rowType, deleteMutation) => {
   return {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
+      const rowId = row.original.id;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -26,9 +25,7 @@ export const RowActions = (rowType) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
+            <DropdownMenuItem onClick={() => deleteMutation({ rowId })}>
               {`Delete ${rowType}`}
             </DropdownMenuItem>
             <DropdownMenuSeparator />

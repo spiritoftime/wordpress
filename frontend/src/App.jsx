@@ -16,13 +16,13 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={isAuthenticated ? <DashboardLayout /> : <Login />}
-      >
-        <Route path="dashboard" element={<Conferences />} />
-        <Route path="add-conference" element={<AddConference />} />
-      </Route>
+      {isAuthenticated ? (
+        <Route path="/" element={<DashboardLayout />}>
+          <Route path="/" element={<Conferences />} />
+        </Route>
+      ) : (
+        <Route path="/" element={<Login />} />
+      )}
     </Routes>
   );
 }
