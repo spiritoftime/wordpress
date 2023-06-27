@@ -8,30 +8,9 @@ import { RowCheckBox } from "./RowCheckBox";
 import { SortableHeader } from "./SortableHeader";
 import PageHeader from "./PageHeader";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { getConferences } from "../services/conferences";
+import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
-const columns = [
-  RowCheckBox,
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <SortableHeader column={column} title="Conference Name" />
-    ),
-  },
-  {
-    accessorKey: "venue",
-    header: "Venue",
-  },
-  {
-    accessorKey: "startDate",
-    header: "Start Date",
-  },
-  {
-    accessorKey: "endDate",
-    header: "End Date",
-  },
-  RowActions("Conference"),
-];
+
 const Conferences = () => {
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
@@ -44,15 +23,36 @@ const Conferences = () => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  const data = [
-    {
-      id: "728ed52f",
-      conferenceName: "APACRS 2023",
-      venue: "Singapore",
-      startDate: "2023-07-01",
-      endDate: "2023-07-03",
+  const { mutate: deleteConferenceMutation } = useMutation({
+    mutationFn: async ({ rowId: conferenceId }) => {
+      const accessToken = await getAccessToken();
+      return deleteConference(conferenceId, accessToken);
     },
-    // ...
+    onSuccess: () => {
+      queryClient.invalidateQueries(["conferences"], { exact: true });
+    },
+  });
+  const columns = [
+    RowCheckBox,
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Conference Name" />
+      ),
+    },
+    {
+      accessorKey: "venue",
+      header: "Venue",
+    },
+    {
+      accessorKey: "startDate",
+      header: "Start Date",
+    },
+    {
+      accessorKey: "endDate",
+      header: "End Date",
+    },
+    RowActions("Conference", deleteConferenceMutation),
   ];
   if (isConferenceFetching)
     return (
@@ -60,7 +60,7 @@ const Conferences = () => {
         <Loading />
       </div>
     );
-  console.log(conferences);
+
   return (
     <div className="container py-10 mx-auto">
       <PageHeader rowType="Conference" />
@@ -68,7 +68,7 @@ const Conferences = () => {
         columns={columns}
         data={conferences}
         rowType={"conferences"}
-        filterColumn={"conferenceName"}
+        filterColumn={"name"}
       />
     </div>
   );

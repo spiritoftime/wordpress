@@ -59,7 +59,7 @@ const EditConference = async (req, res) => {
 const DeleteConference = async (req, res) => {
   const { conferenceId } = req.params;
   try {
-    const conference = await Conference.destroy({
+    await Conference.destroy({
       where: { id: conferenceId },
     });
     return res.status(200).json("Conference deleted");
