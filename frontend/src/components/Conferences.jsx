@@ -4,6 +4,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Toaster } from "./ui/toaster";
 
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";
@@ -16,8 +17,13 @@ import Loading from "./Loading";
 const Conferences = () => {
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { data: conferences, isLoading: isConferenceFetching } = useQuery({
+  const {
+    data: conferences,
+    isLoading: isConferenceFetching,
+    isFetching: isConferenceRefetching,
+  } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
@@ -56,7 +62,9 @@ const Conferences = () => {
     },
     RowActions("Conference", deleteConferenceMutation),
   ];
-  if (isConferenceFetching)
+
+  // Use isConferenceRefetching to show loading screen when refetching
+  if (isConferenceFetching || isConferenceRefetching)
     return (
       <div className="w-full mx-auto">
         <Loading />
@@ -64,19 +72,22 @@ const Conferences = () => {
     );
 
   return (
-    <div className="container py-10 mx-auto">
-      <PageHeader
-        rowType="Conference"
-        handleClick={() => navigate("/add-conference")}
-        hasButton={true}
-      />
-      <DataTable
-        columns={columns}
-        data={conferences}
-        rowType={"conferences"}
-        filterColumn={"name"}
-      />
-    </div>
+    <>
+      <div className="container py-10 mx-auto">
+        <PageHeader
+          rowType="Conference"
+          handleClick={() => navigate("/add-conference")}
+          hasButton={true}
+        />
+        <DataTable
+          columns={columns}
+          data={conferences}
+          rowType={"conferences"}
+          filterColumn={"name"}
+        />
+      </div>
+      <Toaster />
+    </>
   );
 };
 

@@ -47,7 +47,6 @@ const Combobox = ({ field, setValue, options, fieldName }) => {
                   value={item.value}
                   key={item.value}
                   onSelect={(value) => {
-                    console.log(value);
                     setValue(`${fieldName.toLowerCase()}`, value);
                   }}
                 >
