@@ -1,5 +1,6 @@
-import React from "react";
 import { countries } from "../utils/countries";
+import { addConference } from "../services/conferences";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import {
   Form,
   FormControl,
@@ -18,14 +19,17 @@ import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import DatePicker from "./DatePicker";
 
+import { useMutation } from "@tanstack/react-query";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const AddConference = () => {
+  const getAccessToken = useGetAccessToken();
+
   const FormSchema = z
     .object({
-      conferenceName: z.string().min(1, {
+      name: z.string().min(1, {
         message: "Required",
       }),
       country: z.string().nonempty("Required"),
@@ -38,7 +42,7 @@ const AddConference = () => {
       venue: z.string().min(1, {
         message: "Required",
       }),
-      api: z.string().min(1, {
+      wordpressApi: z.string().min(1, {
         message: "Required",
       }),
       roomItems: z.array(
@@ -52,11 +56,11 @@ const AddConference = () => {
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      conferenceName: "",
+      name: "",
       country: "",
       roomItems: [{ room: "" }],
       venue: "",
-      api: "",
+      wordpressApi: "",
     },
   });
 
@@ -71,8 +75,15 @@ const AddConference = () => {
     name: "roomItems",
   });
 
-  const onSubmit = (data) => {
+  // Function to add data to database
+  const { mutate: addToDatabase } = useMutation(async (data) => {
+    const accessToken = await getAccessToken();
+    return addConference(accessToken, data);
+  });
+
+  const onSubmit = async (data) => {
     console.log(data);
+    addToDatabase(data);
     form.reset();
     toast({
       description: "Form Submitted",
@@ -93,7 +104,7 @@ const AddConference = () => {
             <div className="w-[48%]">
               <FormField
                 control={form.control}
-                name="conferenceName"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Conference Name:</FormLabel>
@@ -167,7 +178,7 @@ const AddConference = () => {
             <div className="w-[48%]">
               <FormField
                 control={form.control}
-                name="api"
+                name="wordpressApi"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>WordPress API Key:</FormLabel>

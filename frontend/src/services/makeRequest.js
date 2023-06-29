@@ -8,7 +8,7 @@ import axios from "axios";
 // though if you want to set state at error you cant use this
 export function makeRequest(endpoint, accessToken, options) {
   const baseURL =
-    import.meta.env.VITE_ENV === "production"
+    import.meta.env.VITE_ENV === "development"
       ? import.meta.env.VITE_APP_BASE_URL
       : "/api";
   return axios({

@@ -9,8 +9,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      room: {
         type: Sequelize.STRING,
+        allowNull: false,
+      },
+      conference_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
     });
