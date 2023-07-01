@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { fullCountries as countries } from "../utils/countriesFull";
+import { addContact } from "../services/contacts";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import {
   Form,
   FormControl,
@@ -13,16 +15,17 @@ import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
-import DatePicker from "./DatePicker";
 
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Edit } from "lucide-react";
+import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../firebase";
+import { useMutation } from "@tanstack/react-query";
 
 const titles = [
   { value: "Prof", label: "Prof" },
@@ -35,6 +38,7 @@ const titles = [
 const AddContact = () => {
   const inputRef = useRef(null);
   const [photoPreviewLink, setPhotoPreviewLink] = useState("");
+  const getAccessToken = useGetAccessToken();
 
   const maxFileSize = 500000;
   const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -58,23 +62,19 @@ const AddContact = () => {
       biography: z.string().min(1, {
         message: "Required",
       }),
-      // photo: z.any(),
-      // photo: z.string().refine((value) => value.length > 0, {
-      //   message: "Please upload a photo",
-      //   path: "photo",
-      // }),
-      photo: z
-        .any()
-        .refine((value) => value.length === 0, "Required")
-        .refine(
-          // (files) => console.log(files),
-          (file) => file?.size <= maxFileSize,
-          `Max image size is 5MB.`
-        )
-        .refine(
-          (file) => acceptedImageTypes.includes(file?.type),
-          "Only .jpg, .jpeg and .png formats are supported."
-        ),
+      photo: z.any(),
+      // photo: z
+      //   .any()
+      //   .refine((value) => value.length === 0, "Required")
+      //   .refine(
+      //     // (files) => console.log(files),
+      //     (file) => file?.size <= maxFileSize,
+      //     `Max image size is 5MB.`
+      //   )
+      //   .refine(
+      //     (file) => acceptedImageTypes.includes(file?.type),
+      //     "Only .jpg, .jpeg and .png formats are supported."
+      //   ),
     })
     .required();
 
@@ -101,9 +101,39 @@ const AddContact = () => {
     setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
   };
 
-  // const control = form.control;
+  const { mutate: uploadPhoto, isLoading } = useMutation(
+    async (data) => {
+      const storageRef = ref(
+        storage,
+        `photos/${data.firstName}-${data.lastName}.png`
+      );
+
+      const promises = [getAccessToken(), uploadBytes(storageRef, data.photo)];
+      const [accessToken, snapshot] = await Promise.all(promises);
+      //const accessToken = await getAccessToken();
+
+      // Upload the photo onto Firebase storage
+      // const snapshot = await uploadBytes(storageRef, data.photo);
+
+      // Get the download url for the uploaded photo
+      const photoUrl = await getDownloadURL(snapshot.ref);
+
+      data.photoUrl = photoUrl;
+
+      return addContact(accessToken, data);
+    },
+    {
+      onSuccess: () => {
+        // console.log(url);
+        toast({
+          description: "Speaker added",
+        });
+      },
+    }
+  );
 
   const onSubmit = (data) => {
+    uploadPhoto(data);
     console.log(data);
     form.reset();
     // toast({
@@ -269,8 +299,16 @@ const AddContact = () => {
           <Button
             className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF] mt-5"
             type="submit"
+            disabled={isLoading}
           >
-            Submit
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>
