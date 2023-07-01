@@ -25,6 +25,7 @@ import {
 import { useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/appContext";
 // rowType = 'conferences'/'speakers'/'sessions',etc
 // filterColumn = the key of the column you want to filter
 export function DataTable({
@@ -34,6 +35,7 @@ export function DataTable({
   filterColumn,
   rowNavigate,
 }) {
+  const { setComboBoxValue } = useAppContext();
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
@@ -95,9 +97,10 @@ export function DataTable({
                 return (
                   <TableRow
                     className="cursor-pointer"
-                    onClick={() =>
-                      rowNavigate(row.original.id, { state: row.original.name })
-                    }
+                    onClick={() => {
+                      setComboBoxValue(row.original.name);
+                      rowNavigate(row.original.id);
+                    }}
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
