@@ -9,8 +9,12 @@ function initRoom(sequelize) {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      name: {
+      room: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      conferenceId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },

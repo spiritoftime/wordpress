@@ -8,8 +8,10 @@ const {
   Role,
   Topic,
   TopicSpeaker,
+  Room,
 } = db;
 const { Op } = require("sequelize");
+
 const getConference = async (req, res) => {
   const { conferenceId } = req.params;
   try {
@@ -28,7 +30,8 @@ const getConferences = async (req, res) => {
   }
 };
 const addConference = async (req, res) => {
-  const { startDate, endDate, name, country, venue, wordpressApi } = req.body;
+  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
+    req.body;
   try {
     const conference = await Conference.create({
       startDate,
@@ -38,6 +41,12 @@ const addConference = async (req, res) => {
       venue,
       wordpressApi,
     });
+    const conferenceId = conference.dataValues.id;
+    roomItems.forEach((room) => {
+      room.conferenceId = conferenceId;
+    });
+    const rooms = await Room.bulkCreate(roomItems);
+
     return res.status(200).json(conference);
   } catch (err) {
     return res.status(500).json(err);
