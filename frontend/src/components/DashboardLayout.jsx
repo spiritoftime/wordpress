@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { getConferences } from "../services/conferences";
+import { getConference, getConferences } from "../services/conferences";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { NormalComboBox } from "./NormalComboBox";
 
@@ -17,16 +18,39 @@ import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAppContext } from "../context/appContext";
+import Loading from "./Loading";
 const DashboardLayout = () => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { logout, user } = useAuth0();
-
+  const { logout, user, isAuthenticated } = useAuth0();
+  const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
-  const location = useLocation();
   const { comboBoxValue, setComboBoxValue } = useAppContext();
   const getAccessToken = useGetAccessToken();
-
-  const { data: conferences, isLoading: isConferenceFetching } = useQuery({
+  const { data: conference, isLoading: isConferenceFetching } = useQuery({
+    queryKey: ["conference"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getConference(accessToken, conferenceId);
+    },
+    enabled: conferenceId !== undefined,
+    refetchOnWindowFocus: false,
+  });
+  useEffect(() => {
+    if (conferenceId !== undefined) {
+      if (!isAuthenticated) return;
+      if (!isConferenceFetching) setComboBoxValue(conference.name);
+      else return;
+    }
+  }, [isConferenceFetching]);
+  useEffect(() => {
+    if (!isConferencesFetching) {
+      const newParamId = conferences.find((c) => c.name === comboBoxValue)?.id;
+      navigate(`/conferences/${newParamId}`);
+    }
+  }, [comboBoxValue]);
+  console.log("lol");
+  const { data: conferences, isLoading: isConferencesFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
@@ -40,20 +64,23 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen layout">
-      <div className="pt-4 pr-6 border ablublu bottom-2">
+      <div className="flex justify-between pl-[300px] py-2 pr-6 border bottom-2">
         <div>
-          {!isConferenceFetching && (
-            <NormalComboBox
-              options={conferences}
-              validateProperty={"name"}
-              displayProperty={"name"}
-              fieldName={"conference"}
-              value={comboBoxValue}
-              setValue={setComboBoxValue}
-            />
-          )}
+          {isConferencesFetching || (isConferenceFetching && <Loading />)}
+          {!isConferencesFetching &&
+            !isConferenceFetching &&
+            isAuthenticated && (
+              <NormalComboBox
+                options={conferences}
+                validateProperty={"name"}
+                displayProperty={"name"}
+                fieldName={"conference"}
+                value={comboBoxValue}
+                setValue={setComboBoxValue}
+              />
+            )}
         </div>
-        <div className="flex items-center justify-end gap-2 mb-4 ">
+        <div className="flex items-center justify-end gap-2 ">
           <p className="text-color">{userName}</p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

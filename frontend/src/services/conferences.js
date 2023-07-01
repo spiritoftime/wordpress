@@ -7,3 +7,6 @@ export function deleteConference(conferenceId, accessToken) {
     method: "DELETE",
   });
 }
+export function getConference(accessToken, conferenceId) {
+  return makeRequest(`/conferences/${conferenceId}`, accessToken);
+}
