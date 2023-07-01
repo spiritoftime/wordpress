@@ -13,7 +13,7 @@ import {
 } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-const Combobox = ({ field, setValue, options, fieldName }) => {
+const Combobox = ({ field, setValue, options, fieldName, customHeight }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -41,13 +41,15 @@ const Combobox = ({ field, setValue, options, fieldName }) => {
           <CommandInput placeholder={`Search ${fieldName}`} />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
-            <ScrollArea className="w-[100%] h-72">
+            <ScrollArea
+              className="w-[100%]"
+              style={{ height: customHeight ? `${customHeight}px` : "72px" }}
+            >
               {options.map((item) => (
                 <CommandItem
                   value={item.value}
                   key={item.value}
                   onSelect={(value) => {
-                    console.log(value);
                     setValue(`${fieldName.toLowerCase()}`, value);
                   }}
                 >
