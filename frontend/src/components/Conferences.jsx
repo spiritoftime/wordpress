@@ -15,6 +15,7 @@ import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
 
 const Conferences = () => {
+  const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -71,23 +72,22 @@ const Conferences = () => {
       </div>
     );
 
+  const rowNavigate = (rowId) => navigate(`/conferences/${rowId}`);
   return (
-    <>
-      <div className="container py-10 mx-auto">
-        <PageHeader
-          rowType="Conference"
-          handleClick={() => navigate("/add-conference")}
-          hasButton={true}
-        />
-        <DataTable
-          columns={columns}
-          data={conferences}
-          rowType={"conferences"}
-          filterColumn={"name"}
-        />
-      </div>
-      <Toaster />
-    </>
+    <div className="container py-10 mx-auto">
+      <PageHeader
+        rowType="Conference"
+        handleClick={() => navigate("/add-conference")}
+        hasButton={true}
+      />
+      <DataTable
+        columns={columns}
+        data={conferences}
+        rowType={"conferences"}
+        filterColumn={"name"}
+        rowNavigate={rowNavigate}
+      />
+    </div>
   );
 };
 

@@ -13,7 +13,7 @@ module.exports = {
     await queryInterface.removeColumn("conferences", "wordpress_api");
     await queryInterface.addColumn("conferences", "wordpress_url", {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     });
   },
 };
