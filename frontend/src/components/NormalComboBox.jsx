@@ -32,7 +32,11 @@ export function NormalComboBox({
           className="w-[200px] justify-between"
         >
           {value
-            ? options.find((option) => option.value === value)?.label
+            ? options.find((option) => {
+                return (
+                  option[displayProperty].toUpperCase() === value.toUpperCase()
+                );
+              })?.[displayProperty]
             : `Select ${fieldName}...`}
           <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
         </Button>
@@ -48,7 +52,11 @@ export function NormalComboBox({
                   key={option[validateProperty]}
                   value={option[validateProperty]}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(
+                      currentValue.toUpperCase() === value.toUpperCase()
+                        ? ""
+                        : currentValue.toUpperCase()
+                    );
                     setOpen(false);
                   }}
                 >
