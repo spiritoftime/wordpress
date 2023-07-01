@@ -3,10 +3,12 @@ import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { getConferences } from "../services/conferences";
 import { useState } from "react";
 import { NormalComboBox } from "./NormalComboBox";
+import { useLocation } from "react-router-dom";
 
 const Conference = () => {
+  const location = useLocation();
   const getAccessToken = useGetAccessToken();
-
+  console.log(location);
   const { data: conferences, isLoading: isConferenceFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
@@ -17,12 +19,15 @@ const Conference = () => {
   });
   return (
     <div className="flex flex-col">
-      <NormalComboBox
-        options={conferences}
-        validateProperty={"name"}
-        displayProperty={"name"}
-        fieldName={"conference"}
-      />
+      {!isConferenceFetching && (
+        <NormalComboBox
+          options={conferences}
+          validateProperty={"name"}
+          displayProperty={"name"}
+          fieldName={"conference"}
+          defaultValue={location.state}
+        />
+      )}
     </div>
   );
 };

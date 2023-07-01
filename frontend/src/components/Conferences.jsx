@@ -64,7 +64,8 @@ const Conferences = () => {
       </div>
     );
 
-  const rowNavigate = (rowId) => navigate(`/conferences/${rowId}`);
+  const rowNavigate = (rowId, state) =>
+    navigate(`/conferences/${rowId}`, state);
   return (
     <div className="container py-10 mx-auto">
       <PageHeader
