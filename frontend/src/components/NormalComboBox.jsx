@@ -44,8 +44,8 @@ export function NormalComboBox({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder={`Search ${fieldName}...`} />
+          <CommandEmpty>{`No ${fieldName} found.`}</CommandEmpty>
           <CommandGroup>
             {options &&
               options.map((option) => (

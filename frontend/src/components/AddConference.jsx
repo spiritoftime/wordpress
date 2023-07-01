@@ -83,7 +83,8 @@ const AddConference = () => {
 
   return (
     <div className="w-full p-10">
-      <PageHeader rowType="Add Conference" hasButton={false} />
+      <h1 className="text-xl font-bold">Conference Information</h1>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
