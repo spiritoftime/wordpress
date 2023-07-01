@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
+import { formatDate } from "../utils/convertDate";
 const Conference = () => {
   const FormSchema = z
     .object({
@@ -65,6 +66,7 @@ const Conference = () => {
     fields: rooms,
     append,
     remove,
+    replace,
   } = useFieldArray({
     control,
     name: "roomItems",
@@ -86,7 +88,12 @@ const Conference = () => {
         country: conference.country,
         venue: conference.venue,
         api: conference.wordpressApi,
+        startDate: formatDate(conference.startDate),
+        endDate: formatDate(conference.endDate),
       });
+
+    // need to add in the query for the rooms before you can do this.
+    // replace(conference.rooms);
   }, [conference]);
   return (
     <div className="flex flex-col w-full p-12">
