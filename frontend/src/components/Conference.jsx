@@ -7,8 +7,9 @@ import { useLocation } from "react-router-dom";
 
 const Conference = () => {
   const location = useLocation();
+  const [comboBoxValue, setComboBoxValue] = useState(location.state);
   const getAccessToken = useGetAccessToken();
-  console.log(location);
+
   const { data: conferences, isLoading: isConferenceFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
@@ -18,16 +19,18 @@ const Conference = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col p-12">
       {!isConferenceFetching && (
         <NormalComboBox
           options={conferences}
           validateProperty={"name"}
           displayProperty={"name"}
           fieldName={"conference"}
-          defaultValue={location.state}
+          value={comboBoxValue}
+          setValue={setComboBoxValue}
         />
       )}
+      <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
     </div>
   );
 };

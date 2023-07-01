@@ -18,10 +18,10 @@ export function NormalComboBox({
   validateProperty,
   displayProperty,
   fieldName,
-  defaultValue = "",
+  value,
+  setValue,
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(defaultValue);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
