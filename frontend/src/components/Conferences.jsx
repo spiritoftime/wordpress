@@ -4,6 +4,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Toaster } from "./ui/toaster";
 
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";
@@ -17,8 +18,13 @@ const Conferences = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { data: conferences, isLoading: isConferenceFetching } = useQuery({
+  const {
+    data: conferences,
+    isLoading: isConferenceFetching,
+    isFetching: isConferenceRefetching,
+  } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
@@ -57,7 +63,9 @@ const Conferences = () => {
     },
     RowActions("Conference", deleteConferenceMutation),
   ];
-  if (isConferenceFetching)
+
+  // Use isConferenceRefetching to show loading screen when refetching
+  if (isConferenceFetching || isConferenceRefetching)
     return (
       <div className="w-full mx-auto">
         <Loading />

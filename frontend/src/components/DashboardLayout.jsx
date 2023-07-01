@@ -17,8 +17,10 @@ import { Home, BarChart2, CheckSquare, Flag } from "lucide-react";
 import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { useAuth0 } from "@auth0/auth0-react";
+
 import { useAppContext } from "../context/appContext";
 import Loading from "./Loading";
+
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -64,6 +66,7 @@ const DashboardLayout = () => {
   useEffect(() => {
     setUserName(user.name);
   }, [user]);
+
   return (
     <div className="flex flex-col min-h-screen layout">
       <div className="flex justify-between pl-[300px] py-2 pr-6 border bottom-2">
@@ -139,7 +142,7 @@ const DashboardLayout = () => {
             </div>
           </div>
         </div>
-        <Outlet />
+        <Outlet context={[showToaster]} />
       </div>
     </div>
   );

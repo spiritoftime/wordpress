@@ -1,5 +1,6 @@
-import React from "react";
 import { countries } from "../utils/countries";
+import { addConference } from "../services/conferences";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import {
   Form,
   FormControl,
@@ -9,23 +10,28 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
-import { Toaster } from "./ui/toaster";
-import { Trash } from "lucide-react";
+import { Trash, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import DatePicker from "./DatePicker";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const AddConference = () => {
+  const [showToaster] = useOutletContext();
+  const queryClient = useQueryClient();
+  const getAccessToken = useGetAccessToken();
+  const navigate = useNavigate();
+
   const FormSchema = z
     .object({
-      conferenceName: z.string().min(1, {
+      name: z.string().min(1, {
         message: "Required",
       }),
       country: z.string().nonempty("Required"),
@@ -38,7 +44,7 @@ const AddConference = () => {
       venue: z.string().min(1, {
         message: "Required",
       }),
-      api: z.string().min(1, {
+      wordpressApi: z.string().min(1, {
         message: "Required",
       }),
       roomItems: z.array(
@@ -52,11 +58,11 @@ const AddConference = () => {
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      conferenceName: "",
+      name: "",
       country: "",
       roomItems: [{ room: "" }],
       venue: "",
-      api: "",
+      wordpressApi: "",
     },
   });
 
@@ -71,15 +77,25 @@ const AddConference = () => {
     name: "roomItems",
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-    form.reset();
-    toast({
-      description: "Form Submitted",
-    });
-  };
+  // Function to add data to database
+  const { mutate: addToDatabase, isLoading } = useMutation(
+    async (data) => {
+      const accessToken = await getAccessToken();
+      return addConference(accessToken, data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["conferences"], { exact: true });
+        form.reset();
+        navigate("/");
+        showToaster("Conference Added");
+      },
+    }
+  );
 
-  const { toast } = useToast();
+  const onSubmit = (data) => {
+    addToDatabase(data);
+  };
 
   return (
     <div className="w-full p-10">
@@ -94,7 +110,7 @@ const AddConference = () => {
             <div className="w-[48%]">
               <FormField
                 control={form.control}
-                name="conferenceName"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Conference Name:</FormLabel>
@@ -173,7 +189,7 @@ const AddConference = () => {
             <div className="w-[48%]">
               <FormField
                 control={form.control}
-                name="api"
+                name="wordpressApi"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>WordPress API Key:</FormLabel>
@@ -237,12 +253,19 @@ const AddConference = () => {
           <Button
             className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
             type="submit"
+            disabled={isLoading}
           >
-            Submit
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>
-      <Toaster />
     </div>
   );
 };
