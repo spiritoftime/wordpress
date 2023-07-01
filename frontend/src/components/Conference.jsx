@@ -21,6 +21,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAppContext } from "../context/appContext";
+import { useEffect } from "react";
 const Conference = () => {
   const FormSchema = z
     .object({
@@ -78,6 +79,15 @@ const Conference = () => {
   };
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
+  useEffect(() => {
+    if (conference)
+      form.reset({
+        conferenceName: conference.name,
+        country: conference.country,
+        venue: conference.venue,
+        api: conference.wordpressApi,
+      });
+  }, [conference]);
   return (
     <div className="flex flex-col w-full p-12">
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
