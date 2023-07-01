@@ -14,6 +14,7 @@ import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
 
 const Conferences = () => {
+  const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
 
@@ -62,7 +63,7 @@ const Conferences = () => {
         <Loading />
       </div>
     );
-  const navigate = useNavigate();
+
   const rowNavigate = (rowId) => navigate(`/conferences/${rowId}`);
   return (
     <div className="container py-10 mx-auto">

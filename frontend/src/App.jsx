@@ -6,6 +6,7 @@ import Conferences from "./components/Conferences";
 import AddConference from "./components/AddConference";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
+import Conference from "./components/Conference";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -19,6 +20,7 @@ function App() {
       {isAuthenticated ? (
         <Route path="/" element={<DashboardLayout />}>
           <Route path="/" element={<Conferences />} />
+          <Route path="/conferences/:conferenceId" element={<Conference />} />
           <Route path="/add-conference" element={<AddConference />} />
         </Route>
       ) : (

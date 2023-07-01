@@ -93,7 +93,8 @@ export function DataTable({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  onClick={rowNavigate}
+                  className="cursor-pointer"
+                  onClick={() => rowNavigate(row.id)}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
