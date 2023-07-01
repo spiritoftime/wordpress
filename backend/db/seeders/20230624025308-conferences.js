@@ -9,7 +9,7 @@ module.exports = {
         name: "APARCS 2022",
         country: "USA",
         venue: "New York",
-        wordpressApi: "asdasd123123123",
+        wordpress_api: "asdasd123123123",
       },
       {
         start_date: "2021-05-24",
@@ -17,7 +17,7 @@ module.exports = {
         name: "APARCS 2021",
         country: "USA",
         venue: "New York",
-        wordpressApi: "asdasd78678678",
+        wordpress_api: "asdasd78678678",
       },
       {
         start_date: "2021-04-24",
@@ -25,7 +25,7 @@ module.exports = {
         name: "APARCS 2020",
         country: "USA",
         venue: "Washington",
-        wordpressApi: "asdasd9089018234",
+        wordpress_api: "asdasd9089018234",
       },
     ]);
   },
