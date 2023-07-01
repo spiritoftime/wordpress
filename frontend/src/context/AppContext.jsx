@@ -3,8 +3,11 @@ import React from "react";
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
   const [comboBoxValue, setComboBoxValue] = useState("");
+  const [conference, setConference] = useState("");
   return (
-    <AppContext.Provider value={{ comboBoxValue, setComboBoxValue }}>
+    <AppContext.Provider
+      value={{ comboBoxValue, setComboBoxValue, setConference, conference }}
+    >
       {children}
     </AppContext.Provider>
   );

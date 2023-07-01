@@ -25,60 +25,59 @@ const DashboardLayout = () => {
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
-  const { comboBoxValue, setComboBoxValue } = useAppContext();
+  const { comboBoxValue, setComboBoxValue, setConference } = useAppContext();
   const getAccessToken = useGetAccessToken();
-  const { data: conference, isLoading: isConferenceFetching } = useQuery({
-    queryKey: ["conference"],
-    queryFn: async () => {
-      const accessToken = await getAccessToken();
-      return getConference(accessToken, conferenceId);
-    },
-    enabled: conferenceId !== undefined,
-    refetchOnWindowFocus: false,
-  });
-  useEffect(() => {
-    if (conferenceId !== undefined) {
-      if (!isAuthenticated) return;
-      if (!isConferenceFetching) setComboBoxValue(conference.name);
-      else return;
-    }
-  }, [isConferenceFetching]);
-  useEffect(() => {
-    if (!isConferencesFetching) {
-      const newParamId = conferences.find((c) => c.name === comboBoxValue)?.id;
-      navigate(`/conferences/${newParamId}`);
-    }
-  }, [comboBoxValue]);
-  console.log("lol");
   const { data: conferences, isLoading: isConferencesFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       return getConferences(accessToken);
     },
+    enabled: conferenceId !== undefined,
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   useEffect(() => {
+    if (!isAuthenticated) return;
+    if (conferenceId !== undefined) {
+      if (!isConferencesFetching) {
+        const conference = conferences.find((c) => {
+          return c.id === +conferenceId;
+        });
+        console.log(conference, "conference");
+        setComboBoxValue(conference.name);
+        setConference(conference);
+      } else return;
+    }
+  }, [isConferencesFetching]);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    if (!isConferencesFetching && comboBoxValue !== "") {
+      const conference = conferences.find((c) => {
+        return c.name === comboBoxValue.toUpperCase();
+      });
+      navigate(`/conferences/${conference.id}`);
+      setConference(conference);
+    }
+  }, [comboBoxValue]);
+
+  useEffect(() => {
     setUserName(user.name);
   }, [user]);
-
   return (
     <div className="flex flex-col min-h-screen layout">
       <div className="flex justify-between pl-[300px] py-2 pr-6 border bottom-2">
         <div>
-          {isConferencesFetching || (isConferenceFetching && <Loading />)}
-          {!isConferencesFetching &&
-            !isConferenceFetching &&
-            isAuthenticated && (
-              <NormalComboBox
-                options={conferences}
-                validateProperty={"name"}
-                displayProperty={"name"}
-                fieldName={"conference"}
-                value={comboBoxValue}
-                setValue={setComboBoxValue}
-              />
-            )}
+          {!isConferencesFetching && isAuthenticated && (
+            <NormalComboBox
+              options={conferences}
+              validateProperty={"name"}
+              displayProperty={"name"}
+              fieldName={"conference"}
+              value={comboBoxValue}
+              setValue={setComboBoxValue}
+            />
+          )}
         </div>
         <div className="flex items-center justify-end gap-2 ">
           <p className="text-color">{userName}</p>

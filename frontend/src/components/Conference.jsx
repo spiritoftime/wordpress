@@ -58,7 +58,6 @@ const Conference = () => {
       api: "",
     },
   });
-
   const control = form.control;
 
   const {
@@ -78,7 +77,7 @@ const Conference = () => {
     });
   };
   const { toast } = useToast();
-  const { comboBoxValue } = useAppContext();
+  const { comboBoxValue, conference } = useAppContext();
   return (
     <div className="flex flex-col w-full p-12">
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
