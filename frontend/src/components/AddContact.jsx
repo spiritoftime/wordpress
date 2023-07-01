@@ -15,6 +15,7 @@ import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
+import { Switch } from "./ui/switch";
 import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
@@ -56,13 +57,10 @@ const AddContact = () => {
       email: z.string().min(1, {
         message: "Required",
       }),
-      organisation: z.string().min(1, {
-        message: "Required",
-      }),
-      biography: z.string().min(1, {
-        message: "Required",
-      }),
+      organisation: z.string().optional(),
+      biography: z.string().optional(),
       photo: z.any(),
+      admin: z.boolean(),
       // photo: z
       //   .any()
       //   .refine((value) => value.length === 0, "Required")
@@ -108,12 +106,9 @@ const AddContact = () => {
         `photos/${data.firstName}-${data.lastName}.png`
       );
 
+      // Upload the photo onto Firebase storage with uploadBytes
       const promises = [getAccessToken(), uploadBytes(storageRef, data.photo)];
       const [accessToken, snapshot] = await Promise.all(promises);
-      //const accessToken = await getAccessToken();
-
-      // Upload the photo onto Firebase storage
-      // const snapshot = await uploadBytes(storageRef, data.photo);
 
       // Get the download url for the uploaded photo
       const photoUrl = await getDownloadURL(snapshot.ref);
@@ -124,7 +119,8 @@ const AddContact = () => {
     },
     {
       onSuccess: () => {
-        // console.log(url);
+        form.reset();
+        setPhotoPreviewLink("");
         toast({
           description: "Speaker added",
         });
@@ -133,12 +129,8 @@ const AddContact = () => {
   );
 
   const onSubmit = (data) => {
-    uploadPhoto(data);
     console.log(data);
-    form.reset();
-    // toast({
-    //   description: "Form Submitted",
-    // });
+    uploadPhoto(data);
   };
 
   const { toast } = useToast();
@@ -188,7 +180,7 @@ const AddContact = () => {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name:</FormLabel>
+                    <FormLabel>First Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="First Name" {...field} />
                     </FormControl>
@@ -203,7 +195,7 @@ const AddContact = () => {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name:</FormLabel>
+                    <FormLabel>Last Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="Last Name" {...field} />
                     </FormControl>
@@ -218,7 +210,7 @@ const AddContact = () => {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country:</FormLabel>
+                    <FormLabel>Country*</FormLabel>
                     <Combobox
                       field={field}
                       setValue={form.setValue}
@@ -237,7 +229,7 @@ const AddContact = () => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title:</FormLabel>
+                    <FormLabel>Title*</FormLabel>
                     <Combobox
                       field={field}
                       setValue={form.setValue}
@@ -256,7 +248,7 @@ const AddContact = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email:</FormLabel>
+                    <FormLabel>Email*</FormLabel>
                     <FormControl>
                       <Input placeholder="Email" {...field} />
                     </FormControl>
@@ -271,7 +263,7 @@ const AddContact = () => {
                 name="organisation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Organisation:</FormLabel>
+                    <FormLabel>Organisation</FormLabel>
                     <FormControl>
                       <Input placeholder="Organisation" {...field} />
                     </FormControl>
@@ -286,9 +278,28 @@ const AddContact = () => {
                 name="biography"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Biography:</FormLabel>
+                    <FormLabel>Biography</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Biography" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="w-[100%]">
+              <FormField
+                control={form.control}
+                name="admin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="w-full">Admin Access</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
