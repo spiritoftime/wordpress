@@ -10,11 +10,11 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       start_date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       end_date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       name: {
@@ -29,9 +29,9 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      wordpress_url: {
+      wordpress_api: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     });
   },

@@ -10,6 +10,8 @@ import { Home, BarChart2, CheckSquare, Flag } from "lucide-react";
 import { Outlet, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useToast } from "./ui/use-toast";
+
 const DashboardLayout = () => {
   const { pathname } = useLocation();
   const { logout, user } = useAuth0();
@@ -19,6 +21,14 @@ const DashboardLayout = () => {
   useEffect(() => {
     setUserName(user.name);
   }, [user]);
+
+  const { toast } = useToast();
+
+  const showToaster = (message) => {
+    toast({
+      description: message,
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen layout">
@@ -83,7 +93,7 @@ const DashboardLayout = () => {
             </div>
           </div>
         </div>
-        <Outlet />
+        <Outlet context={[showToaster]} />
       </div>
     </div>
   );
