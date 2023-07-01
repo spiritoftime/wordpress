@@ -62,7 +62,8 @@ const Conferences = () => {
         <Loading />
       </div>
     );
-
+  const navigate = useNavigate();
+  const rowNavigate = (rowId) => navigate(`/conferences/${rowId}`);
   return (
     <div className="container py-10 mx-auto">
       <PageHeader
@@ -75,6 +76,7 @@ const Conferences = () => {
         data={conferences}
         rowType={"conferences"}
         filterColumn={"name"}
+        rowNavigate={rowNavigate}
       />
     </div>
   );
