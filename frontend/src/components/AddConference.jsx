@@ -16,15 +16,16 @@ import { Trash, Loader2 } from "lucide-react";
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import DatePicker from "./DatePicker";
+import { useAppContext } from "../context/appContext";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AddConference = () => {
-  const [showToaster] = useOutletContext();
+  const { showToaster } = useAppContext();
   const queryClient = useQueryClient();
   const getAccessToken = useGetAccessToken();
   const navigate = useNavigate();
@@ -136,6 +137,7 @@ const AddConference = () => {
                         setValue={form.setValue}
                         options={countries}
                         fieldName="Country"
+                        customHeight="160"
                         validateProperty={"value"}
                         displayProperty={"label"}
                       />

@@ -31,6 +31,7 @@ const addSpeaker = async (req, res) => {
     organisation,
     biography,
     photoUrl,
+    isAdmin,
   } = req.body;
   try {
     const speaker = await Speaker.create({
@@ -42,6 +43,7 @@ const addSpeaker = async (req, res) => {
       organisation,
       biography,
       photoUrl,
+      isAdmin,
     });
 
     return res.status(200).json(speaker);

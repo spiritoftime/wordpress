@@ -60,7 +60,7 @@ const AddContact = () => {
       organisation: z.string().optional(),
       biography: z.string().optional(),
       photo: z.any(),
-      admin: z.boolean(),
+      isAdmin: z.boolean(),
       // photo: z
       //   .any()
       //   .refine((value) => value.length === 0, "Required")
@@ -217,6 +217,8 @@ const AddContact = () => {
                       options={countries}
                       fieldName="Country"
                       customHeight="160"
+                      validateProperty="value"
+                      displayProperty="value"
                     />
                     <FormMessage />
                   </FormItem>
@@ -236,6 +238,8 @@ const AddContact = () => {
                       options={titles}
                       fieldName="Title"
                       customHeight="160"
+                      validateProperty="value"
+                      displayProperty="value"
                     />
                     <FormMessage />
                   </FormItem>
@@ -290,7 +294,7 @@ const AddContact = () => {
             <div className="w-[100%]">
               <FormField
                 control={form.control}
-                name="admin"
+                name="isAdmin"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="w-full">Admin Access</FormLabel>
