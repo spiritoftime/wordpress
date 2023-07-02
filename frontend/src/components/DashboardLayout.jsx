@@ -142,7 +142,7 @@ const DashboardLayout = () => {
             </div>
           </div>
         </div>
-        <Outlet context={[showToaster]} />
+        <Outlet />
       </div>
     </div>
   );
