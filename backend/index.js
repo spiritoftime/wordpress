@@ -16,6 +16,7 @@ app.use(express.json());
 const checkJwt = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.BASEURL,
+  tokenSigningAlg: "RS256",
 });
 
 app.use(

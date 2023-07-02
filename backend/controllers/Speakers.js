@@ -2,6 +2,12 @@ const db = require("../db/models");
 const { Speaker } = db;
 const { Op } = require("sequelize");
 
+const {
+  getAuthAccessToken,
+  updateUserInAuth,
+  addUserToAuth,
+} = require("../utils");
+
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   try {
@@ -45,6 +51,10 @@ const addSpeaker = async (req, res) => {
       photoUrl,
       isAdmin,
     });
+
+    if (isAdmin) {
+      const response = await addUserToAuth(firstName, email);
+    }
 
     return res.status(200).json(speaker);
   } catch (err) {

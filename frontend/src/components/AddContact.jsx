@@ -60,7 +60,7 @@ const AddContact = () => {
       organisation: z.string().optional(),
       biography: z.string().optional(),
       photo: z.any(),
-      isAdmin: z.boolean(),
+      isAdmin: z.boolean().optional(),
       // photo: z
       //   .any()
       //   .refine((value) => value.length === 0, "Required")
