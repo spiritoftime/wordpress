@@ -18,7 +18,6 @@ const Conferences = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const {
     data: conferences,
