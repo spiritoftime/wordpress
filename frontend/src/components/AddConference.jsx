@@ -99,7 +99,8 @@ const AddConference = () => {
 
   return (
     <div className="w-full p-10">
-      <PageHeader rowType="Add Conference" hasButton={false} />
+      <h1 className="text-xl font-bold">Conference Information</h1>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -125,18 +126,23 @@ const AddConference = () => {
               <FormField
                 control={form.control}
                 name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country:</FormLabel>
-                    <Combobox
-                      field={field}
-                      setValue={form.setValue}
-                      options={countries}
-                      fieldName="Country"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  console.log(field);
+                  return (
+                    <FormItem>
+                      <FormLabel>Country:</FormLabel>
+                      <Combobox
+                        field={field}
+                        setValue={form.setValue}
+                        options={countries}
+                        fieldName="Country"
+                        validateProperty={"value"}
+                        displayProperty={"label"}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
             <div className="w-[48%]">

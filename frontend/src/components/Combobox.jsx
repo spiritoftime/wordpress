@@ -12,8 +12,17 @@ import {
   CommandItem,
 } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-
-const Combobox = ({ field, setValue, options, fieldName, customHeight }) => {
+// validateProperty would be what property you would like to check, in countries.js it would be the value property.
+// displayProperty is what property should be displayed in the frontend. in countries.js it would be the label property
+const Combobox = ({
+  field,
+  setValue,
+  options,
+  fieldName,
+  customHeight,
+  validateProperty,
+  displayProperty,
+}) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -23,13 +32,14 @@ const Combobox = ({ field, setValue, options, fieldName, customHeight }) => {
             role="combobox"
             className={cn(
               "w-[100%] justify-between",
-              !field.value && "text-muted-foreground"
+              !field[validateProperty] && "text-muted-foreground"
             )}
           >
-            {field.value
+            {field[validateProperty]
               ? options.find(
                   (item) =>
-                    item.value.toUpperCase() === field.value.toUpperCase()
+                    item[validateProperty].toUpperCase() ===
+                    field[validateProperty].toUpperCase()
                 )?.label
               : `Select ${fieldName}`}
             <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
@@ -45,25 +55,28 @@ const Combobox = ({ field, setValue, options, fieldName, customHeight }) => {
               className="w-[100%]"
               style={{ height: customHeight ? `${customHeight}px` : "72px" }}
             >
-              {options.map((item) => (
-                <CommandItem
-                  value={item.value}
-                  key={item.value}
-                  onSelect={(value) => {
-                    setValue(`${fieldName.toLowerCase()}`, value);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      item.value.toUpperCase() === field.value.toUpperCase()
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  {item.label}
-                </CommandItem>
-              ))}
+              {options.map((item) => {
+                return (
+                  <CommandItem
+                    value={item[validateProperty]}
+                    key={item[validateProperty]}
+                    onSelect={(value) => {
+                      setValue(`${fieldName.toLowerCase()}`, value);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        item[validateProperty].toUpperCase() ===
+                          field[validateProperty].toUpperCase()
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {item[displayProperty]}
+                  </CommandItem>
+                );
+              })}
             </ScrollArea>
           </CommandGroup>
         </Command>
