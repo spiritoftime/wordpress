@@ -14,7 +14,8 @@ export const RowActions = (rowType, deleteMutation) => {
   return {
     id: "actions",
     cell: ({ row }) => {
-      const rowId = row.original.id;
+      // const rowId = row.original.id;
+      const rowData = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -25,7 +26,8 @@ export const RowActions = (rowType, deleteMutation) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => deleteMutation({ rowId })}>
+            <DropdownMenuItem onClick={() => deleteMutation({ rowData })}>
+              {/* <DropdownMenuItem onClick={() => deleteMutation({ rowId })}> */}
               {`Delete ${rowType}`}
             </DropdownMenuItem>
             <DropdownMenuSeparator />

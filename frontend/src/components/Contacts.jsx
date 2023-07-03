@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
@@ -33,10 +33,10 @@ const Contacts = () => {
   });
 
   const { mutate: deleteContactMutation } = useMutation({
-    mutationFn: async ({ rowId: contactId }) => {
-      console.log(contactId);
+    mutationFn: async ({ rowData }) => {
+      console.log(rowData);
       const accessToken = await getAccessToken();
-      return deleteContact(contactId, accessToken);
+      return deleteContact(rowData, accessToken);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["contacts"], { exact: true });
@@ -74,7 +74,7 @@ const Contacts = () => {
     RowActions("Contact", deleteContactMutation),
   ];
 
-  // Use isConferenceRefetching to show loading screen when refetching
+  // Use isContactsFetching to show loading screen when refetching
   if (isContactsLoading || isContactsFetching)
     return (
       <div className="w-full mx-auto">

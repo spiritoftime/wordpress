@@ -11,8 +11,9 @@ export function addContact(accessToken, data) {
   });
 }
 
-export function deleteContact(contactId, accessToken) {
-  return makeRequest(`/speakers/${contactId}`, accessToken, {
+export function deleteContact(data, accessToken) {
+  return makeRequest(`/speakers/${data.id}`, accessToken, {
     method: "DELETE",
+    data: data,
   });
 }

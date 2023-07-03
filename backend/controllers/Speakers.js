@@ -6,6 +6,8 @@ const {
   getAuthAccessToken,
   updateUserInAuth,
   addUserToAuth,
+  getUserFromAuth,
+  deleteUserFromAuth,
 } = require("../utils");
 
 const getSpeaker = async (req, res) => {
@@ -64,10 +66,15 @@ const addSpeaker = async (req, res) => {
 
 const deleteSpeaker = async (req, res) => {
   const { speakerId } = req.params;
+  const { isAdmin, email } = req.body;
   try {
     await Speaker.destroy({
       where: { id: speakerId },
     });
+    if (isAdmin) {
+      const userId = await getUserFromAuth(email);
+      const response = await deleteUserFromAuth(userId);
+    }
     return res.status(200).json("Speaker deleted");
   } catch (err) {
     return res.status(500).json(err);
