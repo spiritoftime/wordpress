@@ -62,8 +62,21 @@ const addSpeaker = async (req, res) => {
   }
 };
 
+const deleteSpeaker = async (req, res) => {
+  const { speakerId } = req.params;
+  try {
+    await Speaker.destroy({
+      where: { id: speakerId },
+    });
+    return res.status(200).json("Speaker deleted");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
 module.exports = {
   getSpeaker,
   getSpeakers,
   addSpeaker,
+  deleteSpeaker,
 };

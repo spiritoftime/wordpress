@@ -3,13 +3,13 @@ const {
   getSpeaker,
   getSpeakers,
   addSpeaker,
+  deleteSpeaker,
 } = require("../controllers/Speakers");
 
 const router = express.Router();
 
-router.route("/").post(addSpeaker);
-
-// router.route("/").get(getSpeakers).post(addSpeaker);
+router.route("/").get(getSpeakers).post(addSpeaker);
+router.route("/:speakerId").delete(deleteSpeaker);
 
 // router.route("/:speakerId").get(getSpeaker);
 

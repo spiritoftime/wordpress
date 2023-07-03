@@ -23,7 +23,7 @@ export function makeRequest(endpoint, accessToken, options) {
       return res.data;
     })
     .catch((err) => {
-      return Promise.reject(err?.response?.data?.error ?? "Error");
+      return Promise.reject(err?.response?.data?.errors ?? "Error");
     });
 }
 // the optional chaining is for a frontend error

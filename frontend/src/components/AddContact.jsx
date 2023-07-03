@@ -1,7 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { fullCountries as countries } from "../utils/countriesFull";
+import { convertToTitleCase } from "../utils/convertText";
 import { addContact } from "../services/contacts";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { useAppContext } from "../context/appContext";
 import {
   Form,
   FormControl,
@@ -12,21 +14,20 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useToast } from "./ui/use-toast";
-import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
+import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../firebase";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const titles = [
   { value: "Prof", label: "Prof" },
@@ -40,41 +41,42 @@ const AddContact = () => {
   const inputRef = useRef(null);
   const [photoPreviewLink, setPhotoPreviewLink] = useState("");
   const getAccessToken = useGetAccessToken();
+  const { showToaster } = useAppContext();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const maxFileSize = 500000;
   const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-  const FormSchema = z
-    .object({
-      firstName: z.string().min(1, {
-        message: "Required",
-      }),
-      lastName: z.string().min(1, {
-        message: "Required",
-      }),
-      country: z.string().nonempty("Required"),
-      title: z.string().nonempty("Required"),
-      email: z.string().min(1, {
-        message: "Required",
-      }),
-      organisation: z.string().optional(),
-      biography: z.string().optional(),
-      photo: z.any(),
-      isAdmin: z.boolean().optional(),
-      // photo: z
-      //   .any()
-      //   .refine((value) => value.length === 0, "Required")
-      //   .refine(
-      //     // (files) => console.log(files),
-      //     (file) => file?.size <= maxFileSize,
-      //     `Max image size is 5MB.`
-      //   )
-      //   .refine(
-      //     (file) => acceptedImageTypes.includes(file?.type),
-      //     "Only .jpg, .jpeg and .png formats are supported."
-      //   ),
-    })
-    .required();
+  const FormSchema = z.object({
+    firstName: z.string().min(1, {
+      message: "Required",
+    }),
+    lastName: z.string().min(1, {
+      message: "Required",
+    }),
+    country: z.string().nonempty("Required"),
+    title: z.string().nonempty("Required"),
+    email: z.string().min(1, {
+      message: "Required",
+    }),
+    organisation: z.string().optional(),
+    biography: z.string().optional(),
+    photo: z.any(),
+    isAdmin: z.boolean().optional(),
+    // photo: z
+    //   .any()
+    //   .refine((value) => value.length === 0, "Required")
+    //   .refine(
+    //     // (files) => console.log(files),
+    //     (file) => file?.size <= maxFileSize,
+    //     `Max image size is 5MB.`
+    //   )
+    //   .refine(
+    //     (file) => acceptedImageTypes.includes(file?.type),
+    //     "Only .jpg, .jpeg and .png formats are supported."
+    //   ),
+  });
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -87,6 +89,7 @@ const AddContact = () => {
       email: "",
       organisation: "",
       biography: "",
+      isAdmin: false,
     },
   });
 
@@ -99,7 +102,12 @@ const AddContact = () => {
     setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
   };
 
-  const { mutate: uploadPhoto, isLoading } = useMutation(
+  const {
+    mutate: uploadPhoto,
+    isLoading,
+    isError: addHasError,
+    error: addError,
+  } = useMutation(
     async (data) => {
       const storageRef = ref(
         storage,
@@ -119,21 +127,36 @@ const AddContact = () => {
     },
     {
       onSuccess: () => {
+        queryClient.invalidateQueries(["contacts"], { exact: true });
         form.reset();
         setPhotoPreviewLink("");
-        toast({
-          description: "Speaker added",
-        });
+        navigate("/contacts");
+        showToaster("Speaker Added");
       },
     }
   );
 
+  useEffect(() => {
+    if (addHasError) {
+      const errorMsg = addError[0].message;
+      if (errorMsg === "email must be unique") {
+        showToaster(
+          "Email address is already in used",
+          "Please use another email address",
+          "destructive"
+        );
+      } else {
+        showToaster(addError[0].message, null, "destructive");
+      }
+    }
+  }, [addHasError, addError]);
+
   const onSubmit = (data) => {
+    data.country = convertToTitleCase(data.country);
+    data.title = convertToTitleCase(data.title);
     console.log(data);
     uploadPhoto(data);
   };
-
-  const { toast } = useToast();
 
   return (
     <div className="w-full p-10">
