@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RowActions } from "./RowActions";
+import { useAppContext } from "../context/appContext";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ const Contacts = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
+  const { setContact } = useAppContext();
 
   const {
     data: contacts,
@@ -97,6 +99,7 @@ const Contacts = () => {
           rowType={"contacts"}
           filterColumn={"lastName"}
           rowNavigate={rowNavigate}
+          setData={setContact}
         />
       </div>
       <Toaster />

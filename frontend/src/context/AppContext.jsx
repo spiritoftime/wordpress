@@ -7,6 +7,7 @@ const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
   const [comboBoxValue, setComboBoxValue] = useState("");
   const [conference, setConference] = useState("");
+  const [contact, setContact] = useState("");
   const { toast } = useToast();
 
   /**
@@ -32,6 +33,8 @@ const AppProvider = ({ children }) => {
         setConference,
         conference,
         showToaster,
+        contact,
+        setContact,
       }}
     >
       {children}

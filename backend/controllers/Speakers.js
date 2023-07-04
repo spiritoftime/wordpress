@@ -81,9 +81,60 @@ const deleteSpeaker = async (req, res) => {
   }
 };
 
+async function updateSpeaker(req, res) {
+  const { speakerId } = req.params;
+  const {
+    firstName,
+    lastName,
+    country,
+    title,
+    email,
+    organisation,
+    biography,
+    photoUrl,
+    isAdmin,
+    adminChanged,
+  } = req.body;
+  try {
+    const updatedSpeaker = await Speaker.update(
+      {
+        firstName,
+        lastName,
+        country,
+        title,
+        email,
+        organisation,
+        biography,
+        photoUrl,
+        isAdmin,
+      },
+      {
+        where: { id: speakerId },
+      }
+    );
+
+    if (adminChanged) {
+      if (isAdmin) {
+        await addUserToAuth(firstName, email);
+      } else {
+        const userId = await getUserFromAuth(email);
+        const response = await deleteUserFromAuth(userId);
+      }
+    } else if (isAdmin) {
+      const userId = await getUserFromAuth(email);
+      const response = await updateUserInAuth(userId, firstName);
+    }
+
+    return res.json(updatedSpeaker);
+  } catch (err) {
+    return res.status(400).json({ error: true, msg: err });
+  }
+}
+
 module.exports = {
   getSpeaker,
   getSpeakers,
   addSpeaker,
   deleteSpeaker,
+  updateSpeaker,
 };
