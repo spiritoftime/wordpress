@@ -12,12 +12,11 @@ export function deleteConference(conferenceId, accessToken) {
 
 export function getConference(accessToken, conferenceId) {
   return makeRequest(`/conferences/${conferenceId}`, accessToken);
-
+}
 
 export function addConference(accessToken, data) {
   return makeRequest(`/conferences`, accessToken, {
     method: "POST",
     data: data,
   });
-
 }
