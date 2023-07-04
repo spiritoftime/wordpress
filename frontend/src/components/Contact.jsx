@@ -173,7 +173,7 @@ const Contact = () => {
         form.reset();
         setPhotoPreviewLink("");
         navigate("/contacts");
-        showToaster("Speaker Added");
+        showToaster(`Speaker Updated`);
       },
     }
   );
@@ -213,7 +213,14 @@ const Contact = () => {
 
   return (
     <div className="w-full p-10">
-      <PageHeader rowType="Add Contact" hasButton={false} />
+      <PageHeader
+        rowType={
+          (contact && `${contact.firstName} ${contact.lastName}`) ||
+          (contactFromFetch &&
+            `${contactFromFetch.firstName} ${contactFromFetch.lastName}`)
+        }
+        hasButton={false}
+      />
       <button type="button" onClick={handleInputClick} className="mt-10">
         <div className="relative">
           <img

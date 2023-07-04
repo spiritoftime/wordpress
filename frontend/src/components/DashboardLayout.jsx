@@ -62,7 +62,7 @@ const DashboardLayout = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    if (!isConferencesFetching && comboBoxValue !== "") {
+    if (!isConferencesFetching && comboBoxValue !== undefined) {
       const conference = conferences.find((c) => {
         return c.name === comboBoxValue.toUpperCase();
       });
