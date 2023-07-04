@@ -23,7 +23,6 @@ export function deleteContact(data, accessToken) {
 }
 
 export function updateContact(id, data, accessToken) {
-  console.log(id, data, accessToken);
   return makeRequest(`/speakers/${id}`, accessToken, {
     method: "PUT",
     data: data,

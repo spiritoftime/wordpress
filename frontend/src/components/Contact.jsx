@@ -40,7 +40,9 @@ const titles = [
 const Contact = () => {
   const { contact } = useAppContext();
   const inputRef = useRef(null);
-  const [photoPreviewLink, setPhotoPreviewLink] = useState("");
+  const [photoPreviewLink, setPhotoPreviewLink] = useState(
+    contact && contact.photoUrl
+  );
   const getAccessToken = useGetAccessToken();
   const { showToaster } = useAppContext();
   const navigate = useNavigate();
@@ -190,6 +192,7 @@ const Contact = () => {
   useEffect(() => {
     if (fetchSuccess) {
       prefillData(contactFromFetch);
+      setPhotoPreviewLink(contactFromFetch.photoUrl);
     }
   }, [fetchSuccess]);
 
