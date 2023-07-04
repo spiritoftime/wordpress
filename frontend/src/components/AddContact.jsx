@@ -103,25 +103,31 @@ const AddContact = () => {
   };
 
   const {
-    mutate: uploadPhoto,
+    mutate: uploadContact,
     isLoading,
     isError: addHasError,
     error: addError,
   } = useMutation(
     async (data) => {
-      const storageRef = ref(
-        storage,
-        `photos/${data.firstName}-${data.lastName}.png`
-      );
+      const accessToken = await getAccessToken();
+      if (data.photo !== "") {
+        const storageRef = ref(
+          storage,
+          `photos/${data.firstName}-${data.lastName}.png`
+        );
 
-      // Upload the photo onto Firebase storage with uploadBytes
-      const promises = [getAccessToken(), uploadBytes(storageRef, data.photo)];
-      const [accessToken, snapshot] = await Promise.all(promises);
+        // Upload the photo onto Firebase storage with uploadBytes
+        const snapshot = await uploadBytes(storageRef, data.photo);
 
-      // Get the download url for the uploaded photo
-      const photoUrl = await getDownloadURL(snapshot.ref);
+        // Get the download url for the uploaded photo
+        const photoUrl = await getDownloadURL(snapshot.ref);
 
-      data.photoUrl = photoUrl;
+        data.photoUrl = photoUrl;
+
+        return addContact(accessToken, data);
+      }
+
+      data.photoUrl = "";
 
       return addContact(accessToken, data);
     },
@@ -154,8 +160,13 @@ const AddContact = () => {
   const onSubmit = (data) => {
     data.country = convertToTitleCase(data.country);
     data.title = convertToTitleCase(data.title);
+
+    // if (data.photo === "" || data.photo === null || data.photo === undefined) {
+    //   data.photo = "/assets/dummy.jpg";
+    // }
+
     console.log(data);
-    uploadPhoto(data);
+    uploadContact(data);
   };
 
   return (

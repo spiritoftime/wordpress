@@ -32,9 +32,9 @@ const Conferences = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   const { mutate: deleteConferenceMutation } = useMutation({
-    mutationFn: async ({ rowId: conferenceId }) => {
+    mutationFn: async ({ rowData }) => {
       const accessToken = await getAccessToken();
-      return deleteConference(conferenceId, accessToken);
+      return deleteConference(rowData.id, accessToken);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["conferences"], { exact: true });

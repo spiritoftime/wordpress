@@ -26,7 +26,12 @@ export const RowActions = (rowType, deleteMutation) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => deleteMutation({ rowData })}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteMutation({ rowData });
+              }}
+            >
               {/* <DropdownMenuItem onClick={() => deleteMutation({ rowId })}> */}
               {`Delete ${rowType}`}
             </DropdownMenuItem>

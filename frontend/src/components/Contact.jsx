@@ -129,7 +129,6 @@ const Contact = () => {
     }
     data.adminChanged = adminChanged;
 
-    // console.log(data);
     updateData(data);
   };
 
