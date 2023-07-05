@@ -92,8 +92,8 @@ async function sendEmail(userEmail, ticketLink) {
   try {
     const msg = {
       to: userEmail,
-      from: { name: "InvoiceGenie", email: process.env.SG_EMAIL }, // Verified sender email in send grid
-      subject: "Invitation from InvoiceGenie",
+      from: { name: "AutoMate", email: process.env.SG_EMAIL }, // Verified sender email in send grid
+      subject: "Invitation from Auto Mate",
       text: `Click here ${ticketLink} to accept invitation`,
       html: `<html>
   <head>
@@ -125,9 +125,9 @@ async function sendEmail(userEmail, ticketLink) {
                 style="text-align: center;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%; margin-bottom: 30px;"
               >
                 <img
-                  src="https://raw.githubusercontent.com/hWeitian/invoice-app-frontend/main/src/Assets/Logo.png"
+                  src="https://raw.githubusercontent.com/spiritoftime/wordpress/add-contact/frontend/src/assets/logo-transparent.png"
                   width="350"
-                  alt="invoice genie logo"
+                  alt="auto mate logo"
                   style="-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"
                 />
               </p>
