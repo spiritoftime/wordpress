@@ -216,7 +216,8 @@ const Contact = () => {
         rowType={
           (contact && `${contact.firstName} ${contact.lastName}`) ||
           (contactFromFetch &&
-            `${contactFromFetch.firstName} ${contactFromFetch.lastName}`)
+            `${contactFromFetch.firstName} ${contactFromFetch.lastName}`) ||
+          ""
         }
         hasButton={false}
       />
