@@ -133,15 +133,15 @@ async function sendEmail(userEmail, ticketLink) {
               </p>
               
       
-               <h1>Invitation to Access InvoiceGenie</h1>
+               <h1>Invitation to Auto Mate</h1>
               
-              <p>The administrator has invited you to access InvoiceGenie</p>
+              <p>The administrator has invited you to access Auto Mate</p>
               
               <p>
                 <strong><a href="${ticketLink}">Click here</a></strong> to accept the invitation.
               </p>
               
-              <strong>Invoice Genie</strong>
+              <strong>Auto Mate</strong>
 
               <br /><br />
               <hr style="border: 2px solid #EAEEF3; border-bottom: 0; margin: 20px 0;" />
