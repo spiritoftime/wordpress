@@ -30,7 +30,8 @@ import Loading from "./Loading";
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const match = useMatch("/conferences/:conferenceId");
+  const matchedConferencePath = useMatch("/conferences/:conferenceId");
+  const matchedContactPath = useMatch("/contacts/:contactId");
 
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
@@ -78,28 +79,42 @@ const DashboardLayout = () => {
   const conferenceSelected = pathname.includes("conferences");
 
   return (
-    <div className="flex flex-col min-h-screen layout">
+    <div className="flex flex-col min-h-screen layout ">
       <div
         className={cn(
-          "flex pl-[300px] py-2 pr-6 border bottom-2",
-          conferenceSelected ? "justify-between" : "justify-end"
+          "flex py-2 pr-6 border bottom-2",
+          conferenceSelected ? "justify-between" : "justify-between"
         )}
       >
-        {conferenceSelected && (
-          <div>
-            {!isConferencesFetching && isAuthenticated && (
-              <NormalComboBox
-                options={conferences}
-                validateProperty={"name"}
-                displayProperty={"name"}
-                fieldName={"conference"}
-                value={comboBoxValue}
-                setValue={setComboBoxValue}
-              />
-            )}
+        <div className="flex justify-between w-[50%]">
+          <div
+            className="w-[30%] my-auto cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src="../src/assets/logo-transparent.png"
+              alt="auto mate logo"
+              width="80%"
+              className="m-auto"
+            />
           </div>
-        )}
-        <div className="flex items-center justify-end gap-2 ">
+          {conferenceSelected && (
+            <div className="w-[69%]">
+              {!isConferencesFetching && isAuthenticated && (
+                <NormalComboBox
+                  options={conferences}
+                  validateProperty={"name"}
+                  displayProperty={"name"}
+                  fieldName={"conference"}
+                  value={comboBoxValue}
+                  setValue={setComboBoxValue}
+                />
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2">
           <p className="text-color">{userName}</p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -124,7 +139,7 @@ const DashboardLayout = () => {
                   (pathname.endsWith("dashboard") ||
                     pathname.endsWith("/") ||
                     pathname.endsWith("conferences") ||
-                    match) &&
+                    matchedConferencePath) &&
                     "text-[#0D05F2] bg-[#F9FAFB]",
                   "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
                 )}
@@ -137,7 +152,7 @@ const DashboardLayout = () => {
               <Link to={"/contacts"}>
                 <div
                   className={cn(
-                    pathname.endsWith("contacts") &&
+                    (pathname.endsWith("contacts") || matchedContactPath) &&
                       "text-[#0D05F2] bg-[#F9FAFB]",
                     "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
                   )}
