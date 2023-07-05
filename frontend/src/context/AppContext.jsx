@@ -2,6 +2,7 @@ import { useContext, useMemo, useState } from "react";
 import React from "react";
 import { useToast } from "../components/ui/use-toast";
 import { convertToTitleCase } from "../utils/convertText";
+
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {

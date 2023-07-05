@@ -128,7 +128,6 @@ const AddConference = () => {
                 control={form.control}
                 name="country"
                 render={({ field }) => {
-                  console.log(field);
                   return (
                     <FormItem>
                       <FormLabel>Country:</FormLabel>
