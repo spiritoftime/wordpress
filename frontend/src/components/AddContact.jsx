@@ -331,14 +331,20 @@ const AddContact = () => {
                 name="isAdmin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="w-full">Admin Access</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className="flex flex-wrap w-full">
+                      <div className="w-full">
+                        <FormLabel>Admin Access</FormLabel>
+                      </div>
+                      <div className="w-full">
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

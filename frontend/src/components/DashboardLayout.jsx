@@ -138,6 +138,7 @@ const DashboardLayout = () => {
                 className={cn(
                   (pathname.endsWith("dashboard") ||
                     pathname.endsWith("/") ||
+                    pathname.endsWith("add-conference") ||
                     pathname.endsWith("conferences") ||
                     matchedConferencePath) &&
                     "text-[#0D05F2] bg-[#F9FAFB]",
@@ -152,7 +153,9 @@ const DashboardLayout = () => {
               <Link to={"/contacts"}>
                 <div
                   className={cn(
-                    (pathname.endsWith("contacts") || matchedContactPath) &&
+                    (pathname.endsWith("contacts") ||
+                      pathname.endsWith("add-contact") ||
+                      matchedContactPath) &&
                       "text-[#0D05F2] bg-[#F9FAFB]",
                     "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
                   )}
