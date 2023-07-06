@@ -92,7 +92,7 @@ const Conference = () => {
       });
 
       // need to add in the query for the rooms before you can do this.
-      replace([{ room: "" }, ...conference.Rooms]);
+      replace([...conference.Rooms]);
     }
   }, [conference]);
   console.log(rooms);
@@ -237,7 +237,7 @@ const Conference = () => {
                         )}
                       />
                     </div>
-                    {index > 0 && (
+                    {rooms.length > 0 && (
                       <div className="w-[5%] mt-6 pl-3">
                         <Trash
                           type="button"
