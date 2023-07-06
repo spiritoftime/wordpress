@@ -34,7 +34,7 @@ const Contacts = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
-  const { mutate: deleteContactMutation } = useMutation({
+  const { mutate: deleteContactMutation, isLoading: isDeleting } = useMutation({
     mutationFn: async ({ rowData }) => {
       const accessToken = await getAccessToken();
       return deleteContact(rowData, accessToken);
@@ -76,7 +76,7 @@ const Contacts = () => {
   ];
 
   // Use isContactsFetching to show loading screen when refetching
-  if (isContactsLoading || isContactsFetching)
+  if (isContactsLoading || isContactsFetching || isDeleting)
     return (
       <div className="w-full mx-auto">
         <Loading />

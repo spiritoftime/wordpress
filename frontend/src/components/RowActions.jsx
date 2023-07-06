@@ -68,7 +68,7 @@ export const RowActions = (rowType, deleteMutation) => {
                 <AlertDialogAction
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteMutation({ rowId });
+                    deleteMutation({ rowData });
                   }}
                   className="bg-red-600 focus:ring-red-600"
                 >
