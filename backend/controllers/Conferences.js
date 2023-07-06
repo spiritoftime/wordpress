@@ -23,7 +23,7 @@ const getConference = async (req, res) => {
 };
 const getConferences = async (req, res) => {
   try {
-    const conferences = await Conference.findAll();
+    const conferences = await Conference.findAll({ include: Room });
     return res.status(200).json(conferences);
   } catch (err) {
     return res.status(500).json(err);
