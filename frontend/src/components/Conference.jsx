@@ -26,9 +26,10 @@ import { formatDate } from "../utils/convertDate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { editConference } from "../services/conferences";
+import { useNavigate } from "react-router-dom";
 const Conference = () => {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const FormSchema = z
     .object({
       conferenceName: z.string().min(1, {
@@ -88,6 +89,7 @@ const Conference = () => {
   const onSubmit = (data) => {
     editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
+    navigate("/");
     toast({
       description: "Form Submitted",
     });
@@ -108,12 +110,9 @@ const Conference = () => {
         room.roomId = room.id;
         return room;
       });
-      console.log("rooms", rooms);
-      // need to add in the query for the rooms before you can do this.
       replace([...rooms]);
     }
   }, [conference]);
-  console.log(conference.Rooms);
   return (
     <div className="flex flex-col w-full p-12">
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
