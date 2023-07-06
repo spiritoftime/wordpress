@@ -54,7 +54,8 @@ const addConference = async (req, res) => {
 };
 const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
-  const { startDate, endDate, name, country, venue, wordpressApi } = req.body;
+  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
+    req.body;
   try {
     const conference = await Conference.update(
       { startDate, endDate, name, country, venue, wordpressApi },

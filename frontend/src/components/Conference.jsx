@@ -80,7 +80,6 @@ const Conference = () => {
   };
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
-  console.log(conference.Rooms);
   useEffect(() => {
     if (conference) {
       form.reset({
@@ -96,6 +95,7 @@ const Conference = () => {
       replace([{ room: "" }, ...conference.Rooms]);
     }
   }, [conference]);
+  console.log(rooms);
   return (
     <div className="flex flex-col w-full p-12">
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
@@ -218,7 +218,7 @@ const Conference = () => {
                 <FormLabel>Rooms</FormLabel>
                 {rooms.map((field, index) => (
                   <div
-                    key={`${field}-${index}`}
+                    key={`${field.id}`}
                     className="flex flex-wrap justify-between"
                   >
                     <div
