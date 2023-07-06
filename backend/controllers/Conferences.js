@@ -56,7 +56,13 @@ const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
     req.body;
+
   try {
+    await Room.destroy({ where: { conferenceId } });
+    roomItems.forEach((room) => {
+      room.conferenceId = conferenceId;
+    });
+    await Room.bulkCreate(roomItems);
     const conference = await Conference.update(
       { startDate, endDate, name, country, venue, wordpressApi },
       { where: { id: conferenceId } }

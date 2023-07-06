@@ -23,7 +23,12 @@ import * as z from "zod";
 import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
 import { formatDate } from "../utils/convertDate";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { editConference } from "../services/conferences";
 const Conference = () => {
+  const queryClient = useQueryClient();
+
   const FormSchema = z
     .object({
       conferenceName: z.string().min(1, {
@@ -60,8 +65,17 @@ const Conference = () => {
       api: "",
     },
   });
+  const getAccessToken = useGetAccessToken();
   const control = form.control;
-
+  const { mutate: editConferenceMutation } = useMutation({
+    mutationFn: async ({ data, conferenceId }) => {
+      const accessToken = await getAccessToken();
+      return editConference(accessToken, data, conferenceId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["conferences"], { exact: true });
+    },
+  });
   const {
     fields: rooms,
     append,
@@ -72,7 +86,7 @@ const Conference = () => {
     name: "roomItems",
   });
   const onSubmit = (data) => {
-    console.log(data);
+    editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
     toast({
       description: "Form Submitted",
@@ -90,12 +104,16 @@ const Conference = () => {
         startDate: formatDate(conference.startDate),
         endDate: formatDate(conference.endDate),
       });
-
+      const rooms = conference.Rooms.map((room) => {
+        room.roomId = room.id;
+        return room;
+      });
+      console.log("rooms", rooms);
       // need to add in the query for the rooms before you can do this.
-      replace([...conference.Rooms]);
+      replace([...rooms]);
     }
   }, [conference]);
-  console.log(rooms);
+  console.log(conference.Rooms);
   return (
     <div className="flex flex-col w-full p-12">
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
@@ -227,14 +245,16 @@ const Conference = () => {
                       <FormField
                         control={form.control}
                         name={`roomItems.${index}.room`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input placeholder="Room" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormControl>
+                                <Input placeholder="Room" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                     </div>
                     {rooms.length > 0 && (
@@ -254,9 +274,7 @@ const Conference = () => {
                   type="button"
                   variant="ghost"
                   onClick={() => {
-                    append({
-                      room: "",
-                    });
+                    append({ room: "" });
                   }}
                 >
                   Add Room
