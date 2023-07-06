@@ -17,6 +17,7 @@ import { Textarea } from "./ui/textarea";
 import { Toaster } from "./ui/toaster";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
@@ -232,197 +233,214 @@ const Contact = () => {
           <Edit className="absolute bottom-[-9px] right-[-15px] text-[#0D05F2] shadow-lg" />
         </div>
       </button>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="photo"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <input
-                    ref={inputRef}
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={(e) => {
-                      field.onChange(e.target.files[0]);
-                      handlePhotoInput(e);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <p className="mt-10 text-lg font-bold">Contact Details</p>
-          <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-2">
-            <div className="w-[48%]">
+      <Tabs defaultValue="contactDetails" className="w-[full] mt-10">
+        <TabsList className="w-[48%]">
+          <TabsTrigger value="contactDetails" className="w-[50%]">
+            Contact Details
+          </TabsTrigger>
+          <TabsTrigger value="conferences" className="w-[50%]">
+            Conferences
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="contactDetails" className="px-3">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
-                name="firstName"
+                name="photo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name*</FormLabel>
                     <FormControl>
-                      <Input placeholder="First Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[48%]">
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name*</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Last Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[48%]">
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country*</FormLabel>
-                    <Combobox
-                      field={field}
-                      setValue={form.setValue}
-                      options={countries}
-                      fieldName="Country"
-                      customHeight="160"
-                      validateProperty="value"
-                      displayProperty="value"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[48%]">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title*</FormLabel>
-                    <Combobox
-                      field={field}
-                      setValue={form.setValue}
-                      options={titles}
-                      fieldName="Title"
-                      customHeight="160"
-                      validateProperty="value"
-                      displayProperty="value"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[48%]">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email*</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Email"
-                        {...field}
-                        disabled={
-                          (contact && contact.isAdmin) ||
-                          (contactFromFetch && contactFromFetch.isAdmin)
-                        }
+                      <input
+                        ref={inputRef}
+                        hidden
+                        accept="image/*"
+                        type="file"
+                        onChange={(e) => {
+                          field.onChange(e.target.files[0]);
+                          handlePhotoInput(e);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            <div className="w-[48%]">
-              <FormField
-                control={form.control}
-                name="organisation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Organisation</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Organisation" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[100%]">
-              <FormField
-                control={form.control}
-                name="biography"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Biography</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Biography" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-[100%]">
-              <FormField
-                control={form.control}
-                name="isAdmin"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex flex-wrap w-full">
-                      <div className="w-full">
-                        <FormLabel className="w-full">Admin Access</FormLabel>
-                      </div>
-                      <div className="w-full">
+              <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-4">
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name*</FormLabel>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
+                          <Input placeholder="First Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Last Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country*</FormLabel>
+                        <Combobox
+                          field={field}
+                          setValue={form.setValue}
+                          options={countries}
+                          fieldName="Country"
+                          customHeight="160"
+                          validateProperty="value"
+                          displayProperty="value"
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title*</FormLabel>
+                        <Combobox
+                          field={field}
+                          setValue={form.setValue}
+                          options={titles}
+                          fieldName="Title"
+                          customHeight="160"
+                          validateProperty="value"
+                          displayProperty="value"
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email*</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Email"
                             {...field}
+                            disabled={
+                              (contact && contact.isAdmin) ||
+                              (contactFromFetch && contactFromFetch.isAdmin)
+                            }
                           />
                         </FormControl>
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="organisation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Organisation</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Organisation" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[100%]">
+                  <FormField
+                    control={form.control}
+                    name="biography"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Biography</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Biography" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-[100%]">
+                  <FormField
+                    control={form.control}
+                    name="isAdmin"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex flex-wrap w-full">
+                          <div className="w-full">
+                            <FormLabel className="w-full">
+                              Admin Access
+                            </FormLabel>
+                          </div>
+                          <div className="w-full">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                {...field}
+                              />
+                            </FormControl>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <Button
+                className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF] mt-5"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Submit"
                 )}
-              />
-            </div>
-          </div>
-          <Button
-            className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF] mt-5"
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Please wait
-              </>
-            ) : (
-              "Submit"
-            )}
-          </Button>
-        </form>
-      </Form>
+              </Button>
+            </form>
+          </Form>
+        </TabsContent>
+        <TabsContent value="conferences">
+          List of participated conferences here.
+        </TabsContent>
+      </Tabs>
+
       <Toaster />
     </div>
   );

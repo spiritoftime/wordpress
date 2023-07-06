@@ -99,7 +99,6 @@ export function DataTable({
                   <TableRow
                     className="cursor-pointer"
                     onClick={() => {
-                      console.log("row clicked");
                       setComboBoxValue(row.original.name);
                       setData(row.original);
                       rowNavigate(row.original.id);
