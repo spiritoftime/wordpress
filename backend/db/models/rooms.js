@@ -16,6 +16,10 @@ function initRoom(sequelize) {
       conferenceId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "conferences",
+          key: "id",
+        },
       },
     },
     { underscored: true, timestamps: false }
