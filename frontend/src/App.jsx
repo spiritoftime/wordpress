@@ -4,6 +4,9 @@ import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "./components/DashboardLayout";
 import Conferences from "./components/Conferences";
 import AddConference from "./components/AddConference";
+import AddContact from "./components/AddContact";
+import Contacts from "./components/Contacts";
+import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
@@ -22,6 +25,9 @@ function App() {
           <Route path="/" element={<Conferences />} />
           <Route path="/conferences/:conferenceId" element={<Conference />} />
           <Route path="/add-conference" element={<AddConference />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/contacts/:contactId" element={<Contact />} />
+          <Route path="/add-contact" element={<AddContact />} />
         </Route>
       ) : (
         <Route path="/" element={<Login />} />

@@ -1,14 +1,24 @@
 require("dotenv").config();
+
 const express = require("express");
+
 const cors = require("cors");
+
 const { auth } = require("express-oauth2-jwt-bearer");
+
 const conferenceRouter = require("./routes/ConferenceRouter");
+const sepakerRouter = require("./routes/SpeakerRouter");
+
 const app = express();
+
 app.use(express.json());
+
 const checkJwt = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.BASEURL,
+  tokenSigningAlg: "RS256",
 });
+
 app.use(
   cors({
     origin: ["http://127.0.0.1:5173"],
@@ -17,7 +27,10 @@ app.use(
 );
 
 app.use(checkJwt);
+
 app.use("/conferences", conferenceRouter);
+app.use("/speakers", sepakerRouter);
+
 const port =
   process.env.NODE_ENV === "production"
     ? process.env.PROD_PORT

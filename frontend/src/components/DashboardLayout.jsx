@@ -13,8 +13,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
-import { Home, BarChart2, CheckSquare, Flag } from "lucide-react";
-import { Outlet, useLocation } from "react-router-dom";
+import {
+  Home,
+  Contact,
+  Users,
+  CalendarDays,
+  ClipboardList,
+} from "lucide-react";
+import { Outlet, useLocation, Link, useMatch } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -24,6 +30,9 @@ import Loading from "./Loading";
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const matchedConferencePath = useMatch("/conferences/:conferenceId");
+  const matchedContactPath = useMatch("/contacts/:contactId");
+
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
@@ -54,9 +63,9 @@ const DashboardLayout = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    if (!isConferencesFetching && comboBoxValue !== "") {
+    if (!isConferencesFetching && comboBoxValue !== undefined) {
       const conference = conferences.find((c) => {
-        return c.name === comboBoxValue.toUpperCase();
+        return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
       navigate(`/conferences/${conference.id}`);
       setConference(conference);
@@ -67,22 +76,45 @@ const DashboardLayout = () => {
     setUserName(user.name);
   }, [user]);
 
+  const conferenceSelected = pathname.includes("conferences");
+
   return (
-    <div className="flex flex-col min-h-screen layout">
-      <div className="flex justify-between pl-[300px] py-2 pr-6 border bottom-2">
-        <div>
-          {!isConferencesFetching && isAuthenticated && (
-            <NormalComboBox
-              options={conferences}
-              validateProperty={"name"}
-              displayProperty={"name"}
-              fieldName={"conference"}
-              value={comboBoxValue}
-              setValue={setComboBoxValue}
+    <div className="flex flex-col min-h-screen layout ">
+      <div
+        className={cn(
+          "flex py-2 pr-6 border bottom-2",
+          conferenceSelected ? "justify-between" : "justify-between"
+        )}
+      >
+        <div className="flex justify-between w-[50%]">
+          <div
+            className="w-[30%] my-auto cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src="../src/assets/logo-transparent.png"
+              alt="auto mate logo"
+              width="80%"
+              className="m-auto"
             />
+          </div>
+          {conferenceSelected && (
+            <div className="w-[69%]">
+              {!isConferencesFetching && isAuthenticated && (
+                <NormalComboBox
+                  options={conferences}
+                  validateProperty={"name"}
+                  displayProperty={"name"}
+                  fieldName={"conference"}
+                  value={comboBoxValue}
+                  setValue={setComboBoxValue}
+                />
+              )}
+            </div>
           )}
         </div>
-        <div className="flex items-center justify-end gap-2 ">
+
+        <div className="flex items-center justify-end gap-2">
           <p className="text-color">{userName}</p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -100,46 +132,73 @@ const DashboardLayout = () => {
       </div>
       <div className="flex flex-1">
         <div className="border-r-2 ">
-          <div className="flex flex-col items-center gap-6 px-6 pt-8 ">
-            <div
-              className={cn(
-                (pathname.endsWith("dashboard") ||
-                  pathname.endsWith("/") ||
-                  pathname.endsWith("conferences")) &&
-                  "text-[#0D05F2] bg-[#F9FAFB]",
-                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
-              )}
-            >
-              <Home />
-              <h3 className="font-bold">Conferences</h3>
-            </div>
-            <div
-              className={cn(
-                pathname.endsWith("speakers") && "text-[#0D05F2] bg-[#F9FAFB]",
-                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
-              )}
-            >
-              <BarChart2 />
-              <h3 className="font-bold">Speakers</h3>
-            </div>
-            <div
-              className={cn(
-                pathname.endsWith("program") && "text-[#0D05F2] bg-[#F9FAFB]",
-                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
-              )}
-            >
-              <CheckSquare />
-              <h3 className="font-bold">Program</h3>
-            </div>
-            <div
-              className={cn(
-                pathname.endsWith("download") && "text-[#0D05F2] bg-[#F9FAFB]",
-                "flex gap-2 w-[200px] h-[50px] cursor-pointer"
-              )}
-            >
-              <Flag />
-              <h3 className="font-bold">Download</h3>
-            </div>
+          <div className="flex flex-col items-center gap-6 px-3 pt-8 ">
+            <Link to={"/"}>
+              <div
+                className={cn(
+                  (pathname.endsWith("dashboard") ||
+                    pathname.endsWith("/") ||
+                    pathname.endsWith("add-conference") ||
+                    pathname.endsWith("conferences") ||
+                    matchedConferencePath) &&
+                    "text-[#0D05F2] bg-[#F9FAFB]",
+                  "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                )}
+              >
+                <Home />
+                <h3 className="font-bold">Conferences</h3>
+              </div>
+            </Link>
+            {!conferenceSelected && (
+              <Link to={"/contacts"}>
+                <div
+                  className={cn(
+                    (pathname.endsWith("contacts") ||
+                      pathname.endsWith("add-contact") ||
+                      matchedContactPath) &&
+                      "text-[#0D05F2] bg-[#F9FAFB]",
+                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                  )}
+                >
+                  <Contact />
+                  <h3 className="font-bold">Contacts</h3>
+                </div>
+              </Link>
+            )}
+            {conferenceSelected && (
+              <>
+                <div
+                  className={cn(
+                    pathname.endsWith("speakers") &&
+                      "text-[#0D05F2] bg-[#F9FAFB]",
+                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                  )}
+                >
+                  <Users />
+                  <h3 className="font-bold">Speakers</h3>
+                </div>
+                <div
+                  className={cn(
+                    pathname.endsWith("sessions") &&
+                      "text-[#0D05F2] bg-[#F9FAFB]",
+                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                  )}
+                >
+                  <ClipboardList />
+                  <h3 className="font-bold">Sessions</h3>
+                </div>
+                <div
+                  className={cn(
+                    pathname.endsWith("program") &&
+                      "text-[#0D05F2] bg-[#F9FAFB]",
+                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                  )}
+                >
+                  <CalendarDays />
+                  <h3 className="font-bold">Program Overview</h3>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <Outlet />

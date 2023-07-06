@@ -34,6 +34,7 @@ export function DataTable({
   rowType,
   filterColumn,
   rowNavigate,
+  setData,
 }) {
   const { setComboBoxValue } = useAppContext();
   const [sorting, setSorting] = useState([]);
@@ -99,6 +100,7 @@ export function DataTable({
                     className="cursor-pointer"
                     onClick={() => {
                       setComboBoxValue(row.original.name);
+                      setData(row.original);
                       rowNavigate(row.original.id);
                     }}
                     key={row.id}

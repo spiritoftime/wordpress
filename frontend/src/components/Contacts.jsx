@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RowActions } from "./RowActions";
+import { useAppContext } from "../context/appContext";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -11,81 +12,93 @@ import { RowCheckBox } from "./RowCheckBox";
 import { SortableHeader } from "./SortableHeader";
 import PageHeader from "./PageHeader";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { deleteConference, getConferences } from "../services/conferences";
+import { getContacts, deleteContact } from "../services/contacts";
 import Loading from "./Loading";
 
-const Conferences = () => {
+const Contacts = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
+  const { setContact } = useAppContext();
 
   const {
-    data: conferences,
-    isLoading: isConferenceFetching,
-    isFetching: isConferenceRefetching,
+    data: contacts,
+    isLoading: isContactsLoading,
+    isFetching: isContactsFetching,
   } = useQuery({
-    queryKey: ["conferences"],
+    queryKey: ["contacts"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
-      return getConferences(accessToken);
+      return getContacts(accessToken);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  const { mutate: deleteConferenceMutation } = useMutation({
+
+  const { mutate: deleteContactMutation, isLoading: isDeleting } = useMutation({
     mutationFn: async ({ rowData }) => {
       const accessToken = await getAccessToken();
-      return deleteConference(rowData.id, accessToken);
+      return deleteContact(rowData, accessToken);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conferences"], { exact: true });
+      queryClient.invalidateQueries(["contacts"], { exact: true });
     },
   });
+
   const columns = [
     RowCheckBox,
     {
-      accessorKey: "name",
+      accessorKey: "title",
+      header: "Title",
+    },
+    {
+      accessorKey: "firstName",
       header: ({ column }) => (
-        <SortableHeader column={column} title="Conference Name" />
+        <SortableHeader column={column} title="First Name" />
       ),
     },
     {
-      accessorKey: "venue",
-      header: "Venue",
+      accessorKey: "lastName",
+      header: "Last Name",
     },
     {
-      accessorKey: "startDate",
-      header: "Start Date",
+      accessorKey: "email",
+      header: "Email",
     },
     {
-      accessorKey: "endDate",
-      header: "End Date",
+      accessorKey: "country",
+      header: "Country",
     },
-    RowActions("Conference", deleteConferenceMutation),
+    {
+      accessorKey: "organisation",
+      header: "Organisation",
+    },
+    RowActions("Contact", deleteContactMutation),
   ];
 
-  // Use isConferenceRefetching to show loading screen when refetching
-  if (isConferenceFetching || isConferenceRefetching)
+  // Use isContactsFetching to show loading screen when refetching
+  if (isContactsLoading || isContactsFetching || isDeleting)
     return (
       <div className="w-full mx-auto">
         <Loading />
       </div>
     );
 
-  const rowNavigate = (rowId) => navigate(`/conferences/${rowId}`);
+  const rowNavigate = (rowId) => navigate(`/contacts/${rowId}`);
   return (
     <>
       <div className="container py-10 mx-auto">
         <PageHeader
-          rowType="Conference"
-          handleClick={() => navigate("/add-conference")}
+          rowType="Contacts"
+          handleClick={() => navigate("/add-contact")}
           hasButton={true}
         />
         <DataTable
           columns={columns}
-          data={conferences}
-          rowType={"conferences"}
-          filterColumn={"name"}
+          data={contacts}
+          rowType={"contacts"}
+          filterColumn={"lastName"}
           rowNavigate={rowNavigate}
+          setData={setContact}
         />
       </div>
       <Toaster />
@@ -93,4 +106,4 @@ const Conferences = () => {
   );
 };
 
-export default Conferences;
+export default Contacts;

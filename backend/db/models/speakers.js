@@ -17,6 +17,10 @@ function initSpeaker(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      country: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,8 +33,19 @@ function initSpeaker(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      organisation: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       wordpressId: {
         type: DataTypes.BIGINT,
+      },
+      biography: {
+        type: DataTypes.TEXT,
+      },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
       },
     },
     { underscored: true, timestamps: false }

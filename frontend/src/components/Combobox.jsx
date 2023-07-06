@@ -19,6 +19,7 @@ const Combobox = ({
   setValue,
   options,
   fieldName,
+  customHeight,
   validateProperty,
   displayProperty,
 }) => {
@@ -50,7 +51,10 @@ const Combobox = ({
           <CommandInput placeholder={`Search ${fieldName}`} />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
-            <ScrollArea className="w-[100%] h-72">
+            <ScrollArea
+              className="w-[100%]"
+              style={{ height: customHeight ? `${customHeight}px` : "72px" }}
+            >
               {options.map((item) => {
                 return (
                   <CommandItem

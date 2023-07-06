@@ -136,6 +136,7 @@ const AddConference = () => {
                         setValue={form.setValue}
                         options={countries}
                         fieldName="Country"
+                        customHeight="160"
                         validateProperty={"value"}
                         displayProperty={"label"}
                       />
