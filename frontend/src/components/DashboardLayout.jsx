@@ -54,7 +54,6 @@ const DashboardLayout = () => {
         const conference = conferences.find((c) => {
           return c.id === +conferenceId;
         });
-        console.log(conference, "conference");
         setComboBoxValue(conference.name);
         setConference(conference);
       } else return;
@@ -65,8 +64,10 @@ const DashboardLayout = () => {
 
     if (!isConferencesFetching && comboBoxValue !== undefined) {
       const conference = conferences.find((c) => {
+        console.log(comboBoxValue, c);
         return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
+      console.log(conference);
       navigate(`/conferences/${conference.id}`);
       setConference(conference);
     }

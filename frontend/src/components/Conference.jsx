@@ -71,7 +71,6 @@ const Conference = () => {
     control,
     name: "roomItems",
   });
-
   const onSubmit = (data) => {
     console.log(data);
     form.reset();
@@ -81,8 +80,9 @@ const Conference = () => {
   };
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
+  console.log(conference.Rooms);
   useEffect(() => {
-    if (conference)
+    if (conference) {
       form.reset({
         conferenceName: conference.name,
         country: conference.country,
@@ -92,8 +92,9 @@ const Conference = () => {
         endDate: formatDate(conference.endDate),
       });
 
-    // need to add in the query for the rooms before you can do this.
-    // replace(conference.rooms);
+      // need to add in the query for the rooms before you can do this.
+      replace([{ room: "" }, ...conference.Rooms]);
+    }
   }, [conference]);
   return (
     <div className="flex flex-col w-full p-12">
