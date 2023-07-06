@@ -18,6 +18,12 @@ import { Toaster } from "./ui/toaster";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
@@ -50,26 +56,26 @@ const Contact = () => {
   const queryClient = useQueryClient();
   const { contactId } = useParams();
 
-  // console.log(contact);
-
-  // useQuery to fetch data from server
-  // Will only run when refetchContact is called
-  const {
-    data: contactFromFetch,
-    isLoading: isLoadingContact,
-    isFetching: isFetchingContact,
-    refetch: refetchContact,
-    isSuccess: fetchSuccess,
-  } = useQuery({
+  const { data: contactFromFetch, isSuccess: fetchSuccess } = useQuery({
     queryKey: ["contact"],
     queryFn: async () => {
-      console.log("inside fetch");
-      const accessToken = await getAccessToken();
-      return getContact(contactId, accessToken);
+      if (contact) {
+        return contact;
+      } else {
+        const accessToken = await getAccessToken();
+        return getContact(contactId, accessToken);
+      }
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
-    enabled: false, // Disable auto fetching on mount
+    cacheTime: 0, // Disable data cache
   });
+
+  useEffect(() => {
+    if (fetchSuccess) {
+      prefillData(contactFromFetch);
+      // queryClient.invalidateQueries(["contact"], { exact: true });
+    }
+  }, [fetchSuccess]);
 
   const FormSchema = z.object({
     firstName: z.string().min(1, {
@@ -142,6 +148,9 @@ const Contact = () => {
     form.setValue("organisation", data.organisation);
     form.setValue("biography", data.biography);
     form.setValue("isAdmin", data.isAdmin);
+    if (data.photoUrl.length > 0) {
+      setPhotoPreviewLink(data.photoUrl);
+    }
   };
 
   const {
@@ -149,21 +158,25 @@ const Contact = () => {
     isLoading,
     isError: updateHasError,
     error: updateError,
+    isFetched,
   } = useMutation(
     async (data) => {
-      const storageRef = ref(
-        storage,
-        `photos/${data.firstName}-${data.lastName}.png`
-      );
+      const accessToken = await getAccessToken();
+      if (data.photo !== "") {
+        const storageRef = ref(
+          storage,
+          `photos/${data.firstName}-${data.lastName}.png`
+        );
 
-      // Upload the photo onto Firebase storage with uploadBytes
-      const promises = [getAccessToken(), uploadBytes(storageRef, data.photo)];
-      const [accessToken, snapshot] = await Promise.all(promises);
+        // Upload the photo onto Firebase storage with uploadBytes
+        const snapshot = await uploadBytes(storageRef, data.photo);
 
-      // Get the download url for the uploaded photo
-      const photoUrl = await getDownloadURL(snapshot.ref);
+        // Get the download url for the uploaded photo
+        const photoUrl = await getDownloadURL(snapshot.ref);
 
-      data.photoUrl = photoUrl;
+        data.photoUrl = photoUrl;
+        return updateContact(contactId, data, accessToken);
+      }
 
       return updateContact(contactId, data, accessToken);
     },
@@ -173,28 +186,10 @@ const Contact = () => {
         form.reset();
         setPhotoPreviewLink("");
         navigate("/contacts");
-        showToaster(`Speaker Updated`);
+        showToaster(`Contact Updated`);
       },
     }
   );
-
-  // If received a prop, use the prop
-  // Do not need to fetch data from server
-  useEffect(() => {
-    if (contact) {
-      prefillData(contact);
-    } else {
-      refetchContact();
-    }
-  }, [contact]);
-
-  // If no prop is received, fetch data from server
-  useEffect(() => {
-    if (fetchSuccess) {
-      prefillData(contactFromFetch);
-      setPhotoPreviewLink(contactFromFetch.photoUrl);
-    }
-  }, [fetchSuccess]);
 
   useEffect(() => {
     if (updateHasError) {
@@ -215,7 +210,6 @@ const Contact = () => {
     <div className="w-full p-10">
       <PageHeader
         rowType={
-          (contact && `${contact.firstName} ${contact.lastName}`) ||
           (contactFromFetch &&
             `${contactFromFetch.firstName} ${contactFromFetch.lastName}`) ||
           ""
@@ -347,14 +341,24 @@ const Contact = () => {
                       <FormItem>
                         <FormLabel>Email*</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Email"
-                            {...field}
-                            disabled={
-                              (contact && contact.isAdmin) ||
-                              (contactFromFetch && contactFromFetch.isAdmin)
-                            }
-                          />
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger className="w-full" type="button">
+                                <Input
+                                  placeholder="Email"
+                                  {...field}
+                                  disabled={
+                                    contactFromFetch && contactFromFetch.isAdmin
+                                  }
+                                />
+                              </TooltipTrigger>
+                              {contactFromFetch && contactFromFetch.isAdmin && (
+                                <TooltipContent>
+                                  <p>Unable to edit email of an admin</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

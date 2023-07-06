@@ -137,7 +137,7 @@ const AddContact = () => {
         form.reset();
         setPhotoPreviewLink("");
         navigate("/contacts");
-        showToaster("Speaker Added");
+        showToaster("Contact Added");
       },
     }
   );
@@ -160,12 +160,6 @@ const AddContact = () => {
   const onSubmit = (data) => {
     data.country = convertToTitleCase(data.country);
     data.title = convertToTitleCase(data.title);
-
-    // if (data.photo === "" || data.photo === null || data.photo === undefined) {
-    //   data.photo = "/assets/dummy.jpg";
-    // }
-
-    console.log(data);
     uploadContact(data);
   };
 

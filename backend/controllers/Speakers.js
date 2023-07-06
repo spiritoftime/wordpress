@@ -12,6 +12,7 @@ const {
 
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
+  console.log(speakerId);
   try {
     const speaker = await Speaker.findByPk(speakerId);
     return res.status(200).json(speaker);

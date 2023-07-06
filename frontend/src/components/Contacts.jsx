@@ -36,7 +36,6 @@ const Contacts = () => {
 
   const { mutate: deleteContactMutation } = useMutation({
     mutationFn: async ({ rowData }) => {
-      console.log(rowData);
       const accessToken = await getAccessToken();
       return deleteContact(rowData, accessToken);
     },
