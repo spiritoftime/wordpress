@@ -13,12 +13,13 @@ import PageHeader from "./PageHeader";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
+import { useAppContext } from "../context/appContext";
 
 const Conferences = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
-
+  const { setConference } = useAppContext();
   const {
     data: conferences,
     isLoading: isConferenceFetching,
@@ -86,6 +87,7 @@ const Conferences = () => {
           rowType={"conferences"}
           filterColumn={"name"}
           rowNavigate={rowNavigate}
+          setData={setConference}
         />
       </div>
       <Toaster />
