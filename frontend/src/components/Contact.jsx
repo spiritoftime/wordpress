@@ -84,8 +84,14 @@ const Contact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
-    country: z.string().nonempty("Required"),
-    title: z.string().nonempty("Required"),
+    country: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+    title: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
     email: z.string().min(1, {
       message: "Required",
     }),
@@ -120,8 +126,8 @@ const Contact = () => {
   };
 
   const onSubmit = (data) => {
-    data.country = convertToTitleCase(data.country);
-    data.title = convertToTitleCase(data.title);
+    data.country = data.country["value"];
+    data.title = data.title["value"];
 
     // Check if there is a change in admin status
     // If there is no change in admin status, do not need to search for user in Auth0
@@ -142,8 +148,8 @@ const Contact = () => {
   const prefillData = (data) => {
     form.setValue("firstName", data.firstName);
     form.setValue("lastName", data.lastName);
-    form.setValue("country", data.country);
-    form.setValue("title", data.title);
+    form.setValue("country", { value: data.country, lable: data.country });
+    form.setValue("title", { value: data.title, lable: data.title });
     form.setValue("email", data.email);
     form.setValue("organisation", data.organisation);
     form.setValue("biography", data.biography);
@@ -299,10 +305,11 @@ const Contact = () => {
                       <FormItem>
                         <FormLabel>Country*</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={countries}
-                          fieldName="Country"
+                          fieldName={field.name}
+                          displayName="Country"
                           customHeight="160"
                           validateProperty="value"
                           displayProperty="value"
@@ -320,10 +327,11 @@ const Contact = () => {
                       <FormItem>
                         <FormLabel>Title*</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={titles}
-                          fieldName="Title"
+                          fieldName={field.name}
+                          displayName="Title"
                           customHeight="160"
                           validateProperty="value"
                           displayProperty="value"

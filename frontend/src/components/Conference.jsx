@@ -35,7 +35,12 @@ const Conference = () => {
       conferenceName: z.string().min(1, {
         message: "Required",
       }),
-      country: z.string().nonempty("Required"),
+      country: z
+        .object({
+          value: z.string().nonempty("Required"),
+          label: z.string().nonempty("Required"),
+        })
+        .required("Required"),
       startDate: z.date().min(new Date("1900-01-01"), {
         message: "Please input a date",
       }),
@@ -60,7 +65,7 @@ const Conference = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       conferenceName: "",
-      country: "",
+      country: {},
       roomItems: [{ room: "" }],
       venue: "",
       api: "",
@@ -87,6 +92,7 @@ const Conference = () => {
     name: "roomItems",
   });
   const onSubmit = (data) => {
+    data.country = data.country["value"];
     editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
     navigate("/");
@@ -100,7 +106,7 @@ const Conference = () => {
     if (conference) {
       form.reset({
         conferenceName: conference.name,
-        country: conference.country,
+        country: { value: conference.country, label: conference.country },
         venue: conference.venue,
         api: conference.wordpressApi,
         startDate: formatDate(conference.startDate),
@@ -162,12 +168,14 @@ const Conference = () => {
                       <FormItem>
                         <FormLabel>Country:</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={countries}
-                          fieldName="Country"
-                          validateProperty={"value"}
-                          displayProperty={"label"}
+                          displayName="Country"
+                          customHeight="160"
+                          fieldName={field.name}
+                          validateProperty="value"
+                          displayProperty="value"
                         />
                         <FormMessage />
                       </FormItem>

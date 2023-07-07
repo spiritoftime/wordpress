@@ -55,8 +55,14 @@ const AddContact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
-    country: z.string().nonempty("Required"),
-    title: z.string().nonempty("Required"),
+    country: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+    title: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
     email: z.string().min(1, {
       message: "Required",
     }),
@@ -158,8 +164,8 @@ const AddContact = () => {
   }, [addHasError, addError]);
 
   const onSubmit = (data) => {
-    data.country = convertToTitleCase(data.country);
-    data.title = convertToTitleCase(data.title);
+    data.country = data.country["value"];
+    data.title = data.title["value"];
     uploadContact(data);
   };
 
@@ -240,10 +246,11 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Country*</FormLabel>
                     <Combobox
-                      field={field}
+                      value={field.value}
                       setValue={form.setValue}
                       options={countries}
-                      fieldName="Country"
+                      displayName="Country"
+                      fieldName={field.name}
                       customHeight="160"
                       validateProperty="value"
                       displayProperty="value"
@@ -261,10 +268,11 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Title*</FormLabel>
                     <Combobox
-                      field={field}
+                      value={field.value}
                       setValue={form.setValue}
                       options={titles}
-                      fieldName="Title"
+                      fieldName={field.name}
+                      displayName="Title"
                       customHeight="160"
                       validateProperty="value"
                       displayProperty="value"

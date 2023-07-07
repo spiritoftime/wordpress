@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
 import { RowActions } from "./RowActions";
 import { useAppContext } from "../context/appContext";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "./ui/button";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Toaster } from "./ui/toaster";
+import useGetContacts from "../custom_hooks/useQueries";
 
 import { DataTable } from "./DataTable";
 import { RowCheckBox } from "./RowCheckBox";
 import { SortableHeader } from "./SortableHeader";
 import PageHeader from "./PageHeader";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { getContacts, deleteContact } from "../services/contacts";
+import { deleteContact } from "../services/contacts";
 import Loading from "./Loading";
 
 const Contacts = () => {
@@ -25,14 +24,7 @@ const Contacts = () => {
     data: contacts,
     isLoading: isContactsLoading,
     isFetching: isContactsFetching,
-  } = useQuery({
-    queryKey: ["contacts"],
-    queryFn: async () => {
-      const accessToken = await getAccessToken();
-      return getContacts(accessToken);
-    },
-    refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  });
+  } = useGetContacts();
 
   const { mutate: deleteContactMutation, isLoading: isDeleting } = useMutation({
     mutationFn: async ({ rowData }) => {

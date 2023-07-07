@@ -10,6 +10,7 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
+import AddSpeakers from "./components/AddSpeakers";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -28,6 +29,7 @@ function App() {
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/contacts/:contactId" element={<Contact />} />
           <Route path="/add-contact" element={<AddContact />} />
+          <Route path="/add-speakers" element={<AddSpeakers />} />
         </Route>
       ) : (
         <Route path="/" element={<Login />} />
