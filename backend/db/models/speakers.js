@@ -37,9 +37,6 @@ function initSpeaker(sequelize) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      wordpressId: {
-        type: DataTypes.BIGINT,
-      },
       biography: {
         type: DataTypes.TEXT,
       },
