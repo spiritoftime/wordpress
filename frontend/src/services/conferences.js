@@ -20,3 +20,9 @@ export function addConference(accessToken, data) {
     data: data,
   });
 }
+export function editConference(accessToken, data, conferenceId) {
+  return makeRequest(`/conferences/${conferenceId}`, accessToken, {
+    method: "PATCH",
+    data: data,
+  });
+}

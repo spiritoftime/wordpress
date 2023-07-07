@@ -23,7 +23,7 @@ const getConference = async (req, res) => {
 };
 const getConferences = async (req, res) => {
   try {
-    const conferences = await Conference.findAll();
+    const conferences = await Conference.findAll({ include: Room });
     return res.status(200).json(conferences);
   } catch (err) {
     return res.status(500).json(err);
@@ -54,8 +54,15 @@ const addConference = async (req, res) => {
 };
 const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
-  const { startDate, endDate, name, country, venue, wordpressApi } = req.body;
+  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
+    req.body;
+
   try {
+    await Room.destroy({ where: { conferenceId } });
+    roomItems.forEach((room) => {
+      room.conferenceId = conferenceId;
+    });
+    await Room.bulkCreate(roomItems);
     const conference = await Conference.update(
       { startDate, endDate, name, country, venue, wordpressApi },
       { where: { id: conferenceId } }

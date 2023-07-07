@@ -23,7 +23,13 @@ import * as z from "zod";
 import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
 import { formatDate } from "../utils/convertDate";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { editConference } from "../services/conferences";
+import { useNavigate } from "react-router-dom";
 const Conference = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const FormSchema = z
     .object({
       conferenceName: z.string().min(1, {
@@ -60,8 +66,17 @@ const Conference = () => {
       api: "",
     },
   });
+  const getAccessToken = useGetAccessToken();
   const control = form.control;
-
+  const { mutate: editConferenceMutation } = useMutation({
+    mutationFn: async ({ data, conferenceId }) => {
+      const accessToken = await getAccessToken();
+      return editConference(accessToken, data, conferenceId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["conferences"], { exact: true });
+    },
+  });
   const {
     fields: rooms,
     append,
@@ -71,10 +86,10 @@ const Conference = () => {
     control,
     name: "roomItems",
   });
-
   const onSubmit = (data) => {
-    console.log(data);
+    editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
+    navigate("/");
     toast({
       description: "Form Submitted",
     });
@@ -82,7 +97,7 @@ const Conference = () => {
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
   useEffect(() => {
-    if (conference)
+    if (conference) {
       form.reset({
         conferenceName: conference.name,
         country: conference.country,
@@ -91,9 +106,12 @@ const Conference = () => {
         startDate: formatDate(conference.startDate),
         endDate: formatDate(conference.endDate),
       });
-
-    // need to add in the query for the rooms before you can do this.
-    // replace(conference.rooms);
+      const rooms = conference.Rooms.map((room) => {
+        room.roomId = room.id;
+        return room;
+      });
+      replace([...rooms]);
+    }
   }, [conference]);
   return (
     <div className="flex flex-col w-full p-12">
@@ -217,7 +235,7 @@ const Conference = () => {
                 <FormLabel>Rooms</FormLabel>
                 {rooms.map((field, index) => (
                   <div
-                    key={`${field}-${index}`}
+                    key={`${field.id}`}
                     className="flex flex-wrap justify-between"
                   >
                     <div
@@ -226,17 +244,19 @@ const Conference = () => {
                       <FormField
                         control={form.control}
                         name={`roomItems.${index}.room`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input placeholder="Room" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormControl>
+                                <Input placeholder="Room" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                     </div>
-                    {index > 0 && (
+                    {rooms.length > 0 && (
                       <div className="w-[5%] mt-6 pl-3">
                         <Trash
                           type="button"
@@ -253,9 +273,7 @@ const Conference = () => {
                   type="button"
                   variant="ghost"
                   onClick={() => {
-                    append({
-                      room: "",
-                    });
+                    append({ room: "" });
                   }}
                 >
                   Add Room

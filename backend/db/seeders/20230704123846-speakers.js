@@ -2,12 +2,7 @@
 // make your seeder file
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("conference_speakers", [
-      {
-        conferenceId: 1,
-        speakerId: 1,
-        speakerPostId,
-      },
+    await queryInterface.bulkInsert("speakers", [
       {
         first_name: "Harrison",
         last_name: "Moris",
@@ -16,9 +11,9 @@ module.exports = {
         email: "Harrison@gmail.com",
         organisation: "KFC",
         biography: "KFC is a company that sells KFC",
-        photoUrl: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww",
-        wordpressId: "abc",
-        isAdmin: true,
+        photo_url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww",
+        wordpress_id: 123455,
+        is_admin: true,
       },
       {
         first_name: "Bob",
@@ -28,14 +23,14 @@ module.exports = {
         email: "Bob@gmail.com",
         organisation: "Macs",
         biography: "Macs is a company that sells Macs",
-        photoUrl: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww",
-        wordpressId: "abc",
-        isAdmin: true,
+        photo_url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww",
+        wordpress_id: 123455,
+        is_admin: true,
       },
     ]);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("conference_speakers", null, {});
+    await queryInterface.bulkDelete("speakers", null, {});
   },
 };

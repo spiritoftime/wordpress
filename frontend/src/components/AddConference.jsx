@@ -206,7 +206,7 @@ const AddConference = () => {
               <FormLabel>Rooms</FormLabel>
               {rooms.map((field, index) => (
                 <div
-                  key={`${field}-${index}`}
+                  key={`${field.id}`}
                   className="flex flex-wrap justify-between"
                 >
                   <div

@@ -54,82 +54,51 @@ db.TopicSpeaker = initTopicSpeaker(sequelize);
 db.Topic = initTopic(sequelize);
 // ONE TO MANY
 // one conference can have many sessions
-db.Conference.hasMany(db.Session, {
-  foreignKey: "conferenceId",
-  as: "conference_sessions",
-});
+db.Conference.hasMany(db.Session);
 
-db.Session.belongsTo(db.Conference, {
-  foreignKey: "conference_id",
-  as: "conference",
-});
+db.Session.belongsTo(db.Conference);
+// one conference can have many rooms
+db.Conference.hasMany(db.Room);
+db.Room.belongsTo(db.Conference);
 // one room can have many sessions, but one session can only have one room
-db.Room.hasMany(db.Session, {
-  foreignKey: "roomId",
-  as: "room_sessions",
-});
-db.Session.belongsTo(db.Room, {
-  foreignKey: "roomId",
-  as: "room",
-});
+db.Room.hasMany(db.Session);
+db.Session.belongsTo(db.Room);
 // one session can have many topics, but one topic can only have one session
-db.Session.hasMany(db.Topic, {
-  foreignKey: "sessionId",
-  as: "session_topics",
-});
-db.Topic.belongsTo(db.Session, {
-  foreignKey: "sessionId",
-  as: "topic",
-});
+db.Session.hasMany(db.Topic);
+db.Topic.belongsTo(db.Session);
 
 // MANY TO MANY
 
 // one session can have many speakers, and one speaker can be in many sessions.
 db.Speaker.belongsToMany(db.Session, {
-  foreignKey: "speakerId",
-  as: "belongs_to_session",
   through: db.SessionSpeaker,
 });
 db.Session.belongsToMany(db.Speaker, {
-  foreignKey: "sessionId",
   through: db.SessionSpeaker,
-  as: "speakers",
 });
 
 // one session speaker can have many roles, and one role can have many session speakers
 db.SessionSpeaker.belongsToMany(db.SessionSpeakerRole, {
-  foreignKey: "sessionSpeakerId",
   through: db.SessionSpeakerRole,
-  as: "speaker_roles",
 });
 db.SessionSpeakerRole.belongsToMany(db.SessionSpeaker, {
-  foreignKey: "sessionSpeakerId",
   through: db.SessionSpeakerRole,
-  as: "speakers_for_role",
 });
 
 // one speaker can have many topics, and one topic can have many speakers
 db.Speaker.belongsToMany(db.Topic, {
-  foreignKey: "speakerId",
   through: db.TopicSpeaker,
-  as: "speaker_topics",
 });
 db.Topic.belongsToMany(db.Session, {
-  foreignKey: "topicId",
   through: db.TopicSpeaker,
-  as: "speakers_for_topic",
 });
 
 // one conference can have many speakers, one speaker can have many conferences
 db.Speaker.belongsToMany(db.Conference, {
-  foreignKey: "speakerId",
   through: db.ConferenceSpeaker,
-  as: "speaker_conferences",
 });
 db.Conference.belongsToMany(db.Speaker, {
-  foreignKey: "conferenceId",
   through: db.ConferenceSpeaker,
-  as: "speakers_for_conference",
 });
 // fs.readdirSync(__dirname)
 //   .filter((file) => {
