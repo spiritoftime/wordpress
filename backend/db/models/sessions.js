@@ -41,8 +41,8 @@ function initSession(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      type: {
-        type: DataTypes.ENUM("Symopsia", "Masterclass"),
+      sessionType: {
+        type: DataTypes.ENUM("Symposia", "Masterclass"),
         allowNull: false,
         defaultValue: "Symposia",
       },

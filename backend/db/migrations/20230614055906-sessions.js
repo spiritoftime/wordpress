@@ -41,8 +41,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      type: {
-        type: Sequelize.ENUM("Symopsia", "Masterclass"),
+      session_type: {
+        type: Sequelize.ENUM("Symposia", "Masterclass"),
         allowNull: false,
         defaultValue: "Symposia",
       },
