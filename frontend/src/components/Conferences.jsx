@@ -23,8 +23,8 @@ const Conferences = ({ setNewComboBoxValue }) => {
 
   const {
     data: conferences,
-    isLoading: isConferenceFetching,
-    isFetching: isConferenceRefetching,
+    isLoading: isConferenceLoading,
+    isFetching: isConferenceFetching,
   } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
@@ -68,7 +68,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
   ];
 
   // Use isConferenceRefetching to show loading screen when refetching
-  if (isConferenceFetching || isConferenceRefetching)
+  if (isConferenceLoading || isConferenceFetching)
     return (
       <div className="w-full mx-auto">
         <Loading />

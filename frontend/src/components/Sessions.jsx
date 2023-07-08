@@ -6,12 +6,29 @@ import { useNavigate } from "react-router-dom";
 import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
 import { RowActions } from "./RowActions";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { useQuery } from "@tanstack/react-query";
+import { getSessions } from "../services/sessions";
+import Loading from "./Loading";
 
 const Sessions = () => {
+  const getAccessToken = useGetAccessToken();
+  const {
+    data: sessions,
+    isLoading: isSessionsLoading,
+    isFetching: isSessionsFetching,
+  } = useQuery({
+    queryKey: ["conferences"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getSessions(accessToken);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
   const conferenceId = 1;
   const navigate = useNavigate();
   const deleteSessionMutation = () => {};
-  const sessions = [];
+
   const columns = [
     RowCheckBox,
     {
@@ -40,6 +57,13 @@ const Sessions = () => {
   ];
   const rowNavigate = () => {};
   const setConference = () => {};
+  console.log(sessions);
+  if (isSessionsFetching || isSessionsLoading)
+    return (
+      <div className="w-full mx-auto">
+        <Loading />
+      </div>
+    );
   return (
     <>
       <div className="container py-10 mx-auto">

@@ -8,7 +8,11 @@ const { auth } = require("express-oauth2-jwt-bearer");
 
 const conferenceRouter = require("./routes/ConferenceRouter");
 const speakerRouter = require("./routes/SpeakerRouter");
+<<<<<<< HEAD
 const topicRouter = require("./routes/TopicRouter");
+=======
+const sessionRouter = require("./routes/SessionRouter");
+>>>>>>> b2f5b8b (add backend logic for fetching sessions)
 
 const app = express();
 
@@ -31,7 +35,11 @@ app.use(checkJwt);
 
 app.use("/conferences", conferenceRouter);
 app.use("/speakers", speakerRouter);
+<<<<<<< HEAD
 app.use("/topics", topicRouter);
+=======
+app.use("/sessions", sessionRouter);
+>>>>>>> b2f5b8b (add backend logic for fetching sessions)
 
 const port =
   process.env.NODE_ENV === "production"
