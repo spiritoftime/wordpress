@@ -12,14 +12,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import DatePicker from "./DatePicker";
-// title: "",
-// synopsis: "",
-// sessionCode: "",
-// sessionType: "",
-// location: "",
-// topics: [{ topic: "" }],
-// moderators: [{ moderator: "" }],
-// make the presentation and discussion duration controlled input components to auto calc
+// TO ADD :MODERATORS!!
 const AddSessionPageOne = ({ control }) => {
   return (
     <div className="flex flex-col gap-4 mt-6">

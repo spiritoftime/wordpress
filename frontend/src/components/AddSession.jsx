@@ -56,8 +56,7 @@ const AddSession = () => {
       // topics: [{ topic: "" }],
       // moderators: [{ moderator: "" }],
     },
-    shouldUnregister: true,
-    mode: "all",
+    mode: "onChange",
   });
   const {
     control,
