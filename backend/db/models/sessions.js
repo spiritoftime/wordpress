@@ -42,8 +42,9 @@ function initSession(sequelize) {
         allowNull: false,
       },
       type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("Symopsia", "Masterclass"),
         allowNull: false,
+        defaultValue: "Symposia",
       },
       wordpressUrl: {
         type: DataTypes.STRING,

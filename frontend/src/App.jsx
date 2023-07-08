@@ -10,11 +10,12 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
-import AddSpeakers from "./components/AddSpeakers";
+import Sessions from "./components/Sessions";
 import Speakers from "./components/Speakers";
-import NotFound from "./components/NotFound";
+import AddSpeakers from "./components/AddSpeakers";
 import Speaker from "./components/Speaker";
-
+import NotFound from "./components/NotFound";
+import AddSession from "./components/AddSession";
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
 
@@ -50,6 +51,8 @@ function App() {
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
         <Route path="add-contact" element={<AddContact />} />
+        <Route path="/sessions" element={<Sessions />} />
+        <Route path="/add-session" element={<Sessions />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

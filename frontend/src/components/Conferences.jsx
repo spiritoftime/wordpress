@@ -80,7 +80,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
     <>
       <div className="container py-10 mx-auto">
         <PageHeader
-          rowType="Conference"
+          rowType="Conferences"
           handleClick={() => navigate("/add-conference")}
           hasButton={true}
         />

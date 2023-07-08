@@ -42,8 +42,9 @@ module.exports = {
         allowNull: false,
       },
       type: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM("Symopsia", "Masterclass"),
         allowNull: false,
+        defaultValue: "Symposia",
       },
       wordpress_url: {
         type: Sequelize.STRING,
