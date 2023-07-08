@@ -3,6 +3,7 @@ const {
   getSpeaker,
   getSpeakers,
   addSpeaker,
+  addSpeakersToConference,
   deleteSpeaker,
   updateSpeaker,
 } = require("../controllers/Speakers");
@@ -15,5 +16,7 @@ router
   .delete(deleteSpeaker)
   .get(getSpeaker)
   .put(updateSpeaker);
+
+router.route("/add-to-conference/:conferenceId").post(addSpeakersToConference);
 
 module.exports = router;

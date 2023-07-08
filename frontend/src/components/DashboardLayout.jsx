@@ -23,9 +23,9 @@ import {
 import { Outlet, useLocation, Link, useMatch } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { useAuth0 } from "@auth0/auth0-react";
-
 import { useAppContext } from "../context/appContext";
 import Loading from "./Loading";
+import Conferences from "./Conferences";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -59,6 +59,7 @@ const DashboardLayout = () => {
       } else return;
     }
   }, [isConferencesFetching]);
+
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -67,7 +68,13 @@ const DashboardLayout = () => {
         return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
 
-      navigate(`/conferences/${conference.id}`);
+      if (matchedConferencePath) {
+        navigate(`/conferences/${conference.id}`);
+      } else {
+        const newPath = pathname.slice(0, -2);
+        navigate(`${newPath}/${conference.id}`);
+      }
+
       setConference(conference);
     }
   }, [comboBoxValue]);
@@ -92,7 +99,7 @@ const DashboardLayout = () => {
             onClick={() => navigate("/")}
           >
             <img
-              src="../src/assets/logo-transparent.png"
+              src="../../src/assets/logo-transparent.png"
               alt="auto mate logo"
               width="80%"
               className="m-auto"
@@ -167,41 +174,48 @@ const DashboardLayout = () => {
             )}
             {conferenceSelected && (
               <>
-                <div
-                  className={cn(
-                    pathname.endsWith("speakers") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <Users />
-                  <h3 className="font-bold">Speakers</h3>
-                </div>
-                <div
-                  className={cn(
-                    pathname.endsWith("sessions") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <ClipboardList />
-                  <h3 className="font-bold">Sessions</h3>
-                </div>
-                <div
-                  className={cn(
-                    pathname.endsWith("program") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <CalendarDays />
-                  <h3 className="font-bold">Program Overview</h3>
-                </div>
+                <Link to={`conferences/speakers/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("speakers") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <Users />
+                    <h3 className="font-bold">Speakers</h3>
+                  </div>
+                </Link>
+                <Link to={`conferences/sessions/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("sessions") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <ClipboardList />
+                    <h3 className="font-bold">Sessions</h3>
+                  </div>
+                </Link>
+                <Link to={`conferences/program-overview/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("program-overview") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <CalendarDays />
+                    <h3 className="font-bold">Program Overview</h3>
+                  </div>
+                </Link>
               </>
             )}
           </div>
         </div>
-        <Outlet />
+        {/* <Outlet /> */}
+        {pathname === "/" ? <Conferences /> : <Outlet />}
       </div>
     </div>
   );

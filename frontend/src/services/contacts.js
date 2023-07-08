@@ -15,6 +15,13 @@ export function addContact(accessToken, data) {
   });
 }
 
+export function addContactToConference(accessToken, data) {
+  return makeRequest(`/speakers/add-to-conference/:conferenceId`, accessToken, {
+    method: "POST",
+    data: data,
+  });
+}
+
 export function deleteContact(data, accessToken) {
   return makeRequest(`/speakers/${data.id}`, accessToken, {
     method: "DELETE",

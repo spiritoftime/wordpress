@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import useGetContacts from "../custom_hooks/useQueries";
 import { fullCountries as countries } from "../utils/countriesFull";
 import { convertToTitleCase } from "../utils/convertText";
-import { getContacts } from "../services/contacts";
+import { getContacts, addContactToConference } from "../services/contacts";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useAppContext } from "../context/appContext";
 import {
@@ -94,15 +94,11 @@ const AddSpeakers = () => {
     name: "speakerItems",
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
   // Function to add data to database
   const { mutate: addToDatabase, isLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
-      return addConference(accessToken, data);
+      return addContactToConference(accessToken, data);
     },
     {
       onSuccess: () => {
@@ -113,6 +109,11 @@ const AddSpeakers = () => {
       },
     }
   );
+
+  const onSubmit = (data) => {
+    console.log(data);
+    addToDatabase(data);
+  };
 
   if (isSpeakersNameLoading || isSpeakersNameFetching) {
     return (
