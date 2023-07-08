@@ -10,6 +10,8 @@ const AppProvider = ({ children }) => {
   const [conference, setConference] = useState("");
   const [contact, setContact] = useState("");
   const [speaker, setSpeaker] = useState("");
+  const [session, setSession] = useState("");
+  const [progress, setProgress] = useState(33);
   const { toast } = useToast();
 
   // const comboBoxRef = useRef("");
@@ -49,6 +51,10 @@ const AppProvider = ({ children }) => {
         setContact,
         speaker,
         setSpeaker,
+        session,
+        setSession,
+        progress,
+        setProgress,
       }}
     >
       {children}

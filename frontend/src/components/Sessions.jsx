@@ -10,8 +10,10 @@ import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getSessions } from "../services/sessions";
 import Loading from "./Loading";
+import { useAppContext } from "../context/appContext";
 
 const Sessions = () => {
+  const { setSession } = useAppContext();
   const getAccessToken = useGetAccessToken();
   const {
     data: sessions,
@@ -40,6 +42,12 @@ const Sessions = () => {
     {
       accessorKey: "date",
       header: "Date",
+      cell: ({ row }) => {
+        const amount = row.getValue("date");
+        const formatted = amount.split("T")[0];
+
+        return <div className="font-medium">{formatted}</div>;
+      },
     },
     {
       accessorKey: "location",
@@ -55,9 +63,7 @@ const Sessions = () => {
     },
     RowActions("Session", deleteSessionMutation),
   ];
-  const rowNavigate = () => {};
-  const setConference = () => {};
-  console.log(sessions);
+  const rowNavigate = (rowId) => navigate(`/sessions/${rowId}`);
   if (isSessionsFetching || isSessionsLoading)
     return (
       <div className="w-full mx-auto">
@@ -69,7 +75,7 @@ const Sessions = () => {
       <div className="container py-10 mx-auto">
         <PageHeader
           rowType="Sessions"
-          handleClick={() => navigate(`/add-conference/${conferenceId}`)}
+          handleClick={() => navigate(`/add-session`)}
           hasButton={true}
         />
         <DataTable
@@ -78,7 +84,7 @@ const Sessions = () => {
           rowType={"sessions"}
           filterColumn={"title"}
           rowNavigate={rowNavigate}
-          setData={setConference}
+          setData={setSession}
         />
       </div>
       <Toaster />
