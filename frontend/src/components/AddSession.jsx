@@ -10,6 +10,7 @@ import AddSessionPageOne from "./AddSessionPageOne";
 import { Form } from "./ui/form";
 import AddSessionPageTwo from "./AddSessionPageTwo";
 import { isTimeLater } from "../utils/isTimeLater";
+import AddSessionPageThree from "./AddSessionPageThree";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
@@ -52,12 +53,36 @@ const AddSession = () => {
         }
       ),
     {}, // nothing to validate at the second page
+    // last page validation object needs to have everything combined
     z.object({
-      moderators: z.array(
-        z.object({
-          moderator: z.string().nonempty("Required"),
-        })
-      ),
+      title: z.string().nonempty("Required"),
+      synopsis: z.string().nonempty("Required"),
+      startTime: z
+        .string()
+        .nonempty("Required")
+        .regex(
+          new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+          "Please input a valid 24-hour format time"
+        ),
+      endTime: z
+        .string()
+        .nonempty("Required")
+        .regex(
+          new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+          "Please input a valid 24-hour format time"
+        ),
+      sessionCode: z.string().nonempty("Required"),
+      location: z.string().nonempty("Required"),
+      isPublish: z.boolean().optional(),
+      date: z.date().min(new Date("1900-01-01"), {
+        message: "Please input a date",
+      }),
+      sessionType: z.enum(["Symposia", "Masterclass"]),
+      // moderators: z.array(
+      //   z.object({
+      //     moderator: z.string().nonempty("Required"),
+      //   })
+      // ),
     }),
     // to include the last page - allocate time to topics later
     // where does wordpressurl go??
@@ -82,8 +107,10 @@ const AddSession = () => {
     watch,
     formState: { errors, isValid },
   } = form;
-  console.log("isvalid", isValid);
-  console.log(errors, "errors");
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">
@@ -94,16 +121,19 @@ const AddSession = () => {
       </div>
       <div>
         <Form {...form}>
-          <MultiPageForm
-            errors={errors}
-            isValid={isValid}
-            nextFormStep={nextFormStep}
-            currentStep={formStep}
-            prevFormStep={prevFormStep}
-          >
-            {formStep === 0 && <AddSessionPageOne control={control} />}
-            {formStep === 1 && <AddSessionPageTwo control={control} />}
-          </MultiPageForm>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <MultiPageForm
+              errors={errors}
+              isValid={isValid}
+              nextFormStep={nextFormStep}
+              currentStep={formStep}
+              prevFormStep={prevFormStep}
+            >
+              {formStep === 0 && <AddSessionPageOne control={control} />}
+              {formStep === 1 && <AddSessionPageTwo control={control} />}
+              {formStep === 2 && <AddSessionPageThree control={control} />}
+            </MultiPageForm>
+          </form>
         </Form>
       </div>
       <pre>{JSON.stringify(watch(), null, 2)}</pre>

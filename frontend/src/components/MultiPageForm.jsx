@@ -42,19 +42,30 @@ const MultiPageForm = ({
       {children}
 
       <div className="flex gap-2 mx-auto w-fit">
-        <Button
-          disabled={
-            !isValid || (currentStep === 1 && selectedTopics.length === 0)
-          }
-          onClick={() => {
-            setProgress(Math.ceil((100 / MAX_STEPS) * (currentStep + 1 + 1)));
-            nextFormStep();
-          }}
-          type="button"
-          className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
-        >
-          Next
-        </Button>
+        {currentStep < 2 && (
+          <Button
+            disabled={
+              !isValid || (currentStep === 1 && selectedTopics.length === 0)
+            }
+            onClick={() => {
+              setProgress(Math.ceil((100 / MAX_STEPS) * (currentStep + 1 + 1)));
+              nextFormStep();
+            }}
+            type="button"
+            className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
+          >
+            Next
+          </Button>
+        )}
+        {currentStep === 2 && (
+          <Button
+            disabled={!isValid}
+            type="submit"
+            className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
+          >
+            Save
+          </Button>
+        )}
         {/* on cancel pop out the dialog, then navigate */}
         <Button type="button" variant="outline">
           Cancel
