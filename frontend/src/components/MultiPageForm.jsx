@@ -12,14 +12,22 @@ const MultiPageForm = ({
   prevFormStep,
   nextFormStep,
 }) => {
-  const { progress } = useAppContext();
+  const { progress, setProgress } = useAppContext();
   return (
     <div>
       {currentStep < MAX_STEPS && (
         <div className="flex flex-col items-center justify-center">
           <div className="flex gap-2">
             {currentStep > 0 && (
-              <button onClick={prevFormStep} type="button">
+              <button
+                onClick={() => {
+                  setProgress(
+                    Math.floor(100 / MAX_STEPS) * (currentStep + 1 - 1)
+                  );
+                  prevFormStep();
+                }}
+                type="button"
+              >
                 <ChevronLeft />
               </button>
             )}
@@ -35,7 +43,10 @@ const MultiPageForm = ({
       <div className="flex gap-2 mx-auto w-fit">
         <Button
           disabled={!isValid}
-          onClick={nextFormStep}
+          onClick={() => {
+            setProgress(Math.floor(100 / MAX_STEPS) * (currentStep + 1 + 1));
+            nextFormStep();
+          }}
           type="button"
           className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
         >

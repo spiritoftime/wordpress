@@ -8,6 +8,7 @@ import * as z from "zod";
 import MultiPageForm from "./MultiPageForm";
 import AddSessionPageOne from "./AddSessionPageOne";
 import { Form } from "./ui/form";
+import AddSessionPageTwo from "./AddSessionPageTwo";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
@@ -81,6 +82,7 @@ const AddSession = () => {
             prevFormStep={prevFormStep}
           >
             {formStep === 0 && <AddSessionPageOne control={control} />}
+            {formStep === 1 && <AddSessionPageTwo control={control} />}
           </MultiPageForm>
         </Form>
       </div>

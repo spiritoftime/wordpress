@@ -4,14 +4,14 @@ import { useToast } from "../components/ui/use-toast";
 import { convertToTitleCase } from "../utils/convertText";
 
 const AppContext = React.createContext();
-
+const MAX_STEPS = 3;
 const AppProvider = ({ children }) => {
   const [comboBoxValue, setComboBoxValue] = useState("");
   const [conference, setConference] = useState("");
   const [contact, setContact] = useState("");
   const [speaker, setSpeaker] = useState("");
   const [session, setSession] = useState("");
-  const [progress, setProgress] = useState(33);
+  const [progress, setProgress] = useState(Math.floor(100 / MAX_STEPS));
   const { toast } = useToast();
 
   // const comboBoxRef = useRef("");
