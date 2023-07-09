@@ -14,6 +14,7 @@ module.exports = {
         session_type: "Symposia",
         wordpress_url: "https://wordpress.org/",
         room_id: 1,
+        location: "Bhutan",
       },
     ]);
   },

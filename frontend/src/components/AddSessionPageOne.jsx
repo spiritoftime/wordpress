@@ -12,12 +12,13 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import DatePicker from "./DatePicker";
-// TO ADD :MODERATORS!!
+import { SelectOption } from "./SelectOption";
+// TO ADD SESSION TYPE & MODERATORS!!
 const AddSessionPageOne = ({ control }) => {
   return (
     <div className="flex flex-col gap-4 mt-6">
-      <div className="flex gap-6">
-        <div className="w-[80%]">
+      <div className="flex items-center gap-6">
+        <div className="w-[60%]">
           <FormField
             control={control}
             name="title"
@@ -26,6 +27,25 @@ const AddSessionPageOne = ({ control }) => {
                 <FormLabel>Session Title:</FormLabel>
                 <FormControl>
                   <Input placeholder="Session Title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="w-[20%]">
+          <FormField
+            control={control}
+            name="sessionType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Session Type:</FormLabel>
+                <FormControl>
+                  <SelectOption
+                    field={field}
+                    placeholder="Session Type"
+                    options={["Symposia", "Masterclass"]}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -48,7 +68,7 @@ const AddSessionPageOne = ({ control }) => {
           />
         </div>
       </div>
-      <div className="flex gap-10">
+      <div className="flex items-center gap-10">
         <div className="w-[25%]">
           <FormField
             control={control}
@@ -98,7 +118,7 @@ const AddSessionPageOne = ({ control }) => {
           </FormItem>
         </div>
       </div>
-      <div className="flex gap-10">
+      <div className="flex items-center gap-10">
         <div className="w-[50%]">
           <FormField
             control={control}

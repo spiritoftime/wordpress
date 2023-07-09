@@ -50,6 +50,10 @@ function initSession(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       roomId: {
         type: DataTypes.INTEGER,
         allowNull: false,

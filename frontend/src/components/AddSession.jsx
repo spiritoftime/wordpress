@@ -25,9 +25,9 @@ const AddSession = () => {
       date: z.date().min(new Date("1900-01-01"), {
         message: "Please input a date",
       }),
+      sessionType: z.enum(["Symposia", "Masterclass"]),
     }),
     z.object({
-      sessionType: z.enum(["Symposia", "Masterclass"]),
       moderators: z.array(
         z.object({
           moderator: z.string().nonempty("Required"),
