@@ -16,42 +16,48 @@ const AddSession = () => {
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
   // formschemas needs to be in an array so that the useResolver can work for multiple pages.
+  const zodForDates = z
+    .object({
+      startTime: z
+        .string()
+        .nonempty("Required")
+        .regex(
+          new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+          "Please input a valid 24-hour format time"
+        ),
+      endTime: z
+        .string()
+        .nonempty("Required")
+        .regex(
+          new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+          "Please input a valid 24-hour format time"
+        ),
+    })
+    .refine(
+      (data) => {
+        const isValid = isTimeLater(data.startTime, data.endTime);
+
+        return isValid;
+      },
+      {
+        message: "End time must be later than start time",
+        path: ["endTime"], // where to set the error
+      }
+    );
+  const zodForRest = z.object({
+    title: z.string().nonempty("Required"),
+    synopsis: z.string().nonempty("Required"),
+    sessionCode: z.string().nonempty("Required"),
+    location: z.string().nonempty("Required"),
+    isPublish: z.boolean().optional(),
+    date: z.date().min(new Date("1900-01-01"), {
+      message: "Please input a date",
+    }),
+    sessionType: z.enum(["Symposia", "Masterclass"]),
+  });
+  const endResultZod = z.intersection(zodForDates, zodForRest);
   const formSchemas = [
-    z
-      .object({
-        title: z.string().nonempty("Required"),
-        synopsis: z.string().nonempty("Required"),
-        startTime: z
-          .string()
-          .nonempty("Required")
-          .regex(
-            new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
-            "Please input a valid 24-hour format time"
-          ),
-        endTime: z
-          .string()
-          .nonempty("Required")
-          .regex(
-            new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
-            "Please input a valid 24-hour format time"
-          ),
-        sessionCode: z.string().nonempty("Required"),
-        location: z.string().nonempty("Required"),
-        isPublish: z.boolean().optional(),
-        date: z.date().min(new Date("1900-01-01"), {
-          message: "Please input a date",
-        }),
-        sessionType: z.enum(["Symposia", "Masterclass"]),
-      })
-      .refine(
-        (data) => {
-          return isTimeLater(data.startTime, data.endTime);
-        },
-        {
-          message: "End time must be later than start time",
-          path: ["endTime"], // where to set the error
-        }
-      ),
+    endResultZod,
     {}, // nothing to validate at the second page
     // last page validation object needs to have everything combined
     z.object({

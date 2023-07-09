@@ -7,6 +7,5 @@ export const isTimeLater = (startTime, endTime) => {
   } else if (endTimeParts[0] === startTimeParts[0]) {
     return endTimeParts[1] > startTimeParts[1];
   }
-
   return false;
 };

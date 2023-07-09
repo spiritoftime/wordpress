@@ -13,7 +13,7 @@ const MultiPageForm = ({
   nextFormStep,
 }) => {
   const { progress, setProgress, selectedTopics } = useAppContext();
-  console.log(selectedTopics);
+  // console.log(selectedTopics);
   return (
     <div>
       {currentStep < MAX_STEPS && (
