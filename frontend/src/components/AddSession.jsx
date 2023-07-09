@@ -28,15 +28,11 @@ const AddSession = () => {
       }),
       sessionType: z.enum(["Symposia", "Masterclass"]),
     }),
+    {}, // nothing to validate at the second page
     z.object({
       moderators: z.array(
         z.object({
           moderator: z.string().nonempty("Required"),
-        })
-      ),
-      topics: z.array(
-        z.object({
-          topic: z.string().nonempty("Required"),
         })
       ),
     }),
@@ -54,7 +50,6 @@ const AddSession = () => {
       sessionCode: "",
       location: "",
       // sessionType: "Symposia",
-      // topics: [{ topic: "" }],
       // moderators: [{ moderator: "" }],
     },
     mode: "onChange",
@@ -70,7 +65,9 @@ const AddSession = () => {
     <div className="flex flex-col w-full p-12">
       <div className="w-full">
         <PageHeader rowType="Add New Session" hasButton={false} />
-        <p className="font-semibold">Session Details</p>
+        {formStep === 0 && <p className="font-semibold">Session Details</p>}
+        {formStep === 1 && <p className="font-semibold">Select Topics</p>}
+        {formStep === 2 && <p className="font-semibold">Confirm Topics</p>}
       </div>
       <div>
         <Form {...form}>

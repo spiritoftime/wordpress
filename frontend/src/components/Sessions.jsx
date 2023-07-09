@@ -85,6 +85,7 @@ const Sessions = () => {
           filterColumn={"title"}
           rowNavigate={rowNavigate}
           setData={setSession}
+          clickable={true}
         />
       </div>
       <Toaster />

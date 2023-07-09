@@ -91,6 +91,7 @@ const Contacts = () => {
           filterColumn={"lastName"}
           rowNavigate={rowNavigate}
           setData={setContact}
+          clickable={true}
         />
       </div>
       <Toaster />

@@ -11,7 +11,10 @@ const AppProvider = ({ children }) => {
   const [contact, setContact] = useState("");
   const [speaker, setSpeaker] = useState("");
   const [session, setSession] = useState("");
-  const [progress, setProgress] = useState(Math.floor(100 / MAX_STEPS));
+  const [progress, setProgress] = useState(Math.ceil(100 / MAX_STEPS));
+  const [selectedTopics, setSelectedTopics] = useState([]);
+  // this is needed to preserve the state for selected rows for data table, and to fill in AddSessionPageThree
+
   const { toast } = useToast();
 
   // const comboBoxRef = useRef("");
@@ -43,6 +46,8 @@ const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         comboBoxValue,
+        selectedTopics,
+        setSelectedTopics,
         setComboBoxValue,
         setConference,
         conference,
