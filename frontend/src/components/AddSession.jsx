@@ -28,7 +28,7 @@ const AddSession = () => {
       location: "",
       isPublish: false,
       // sessionType: "Symposia",
-      // moderators: [{ moderator: "" }],
+      speakers: [{}],
     },
     mode: "onChange",
   });
@@ -40,7 +40,7 @@ const AddSession = () => {
   const onSubmit = (data) => {
     console.log(data);
   };
-
+  console.log(errors);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">

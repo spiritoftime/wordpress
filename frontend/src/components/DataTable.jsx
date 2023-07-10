@@ -39,7 +39,7 @@ export function DataTable({
 }) {
   const { setComboBoxValue, setSelectedTopics, selectedTopics } =
     useAppContext();
-
+  console.log("topics", selectedTopics);
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
@@ -81,8 +81,8 @@ export function DataTable({
     }));
     setSelectedTopics(newSelectedTopics);
   }, [table.getFilteredSelectedRowModel().rows.length]);
-  console.log("state", table.getState());
-  console.log("selected", table.getFilteredSelectedRowModel().rows);
+  // console.log("state", table.getState());
+  // console.log("selected", table.getFilteredSelectedRowModel().rows);
 
   const navigate = useNavigate();
   const matchedConferencePath = useMatch("/");

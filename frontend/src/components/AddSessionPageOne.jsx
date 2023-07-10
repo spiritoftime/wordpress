@@ -13,8 +13,22 @@ import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import DatePicker from "./DatePicker";
 import { SelectOption } from "./SelectOption";
+import { Trash } from "lucide-react";
+import { useFieldArray } from "react-hook-form";
+import { Button } from "./ui/button";
 // TO ADD SESSION TYPE & MODERATORS!!
+
 const AddSessionPageOne = ({ control }) => {
+  //  to query
+  const speakers = ["Bob", "Sally"];
+  const {
+    fields: moderators,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "speakers",
+  });
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex items-center gap-6">
@@ -161,7 +175,86 @@ const AddSessionPageOne = ({ control }) => {
           </FormItem>
         )}
       />
+      <div className="flex flex-col">
+        <FormLabel>Moderators</FormLabel>
+        {moderators.map((field, index) => (
+          <div
+            className={`w-full flex items-center gap-3  ${
+              index === 0 ? "w-[95%] mt-1" : "w-[95%] mt-3"
+            }`}
+            key={`${field.id}`}
+          >
+            <div className={"w-[45%]"}>
+              <FormField
+                control={control}
+                name={`speakers.${index}.speakerRole`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <SelectOption
+                        field={field}
+                        placeholder="Select a role"
+                        options={[
+                          "Course Director",
+                          "Co-Course Director",
+                          "Chair",
+                          "Co-Chair",
+                          "Moderator",
+                          "Judge",
+                          "Chief Judge",
+                          "Faculty",
+                          "Speaker",
+                        ]}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className={"w-[45%]"}>
+              <FormField
+                control={control}
+                name={`speakers.${index}.speaker`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <SelectOption
+                        field={field}
+                        placeholder="Select a speaker"
+                        options={speakers}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
+            {index > 0 && (
+              <div>
+                <Trash
+                  type="button"
+                  size={18}
+                  onClick={() => {
+                    remove(index);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+        <Button
+          type="button"
+          variant="ghost"
+          className="justify-start w-fit"
+          onClick={() => {
+            append({});
+          }}
+        >
+          Add Role
+        </Button>
+      </div>
       <div className="w-[100%]">
         <FormField
           control={control}

@@ -38,5 +38,13 @@ const zodForRest = z.object({
     message: "Please input a date",
   }),
   sessionType: z.enum(["Symposia", "Masterclass"]),
+  speakers: z.array(
+    z.object({
+      speakerRole: z.string().nonempty("Required"),
+      speaker: z.string().nonempty("Required"),
+    })
+  ),
 });
+// need intersection so that the endtime refine will fire.
+// for more info, check out https://github.com/colinhacks/zod/issues/479
 export const firstPageZod = z.intersection(zodForDates, zodForRest);
