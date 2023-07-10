@@ -52,14 +52,11 @@ function App() {
   //     {isAuthenticated ? (
   //       <Route path="/" element={<DashboardLayout />}>
   //         <Route path="/" element={<Conferences />} />
-  //         <Route
-  //           path="/conferences/:conferenceId"
-  //           element={<Conference />}
-  //         ></Route>
-  //         <Route
+  //         <Route path="/conferences/:conferenceId" element={<Conference />} />
+  //         {/* <Route
   //           path="conferences/:conferenceId/add-speakers"
   //           element={<AddSpeakers />}
-  //         />
+  //         /> */}
   //         <Route path="/add-conference" element={<AddConference />} />
   //         <Route path="/contacts" element={<Contacts />} />
   //         <Route path="/contacts/:contactId" element={<Contact />} />

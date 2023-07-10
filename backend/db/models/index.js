@@ -89,7 +89,7 @@ db.SessionSpeakerRole.belongsToMany(db.SessionSpeaker, {
 db.Speaker.belongsToMany(db.Topic, {
   through: db.TopicSpeaker,
 });
-db.Topic.belongsToMany(db.Session, {
+db.Topic.belongsToMany(db.Speaker, {
   through: db.TopicSpeaker,
 });
 

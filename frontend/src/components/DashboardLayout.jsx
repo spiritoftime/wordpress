@@ -99,7 +99,7 @@ const DashboardLayout = () => {
             onClick={() => navigate("/")}
           >
             <img
-              src="../../src/assets/logo-transparent.png"
+              src="../../../src/assets/logo-transparent.png"
               alt="auto mate logo"
               width="80%"
               className="m-auto"

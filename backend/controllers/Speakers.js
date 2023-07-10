@@ -64,22 +64,51 @@ const addSpeaker = async (req, res) => {
   }
 };
 
-// Add speaker to conferenceSpeakers
-// Add proposed topics to Topics
-// Add speakerId and topicId to topicSpeakers
 const addSpeakersToConference = async (req, res) => {
-  console.log(req.body);
-  const data = req.body;
-  const speakers = [];
+  const { speakerItems } = req.body;
+  const speakersId = [];
 
-  // if (data.length > 0) {
-  //   data.forEach((item) => speakers.push(item.name.id));
-  //   await ConferenceSpeaker.bulkCreate(speakers);
-  // }
+  const { conferenceId } = req.params;
 
-  // data.forEach(item => {
-  //   await ConferenceSpeaker.create();
-  // })
+  try {
+    for (let i = 0; i < speakerItems.length; i++) {
+      const topicsArr = [];
+      const topicSpeakersData = [];
+
+      speakersId.push({
+        speakerId: speakerItems[i].name.id,
+        conferenceId: conferenceId,
+      });
+
+      for (const key in speakerItems[i]) {
+        if (key !== "name" && speakerItems[i][key].length > 0) {
+          topicsArr.push({ title: speakerItems[i][key] });
+        }
+      }
+      // If topics were provided
+      if (topicsArr.length > 0) {
+        // Add proposed topics to Topics
+        const topicsId = await Topic.bulkCreate(topicsArr);
+        topicsId.forEach((topic) => {
+          topicSpeakersData.push({
+            speakerId: speakerItems[i].name.id,
+            topicId: topic.dataValues.id,
+          });
+        });
+
+        // Add speakerId and topicId to topicSpeakers
+        const result = await TopicSpeaker.bulkCreate(topicSpeakersData);
+      }
+    }
+
+    // Add speakers to conferenceSpeakers
+    await ConferenceSpeaker.bulkCreate(speakersId);
+
+    return res.status(200).json();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
 };
 
 const deleteSpeaker = async (req, res) => {

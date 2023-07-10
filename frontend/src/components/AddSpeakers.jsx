@@ -1,8 +1,5 @@
-import { useState, useRef, useEffect } from "react";
 import useGetContacts from "../custom_hooks/useQueries";
-import { fullCountries as countries } from "../utils/countriesFull";
-import { convertToTitleCase } from "../utils/convertText";
-import { getContacts, addContactToConference } from "../services/contacts";
+import { addContactToConference } from "../services/contacts";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useAppContext } from "../context/appContext";
 import {
@@ -14,10 +11,8 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
 import { Toaster } from "./ui/toaster";
 import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
 import { Trash, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
@@ -26,24 +21,15 @@ import Loading from "./Loading";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
-import { storage } from "../firebase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-
-const titles = [
-  { value: "Prof", label: "Prof" },
-  { value: "Dr", label: "Dr" },
-  { value: "Mr", label: "Mr" },
-  { value: "Ms", label: "Ms" },
-  { value: "Mrs", label: "Mrs" },
-];
+import { useNavigate, useParams } from "react-router-dom";
 
 const AddSpeakers = () => {
   const { showToaster } = useAppContext();
   const queryClient = useQueryClient();
   const getAccessToken = useGetAccessToken();
   const navigate = useNavigate();
+  const { conferenceId } = useParams();
 
   const {
     data: speakersName,
@@ -54,18 +40,33 @@ const AddSpeakers = () => {
   const FormSchema = z.object({
     speakerItems: z.array(
       z.object({
-        name: z.object({
-          firstName: z.string(),
-          lastName: z.string(),
-          country: z.string(),
-          biography: z.string(),
-          email: z.string(),
-          id: z.number(),
-          isAdmin: z.boolean(),
-          organisation: z.string(),
-          photoUrl: z.string(),
-          title: z.string(),
-        }),
+        name: z
+          .object({
+            firstName: z.string(),
+            lastName: z.string(),
+            country: z.string(),
+            biography: z.string(),
+            email: z.string(),
+            id: z.number().positive(),
+            isAdmin: z.boolean(),
+            organisation: z.string(),
+            photoUrl: z.string(),
+            title: z.string(),
+            // firstName: z.string().nonempty("Required"),
+            // lastName: z.string().nonempty("Required"),
+            // country: z.string().nonempty("Required"),
+            // biography: z.string().nonempty("Required"),
+            // email: z.string().nonempty("Required"),
+            // id: z.number().positive(),
+            // isAdmin: z.boolean({ required_error: "Required" }),
+            // organisation: z.string().nonempty("Required"),
+            // photoUrl: z.string().nonempty("Required"),
+            // title: z.string().nonempty("Required"),
+          })
+          .required(),
+        // .refine((val) => val.firstName.length >= 1, {
+        //   message: "Speaker name is required",
+        // }),
         topicOne: z.string(),
         topicTwo: z.string(),
         topicThree: z.string(),
@@ -78,7 +79,25 @@ const AddSpeakers = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       speakerItems: [
-        { name: "", topicOne: "", topicTwo: "", topicThree: "", topicFour: "" },
+        {
+          // name: {},
+          name: {
+            firstName: "",
+            lastName: "",
+            country: "",
+            biography: "",
+            email: "",
+            id: "",
+            isAdmin: "",
+            organisation: "",
+            photoUrl: "",
+            title: "",
+          },
+          topicOne: "",
+          topicTwo: "",
+          topicThree: "",
+          topicFour: "",
+        },
       ],
     },
   });
@@ -98,14 +117,14 @@ const AddSpeakers = () => {
   const { mutate: addToDatabase, isLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
-      return addContactToConference(accessToken, data);
+      return addContactToConference(accessToken, data, conferenceId);
     },
     {
       onSuccess: () => {
         //queryClient.invalidateQueries(["conferences"], { exact: true });
         form.reset();
         // navigate("/");
-        // showToaster("Conference Added");
+        showToaster("Speakers Added");
       },
     }
   );

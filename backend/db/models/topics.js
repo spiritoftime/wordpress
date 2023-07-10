@@ -15,7 +15,7 @@ function initTopic(sequelize) {
       },
       sessionId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "sessions",
           key: "id",
@@ -23,11 +23,11 @@ function initTopic(sequelize) {
       },
       startTime: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       endTime: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
     },
     { underscored: true, timestamps: false }
