@@ -44,11 +44,13 @@ export const FancyMultiSelect = ({ onChange, options: FRAMEWORKS }: Props) => {
     },
     []
   );
+  const selectables = FRAMEWORKS.filter((framework) => {
+    return !selected.some((selectedFramework) => {
+      return JSON.stringify(framework) === JSON.stringify(selectedFramework);
+    });
+  });
 
-  const selectables = FRAMEWORKS.filter(
-    (framework) => !selected.includes(framework)
-  );
-
+  console.log("selectables", selectables);
   React.useEffect(() => {
     onChange?.(selected);
     // eslint-disable-next-line react-hooks/exhaustive-deps

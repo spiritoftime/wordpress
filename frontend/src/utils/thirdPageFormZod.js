@@ -23,6 +23,15 @@ export const thirdPageZod = z.object({
     message: "Please input a date",
   }),
   sessionType: z.enum(["Symposia", "Masterclass"]),
+  speakers: z.array(
+    z.object({
+      speakerRole: z.string().nonempty("Required"),
+      speaker: z.array(z.string().nonempty("Required")),
+    })
+    // .refine((value) => value.some((item) => item), {
+    //   message: "You have to select at least one item.",
+    // }),
+  ),
   // moderators: z.array(
   //   z.object({
   //     moderator: z.string().nonempty("Required"),
