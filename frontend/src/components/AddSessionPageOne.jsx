@@ -16,11 +16,22 @@ import { SelectOption } from "./SelectOption";
 import { Trash } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "./ui/button";
+import { FancyMultiSelect } from "./ui/FancyMultiSelect";
+import FormMultiSelect from "./FormMultiSelect";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
   //  to query
-  const speakers = ["Bob", "Sally"];
+  const speakers = [
+    {
+      value: "next.js",
+      label: "Next.js",
+    },
+    {
+      value: "poop.js",
+      label: "Poop.js",
+    },
+  ];
   const {
     fields: moderators,
     append,
@@ -151,7 +162,7 @@ const AddSessionPageOne = ({ control }) => {
             control={control}
             name="location"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>Location:</FormLabel>
                 <FormControl>
                   <Input placeholder="Location" {...field} />
@@ -219,11 +230,7 @@ const AddSessionPageOne = ({ control }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <SelectOption
-                        field={field}
-                        placeholder="Select a speaker"
-                        options={speakers}
-                      />
+                      <FormMultiSelect options={speakers} field={field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

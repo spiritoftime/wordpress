@@ -41,10 +41,14 @@ const zodForRest = z.object({
   speakers: z.array(
     z.object({
       speakerRole: z.string().nonempty("Required"),
-      speaker: z.string().nonempty("Required"),
+      speaker: z.array(z.string().nonempty("Required")),
     })
+    // .refine((value) => value.some((item) => item), {
+    //   message: "You have to select at least one item.",
+    // }),
   ),
 });
+
 // need intersection so that the endtime refine will fire.
 // for more info, check out https://github.com/colinhacks/zod/issues/479
 export const firstPageZod = z.intersection(zodForDates, zodForRest);
