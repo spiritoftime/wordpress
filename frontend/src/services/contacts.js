@@ -4,6 +4,17 @@ export function getContacts(accessToken) {
   return makeRequest("/speakers", accessToken);
 }
 
+export function getSpeakers(accessToken, conferenceId) {
+  return makeRequest(`/speakers/conference/${conferenceId}`, accessToken);
+}
+
+export function getSpeaker(accessToken, speakerId, conferenceId) {
+  return makeRequest(
+    `/speakers/conference/${speakerId}/${conferenceId}`,
+    accessToken
+  );
+}
+
 export function getContact(id, accessToken) {
   return makeRequest(`/speakers/${id}`, accessToken);
 }

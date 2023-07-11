@@ -21,6 +21,14 @@ function initTopic(sequelize) {
           key: "id",
         },
       },
+      conferenceId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "conferences",
+          key: "id",
+        },
+      },
       startTime: {
         type: DataTypes.DATE,
         allowNull: true,

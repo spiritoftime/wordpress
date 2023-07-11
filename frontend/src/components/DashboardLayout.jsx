@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { getConference, getConferences } from "../services/conferences";
+import { getConferences } from "../services/conferences";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { NormalComboBox } from "./NormalComboBox";
+import Combobox from "./Combobox";
 
 import { ProfileIcon } from "./ProfileIcon";
 import {
@@ -19,10 +20,11 @@ import {
   Users,
   CalendarDays,
   ClipboardList,
+  CopySlash,
 } from "lucide-react";
 import { Outlet, useLocation, Link, useMatch } from "react-router-dom";
 import { cn } from "../lib/utils";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useAppContext } from "../context/appContext";
 import Loading from "./Loading";
 import Conferences from "./Conferences";
@@ -33,44 +35,58 @@ const DashboardLayout = () => {
   const matchedConferencePath = useMatch("/conferences/:conferenceId");
   const matchedContactPath = useMatch("/contacts/:contactId");
 
+  // const [newComboBoxValue, setNewComboBoxValue] = useState();
+
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
+  // const { setConference } = useAppContext();
   const { comboBoxValue, setComboBoxValue, setConference } = useAppContext();
   const getAccessToken = useGetAccessToken();
+
+  console.log("ComboBox value: ", comboBoxValue);
+
   const { data: conferences, isLoading: isConferencesFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       return getConferences(accessToken);
     },
-    enabled: conferenceId !== undefined,
+    // enabled: conferenceId !== undefined,
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
+    cacheTime: 0,
   });
+
   useEffect(() => {
     if (!isAuthenticated) return;
+
     if (conferenceId !== undefined) {
       if (!isConferencesFetching) {
         const conference = conferences.find((c) => {
           return c.id === +conferenceId;
         });
+        // setNewComboBoxValue(conference.name);
         setComboBoxValue(conference.name);
         setConference(conference);
       } else return;
     }
-  }, [isConferencesFetching]);
+  }, [conferences, isConferencesFetching]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    if (!isConferencesFetching && comboBoxValue !== undefined) {
+    if (
+      !isConferencesFetching &&
+      comboBoxValue !== undefined &&
+      comboBoxValue !== ""
+    ) {
       const conference = conferences.find((c) => {
         return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
 
       if (matchedConferencePath) {
         navigate(`/conferences/${conference.id}`);
-      } else {
+      } else if (pathname !== "/") {
         const newPath = pathname.slice(0, -2);
         navigate(`${newPath}/${conference.id}`);
       }
@@ -107,13 +123,15 @@ const DashboardLayout = () => {
           </div>
           {conferenceSelected && (
             <div className="w-[69%]">
-              {!isConferencesFetching && isAuthenticated && (
+              {!isConferencesFetching && isAuthenticated && comboBoxValue && (
                 <NormalComboBox
                   options={conferences}
                   validateProperty={"name"}
                   displayProperty={"name"}
                   fieldName={"conference"}
+                  // value={newComboBoxValue}
                   value={comboBoxValue}
+                  // setValue={setNewComboBoxValue}
                   setValue={setComboBoxValue}
                 />
               )}
@@ -216,9 +234,19 @@ const DashboardLayout = () => {
         </div>
         {/* <Outlet /> */}
         {pathname === "/" ? <Conferences /> : <Outlet />}
+        {/* {pathname === "/" ? (
+          <Conferences setNewComboBoxValue={setNewComboBoxValue} />
+        ) : (
+          <Outlet context={[newComboBoxValue, setNewComboBoxValue]} />
+        )} */}
       </div>
     </div>
   );
 };
 
 export default DashboardLayout;
+
+// export default withAuthenticationRequired(DashboardLayout, {
+//   // Show a message while the user waits to be redirected to the login page.
+//   onRedirecting: () => <div>Redirecting you to the login page...</div>,
+// });

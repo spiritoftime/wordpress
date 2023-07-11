@@ -84,13 +84,15 @@ const Contact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
+    // country: z.string(),
+    // title: z.string(),
     country: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.any(),
+      label: z.any(),
     }),
     title: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.any(),
+      label: z.any(),
     }),
     email: z.string().min(1, {
       message: "Required",
@@ -126,6 +128,7 @@ const Contact = () => {
   };
 
   const onSubmit = (data) => {
+    console.log(data);
     data.country = data.country["value"];
     data.title = data.title["value"];
 

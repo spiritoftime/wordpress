@@ -2,6 +2,8 @@ const express = require("express");
 const {
   getSpeaker,
   getSpeakers,
+  getSpeakerForConference,
+  getSpeakersForConference,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,
@@ -18,5 +20,9 @@ router
   .put(updateSpeaker);
 
 router.route("/add-to-conference/:conferenceId").post(addSpeakersToConference);
+router.route("/conference/:conferenceId").get(getSpeakersForConference);
+router
+  .route("/conference/:speakerId/:conferenceId/")
+  .get(getSpeakerForConference);
 
 module.exports = router;

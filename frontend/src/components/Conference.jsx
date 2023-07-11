@@ -26,7 +26,7 @@ import { formatDate } from "../utils/convertDate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { editConference } from "../services/conferences";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 const Conference = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -102,6 +102,8 @@ const Conference = () => {
   };
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
+  // const [newComboBoxValue] = useOutletContext();
+
   useEffect(() => {
     if (conference) {
       form.reset({
@@ -119,8 +121,10 @@ const Conference = () => {
       replace([...rooms]);
     }
   }, [conference]);
+
   return (
     <div className="flex flex-col w-full p-12">
+      {/* <h1 className="text-4xl font-bold">{newComboBoxValue}</h1> */}
       <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
       <div className="flex w-full gap-6">
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">

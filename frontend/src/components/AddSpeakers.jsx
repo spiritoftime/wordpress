@@ -121,9 +121,11 @@ const AddSpeakers = () => {
     },
     {
       onSuccess: () => {
-        //queryClient.invalidateQueries(["conferences"], { exact: true });
+        queryClient.invalidateQueries(["speakers", conferenceId], {
+          exact: true,
+        });
         form.reset();
-        // navigate("/");
+        navigate(`/conferences/speakers/${conferenceId}`);
         showToaster("Speakers Added");
       },
     }
@@ -147,8 +149,8 @@ const AddSpeakers = () => {
       <PageHeader rowType="Add Speakers" hasButton={false} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <p className="mt-10 text-base font-bold">Add Existing Contact</p>
-          <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-2">
+          <p className="mt-3 text-base font-bold">Add Existing Contact</p>
+          <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5">
             <div className="w-[100%]">
               {speakers.map((field, index) => (
                 <div

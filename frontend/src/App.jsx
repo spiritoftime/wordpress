@@ -11,7 +11,9 @@ import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
 import AddSpeakers from "./components/AddSpeakers";
+import Speakers from "./components/Speakers";
 import NotFound from "./components/NotFound";
+import Speaker from "./components/Speaker";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -28,7 +30,13 @@ function App() {
       >
         <Route path="conferences">
           <Route path=":conferenceId" element={<Conference />} />
-          <Route path="speakers/:conferenceId" element={<AddSpeakers />} />
+          <Route path="speakers/:conferenceId" element={<Speakers />} />
+          <Route
+            path="speakers/:conferenceId/:speakerId"
+            element={<Speaker />}
+          />
+          <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
+
           <Route
             path="sessions/:conferenceId"
             element={<div>This is the session page</div>}

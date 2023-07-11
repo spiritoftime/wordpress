@@ -1,9 +1,16 @@
 const db = require("../db/models");
-const { Speaker, Topic, TopicSpeaker, ConferenceSpeaker } = db;
+const {
+  Speaker,
+  Topic,
+  TopicSpeaker,
+  ConferenceSpeaker,
+  Conference,
+  Session,
+  SessionSpeaker,
+} = db;
 const { Op } = require("sequelize");
 
 const {
-  getAuthAccessToken,
   updateUserInAuth,
   addUserToAuth,
   getUserFromAuth,
@@ -24,6 +31,42 @@ const getSpeakers = async (req, res) => {
   try {
     const speakers = await Speaker.findAll();
     return res.status(200).json(speakers);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+const getSpeakersForConference = async (req, res) => {
+  const { conferenceId } = req.params;
+  console.log(conferenceId);
+  try {
+    const speakers = await Speaker.findAll({
+      include: [{ model: Conference, where: { id: conferenceId } }],
+    });
+    // const speakersId = [];
+    // // console.log(speakers);
+    // speakers.forEach((speaker) => {
+    //   console.log(speaker.dataValues.id);
+    //   speakersId.push(speaker.dataValues.id);
+    // });
+    // console.log(speakersId);
+    // const speakersSession = await SessionSpeaker.findAll({
+    //   where: { speakerId: { [Op.or]: speakersId } },
+    // });
+    // console.log(speakersSession);
+    return res.status(200).json(speakers);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+const getSpeakerForConference = async (req, res) => {
+  const { speakerId, conferenceId } = req.params;
+  try {
+    const speaker = await Speaker.findByPk(speakerId, {
+      include: [{ model: Topic, where: { conferenceId: conferenceId } }],
+    });
+    return res.status(200).json(speaker);
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -82,7 +125,10 @@ const addSpeakersToConference = async (req, res) => {
 
       for (const key in speakerItems[i]) {
         if (key !== "name" && speakerItems[i][key].length > 0) {
-          topicsArr.push({ title: speakerItems[i][key] });
+          topicsArr.push({
+            title: speakerItems[i][key],
+            conferenceId: conferenceId,
+          });
         }
       }
       // If topics were provided
@@ -181,6 +227,8 @@ async function updateSpeaker(req, res) {
 module.exports = {
   getSpeaker,
   getSpeakers,
+  getSpeakerForConference,
+  getSpeakersForConference,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,

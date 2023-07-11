@@ -21,6 +21,14 @@ module.exports = {
           key: "id",
         },
       },
+      conference_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "conferences",
+          key: "id",
+        },
+      },
       start_time: {
         type: Sequelize.DATE,
         allowNull: true,
