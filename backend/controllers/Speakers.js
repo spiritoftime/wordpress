@@ -17,6 +17,7 @@ const {
   deleteUserFromAuth,
 } = require("../utils");
 
+// Function to get a specific contact
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   try {
@@ -29,20 +30,57 @@ const getSpeaker = async (req, res) => {
   }
 };
 
+// Function to get all contacts
 const getSpeakers = async (req, res) => {
   try {
-    const speakers = await Speaker.findAll();
+    const speakers = await Speaker.findAll({
+      order: [["id", "ASC"]],
+    });
+    console.log(speakers);
     return res.status(200).json(speakers);
   } catch (err) {
     return res.status(500).json(err);
   }
 };
 
+// Function to get contacts that are not added to the specific conference
+const getContactsForAdding = async (req, res) => {
+  const { conferenceId } = req.params;
+  const finalSpeakers = [];
+  try {
+    const speakers = await Speaker.findAll({
+      order: [["id", "ASC"]],
+      include: [{ model: Conference }],
+    });
+    speakers.forEach((speaker) => {
+      const joinedConferences = [];
+      if (speaker.dataValues?.Conferences) {
+        for (let i = 0; i < speaker.dataValues.Conferences.length; i++) {
+          joinedConferences.push(speaker.dataValues.Conferences[i].id);
+        }
+      }
+      if (!joinedConferences.includes(+conferenceId)) {
+        finalSpeakers.push(speaker);
+      }
+    });
+    return res.status(200).json(finalSpeakers);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+// Function to get speakers for a specific conference
 const getSpeakersForConference = async (req, res) => {
   const { conferenceId } = req.params;
   try {
     const speakers = await Speaker.findAll({
-      include: [{ model: Conference, where: { id: conferenceId } }],
+      include: [
+        {
+          model: Conference,
+          where: { id: conferenceId },
+        },
+      ],
+      order: [["id", "ASC"]],
     });
     // const speakersId = [];
     // // console.log(speakers);
@@ -230,6 +268,7 @@ module.exports = {
   getSpeakers,
   getSpeakerForConference,
   getSpeakersForConference,
+  getContactsForAdding,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,

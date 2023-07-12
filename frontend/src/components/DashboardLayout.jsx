@@ -44,8 +44,6 @@ const DashboardLayout = () => {
   const { comboBoxValue, setComboBoxValue, setConference } = useAppContext();
   const getAccessToken = useGetAccessToken();
 
-  console.log("ComboBox value: ", comboBoxValue);
-
   const { data: conferences, isLoading: isConferencesFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
@@ -59,7 +57,6 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    console.log("test");
     if (conferenceId !== undefined) {
       if (!isConferencesFetching) {
         const conference = conferences.find((c) => {

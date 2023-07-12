@@ -4,6 +4,10 @@ export function getContacts(accessToken) {
   return makeRequest("/speakers", accessToken);
 }
 
+export function getContactsForAddingSpeakers(accessToken, conferenceId) {
+  return makeRequest(`/speakers/input/${conferenceId}`, accessToken);
+}
+
 export function getSpeakers(accessToken, conferenceId) {
   return makeRequest(`/speakers/conference/${conferenceId}`, accessToken);
 }

@@ -31,8 +31,6 @@ const Speaker = () => {
     cacheTime: 0, // Disable data cache
   });
 
-  console.log(speakerFromFetch);
-
   return (
     <div className="w-full p-10">
       <div className="flex gap-4 justify-normal">

@@ -1,5 +1,8 @@
 import useGetContacts from "../custom_hooks/useQueries";
-import { addContactToConference } from "../services/contacts";
+import {
+  addContactToConference,
+  getContactsForAddingSpeakers,
+} from "../services/contacts";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useAppContext } from "../context/appContext";
 import {
@@ -21,7 +24,7 @@ import Loading from "./Loading";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 const AddSpeakers = () => {
@@ -35,7 +38,15 @@ const AddSpeakers = () => {
     data: speakersName,
     isLoading: isSpeakersNameLoading,
     isFetching: isSpeakersNameFetching,
-  } = useGetContacts();
+  } = useQuery({
+    queryKey: ["speakersName", conferenceId],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getContactsForAddingSpeakers(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+    cacheTime: 0,
+  });
 
   const FormSchema = z.object({
     speakerItems: z.array(
