@@ -24,6 +24,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 import { Edit, Loader2 } from "lucide-react";
 
 import Combobox from "./Combobox";
@@ -57,7 +63,7 @@ const Contact = () => {
   const { contactId } = useParams();
 
   const { data: contactFromFetch, isSuccess: fetchSuccess } = useQuery({
-    queryKey: ["contact"],
+    queryKey: ["contact", contactId],
     queryFn: async () => {
       if (contact) {
         return contact;
@@ -69,6 +75,8 @@ const Contact = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0, // Disable data cache
   });
+
+  console.log(contactFromFetch);
 
   useEffect(() => {
     if (fetchSuccess) {
@@ -87,12 +95,12 @@ const Contact = () => {
     // country: z.string(),
     // title: z.string(),
     country: z.object({
-      value: z.any(),
-      label: z.any(),
+      value: z.string(),
+      label: z.string(),
     }),
     title: z.object({
-      value: z.any(),
-      label: z.any(),
+      value: z.string(),
+      label: z.string(),
     }),
     email: z.string().min(1, {
       message: "Required",
@@ -117,6 +125,11 @@ const Contact = () => {
       isAdmin: false,
     },
   });
+
+  console.log("Form: ", form);
+  console.log("Error: ", form.formState.errors);
+
+  const watch = form.watch;
 
   const handleInputClick = () => {
     inputRef.current.click();
@@ -151,8 +164,8 @@ const Contact = () => {
   const prefillData = (data) => {
     form.setValue("firstName", data.firstName);
     form.setValue("lastName", data.lastName);
-    form.setValue("country", { value: data.country, lable: data.country });
-    form.setValue("title", { value: data.title, lable: data.title });
+    form.setValue("country", { value: data.country, label: data.country });
+    form.setValue("title", { value: data.title, label: data.title });
     form.setValue("email", data.email);
     form.setValue("organisation", data.organisation);
     form.setValue("biography", data.biography);
@@ -452,10 +465,23 @@ const Contact = () => {
           </Form>
         </TabsContent>
         <TabsContent value="conferences">
-          List of participated conferences here.
+          {/* {contactFromFetch &&
+            contactFromFetch["Conferences"].map((conference, index) => (
+              <Accordion
+                type="single"
+                collapsible
+                key={`${conference.name}-${index}`}
+              >
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{conference.name}</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))} */}
         </TabsContent>
       </Tabs>
-
       <Toaster />
     </div>
   );

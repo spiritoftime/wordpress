@@ -59,7 +59,7 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-
+    console.log("test");
     if (conferenceId !== undefined) {
       if (!isConferencesFetching) {
         const conference = conferences.find((c) => {
@@ -84,12 +84,14 @@ const DashboardLayout = () => {
         return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
 
-      if (matchedConferencePath) {
-        navigate(`/conferences/${conference.id}`);
-      } else if (pathname !== "/") {
-        const newPath = pathname.slice(0, -2);
-        navigate(`${newPath}/${conference.id}`);
-      }
+      // if (matchedConferencePath) {
+      //   navigate(`/conferences/${conference.id}`);
+      // } else if (pathname !== "/") {
+      //   const newPath = pathname.slice(0, -2);
+      //   navigate(`${newPath}/${conference.id}`);
+      // }
+
+      navigate(`/conferences/${conference.id}`);
 
       setConference(conference);
     }
@@ -158,7 +160,7 @@ const DashboardLayout = () => {
       <div className="flex flex-1">
         <div className="border-r-2 ">
           <div className="flex flex-col items-center gap-6 px-3 pt-8 ">
-            <Link to={"/"}>
+            <Link to={`/conferences/${conferenceId}`}>
               <div
                 className={cn(
                   (pathname.endsWith("dashboard") ||
@@ -171,7 +173,7 @@ const DashboardLayout = () => {
                 )}
               >
                 <Home />
-                <h3 className="font-bold">Conferences</h3>
+                <h3 className="font-bold">Conference</h3>
               </div>
             </Link>
             {!conferenceSelected && (

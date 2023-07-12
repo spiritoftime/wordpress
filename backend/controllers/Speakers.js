@@ -20,7 +20,9 @@ const {
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   try {
-    const speaker = await Speaker.findByPk(speakerId);
+    const speaker = await Speaker.findByPk(speakerId, {
+      include: [{ model: Conference }],
+    });
     return res.status(200).json(speaker);
   } catch (err) {
     return res.status(500).json(err);
@@ -38,7 +40,6 @@ const getSpeakers = async (req, res) => {
 
 const getSpeakersForConference = async (req, res) => {
   const { conferenceId } = req.params;
-  console.log(conferenceId);
   try {
     const speakers = await Speaker.findAll({
       include: [{ model: Conference, where: { id: conferenceId } }],

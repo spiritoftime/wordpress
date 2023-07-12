@@ -68,20 +68,17 @@ const AddContact = () => {
     }),
     organisation: z.string().optional(),
     biography: z.string().optional(),
-    photo: z.any(),
+    // photo: z.any(),
     isAdmin: z.boolean().optional(),
-    // photo: z
-    //   .any()
-    //   .refine((value) => value.length === 0, "Required")
-    //   .refine(
-    //     // (files) => console.log(files),
-    //     (file) => file?.size <= maxFileSize,
-    //     `Max image size is 5MB.`
-    //   )
-    //   .refine(
-    //     (file) => acceptedImageTypes.includes(file?.type),
-    //     "Only .jpg, .jpeg and .png formats are supported."
-    //   ),
+    photo: z.any().refine(
+      (file) => {
+        const isValid = file?.size <= maxFileSize && file?.size >= 0;
+        return isValid;
+      },
+      {
+        message: `Please upload an image that is less than 5MB.`,
+      }
+    ),
   });
 
   const form = useForm({
@@ -166,7 +163,8 @@ const AddContact = () => {
   const onSubmit = (data) => {
     data.country = data.country["value"];
     data.title = data.title["value"];
-    uploadContact(data);
+    console.log(data);
+    // uploadContact(data);
   };
 
   return (

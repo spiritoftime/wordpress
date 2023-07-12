@@ -123,9 +123,8 @@ const Conference = () => {
   }, [conference]);
 
   return (
-    <div className="flex flex-col w-full p-12">
-      {/* <h1 className="text-4xl font-bold">{newComboBoxValue}</h1> */}
-      <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
+    <div className="flex flex-col w-full p-10">
+      <h1 className="text-3xl font-bold">{comboBoxValue}</h1>
       <div className="flex w-full gap-6">
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total speakers</h2>
