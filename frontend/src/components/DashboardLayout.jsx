@@ -157,7 +157,13 @@ const DashboardLayout = () => {
       <div className="flex flex-1">
         <div className="border-r-2 ">
           <div className="flex flex-col items-center gap-6 px-3 pt-8 ">
-            <Link to={`/conferences/${conferenceId}`}>
+            <Link
+              to={
+                pathname.includes("conferences")
+                  ? `/conferences/${conferenceId}`
+                  : "/"
+              }
+            >
               <div
                 className={cn(
                   (pathname.endsWith("dashboard") ||
