@@ -82,6 +82,9 @@ const getSpeakersForConference = async (req, res) => {
       ],
       order: [["id", "ASC"]],
     });
+
+    // Code below is to calculate the number of session that each speaker is in. Not completed.
+
     // const speakersId = [];
     // // console.log(speakers);
     // speakers.forEach((speaker) => {

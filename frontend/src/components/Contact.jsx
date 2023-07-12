@@ -32,6 +32,7 @@ import {
 } from "./ui/accordion";
 import { Edit, Loader2 } from "lucide-react";
 
+import Loading from "./Loading";
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import { useForm } from "react-hook-form";
@@ -65,23 +66,16 @@ const Contact = () => {
   const { data: contactFromFetch, isSuccess: fetchSuccess } = useQuery({
     queryKey: ["contact", contactId],
     queryFn: async () => {
-      if (contact) {
-        return contact;
-      } else {
-        const accessToken = await getAccessToken();
-        return getContact(contactId, accessToken);
-      }
+      const accessToken = await getAccessToken();
+      return getContact(contactId, accessToken);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0, // Disable data cache
   });
 
-  console.log(contactFromFetch);
-
   useEffect(() => {
     if (fetchSuccess) {
       prefillData(contactFromFetch);
-      // queryClient.invalidateQueries(["contact"], { exact: true });
     }
   }, [fetchSuccess]);
 
@@ -126,10 +120,10 @@ const Contact = () => {
     },
   });
 
-  console.log("Form: ", form);
-  console.log("Error: ", form.formState.errors);
+  // console.log("Form: ", form);
+  // console.log("Error: ", form.formState.errors);
 
-  const watch = form.watch;
+  // const watch = form.watch;
 
   const handleInputClick = () => {
     inputRef.current.click();
@@ -227,6 +221,10 @@ const Contact = () => {
       }
     }
   }, [updateHasError, updateError]);
+
+  if (!fetchSuccess) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full p-10">
@@ -465,7 +463,7 @@ const Contact = () => {
           </Form>
         </TabsContent>
         <TabsContent value="conferences">
-          {/* {contactFromFetch &&
+          {contactFromFetch && contactFromFetch["Conferences"].length > 0 ? (
             contactFromFetch["Conferences"].map((conference, index) => (
               <Accordion
                 type="single"
@@ -479,7 +477,13 @@ const Contact = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            ))} */}
+            ))
+          ) : (
+            <p className="p-3">
+              {`${contactFromFetch.title} ${contactFromFetch.firstName} ${contactFromFetch.lastName} did not participate in any
+              conference.`}
+            </p>
+          )}
         </TabsContent>
       </Tabs>
       <Toaster />
