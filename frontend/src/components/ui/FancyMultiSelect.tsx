@@ -17,6 +17,7 @@ export const FancyMultiSelect = ({
   onChange,
   options: FRAMEWORKS,
   defaultValue,
+  readOnly = false,
 }: Props) => {
   // console.log("defaultValue", defaultValue);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -77,7 +78,7 @@ export const FancyMultiSelect = ({
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === "Enter" && !readOnly) {
                       handleUnselect(framework);
                     }
                   }}
@@ -85,7 +86,9 @@ export const FancyMultiSelect = ({
                     e.preventDefault();
                     e.stopPropagation();
                   }}
-                  onClick={() => handleUnselect(framework)}
+                  onClick={() => {
+                    if (!readOnly) handleUnselect(framework);
+                  }}
                 >
                   <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                 </button>

@@ -3,10 +3,11 @@
 
 import { FancyMultiSelect } from "./ui/FancyMultiSelect";
 
-export default function FormMultiSelect({ field, options }) {
+export default function FormMultiSelect({ field, options, readOnly = false }) {
   // console.log("field", field);
   return (
     <FancyMultiSelect
+      readOnly={readOnly}
       options={options}
       defaultValue={field?.value}
       onChange={(values) => {

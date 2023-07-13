@@ -65,7 +65,7 @@ const TopicFieldArray = ({ control, fields: topicDetails }) => {
                 <FormItem>
                   {index === 0 && <FormLabel>Topic:</FormLabel>}
                   <FormControl>
-                    <Input placeholder="Topic" {...field} />
+                    <Input readOnly={true} placeholder="Topic" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -80,7 +80,11 @@ const TopicFieldArray = ({ control, fields: topicDetails }) => {
                 <FormItem>
                   {index === 0 && <FormLabel>Speaker:</FormLabel>}
                   <FormControl>
-                    <FormMultiSelect options={speakers} field={field} />
+                    <FormMultiSelect
+                      readOnly={true}
+                      options={speakers}
+                      field={field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
