@@ -13,7 +13,7 @@ import { FormControl } from "./ui/form";
 
 export function SelectOption({ options, placeholder, field }) {
   return (
-    <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <Select onValueChange={field.onChange} defaultValue={field?.value}>
       <FormControl>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />

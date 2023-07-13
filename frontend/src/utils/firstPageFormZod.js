@@ -19,8 +19,9 @@ const zodForDates = z
   })
   .refine(
     (data) => {
+      // console.log("dattttaaaaaa", data);
       const isValid = isTimeLater(data.startTime, data.endTime);
-
+      // console.log("checktime", isValid);
       return isValid;
     },
     {
@@ -38,10 +39,37 @@ const zodForRest = z.object({
     message: "Please input a date",
   }),
   sessionType: z.enum(["Symposia", "Masterclass"]),
+  presentationDuration: z
+    .number()
+    .positive({ message: "Value must be positive" })
+    .int({ message: "Value must be an integer" })
+    .or(z.string())
+    .pipe(
+      z.coerce
+        .number()
+        .positive({ message: "Value must be positive" })
+        .int({ message: "Value must be an integer" })
+    ),
+  discussionDuration: z
+    .number()
+    .positive({ message: "Value must be positive" })
+    .int({ message: "Value must be an integer" })
+    .or(z.string())
+    .pipe(
+      z.coerce
+        .number()
+        .positive({ message: "Value must be positive" })
+        .int({ message: "Value must be an integer" })
+    ),
   speakers: z.array(
     z.object({
       speakerRole: z.string().nonempty("Required"),
-      speaker: z.array(z.string().nonempty("Required")),
+      speaker: z.array(
+        z.object({
+          value: z.string().nonempty("Required"),
+          label: z.string().nonempty("Required"),
+        })
+      ),
     })
     // .refine((value) => value.some((item) => item), {
     //   message: "You have to select at least one item.",

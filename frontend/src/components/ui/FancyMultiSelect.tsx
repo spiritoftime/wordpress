@@ -13,10 +13,17 @@ interface Props {
   onChange?: (values: { value: string; label: string }[]) => void;
 }
 
-export const FancyMultiSelect = ({ onChange, options: FRAMEWORKS }: Props) => {
+export const FancyMultiSelect = ({
+  onChange,
+  options: FRAMEWORKS,
+  defaultValue,
+}: Props) => {
+  // console.log("defaultValue", defaultValue);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<Framework[]>([]);
+  const [selected, setSelected] = React.useState<Framework[]>(
+    defaultValue || []
+  );
   const [inputValue, setInputValue] = React.useState("");
 
   const handleUnselect = React.useCallback((framework: Framework) => {
@@ -49,8 +56,8 @@ export const FancyMultiSelect = ({ onChange, options: FRAMEWORKS }: Props) => {
       return JSON.stringify(framework) === JSON.stringify(selectedFramework);
     });
   });
-
-  console.log("selectables", selectables);
+  // console.log("selected", selected);
+  // console.log("selectables", selectables);
   React.useEffect(() => {
     onChange?.(selected);
     // eslint-disable-next-line react-hooks/exhaustive-deps

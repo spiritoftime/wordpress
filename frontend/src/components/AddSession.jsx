@@ -13,6 +13,7 @@ import AddSessionPageThree from "./AddSessionPageThree";
 import { formSchemas } from "../utils/multiPageFormZod";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
+  console.log("formstep", formStep);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
@@ -27,20 +28,25 @@ const AddSession = () => {
       sessionCode: "",
       location: "",
       isPublish: false,
+      presentationDuration: 0,
+      discussionDuration: 0,
       // sessionType: "Symposia",
       speakers: [{}],
+      // topics: [{}],
     },
-    mode: "onChange",
+    mode: "all",
   });
   const {
     control,
     watch,
+    getValues,
     formState: { errors, isValid },
   } = form;
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("data", data);
   };
-  // console.log(errors);
+  console.log(errors, "errors");
+  console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">
@@ -61,7 +67,9 @@ const AddSession = () => {
             >
               {formStep === 0 && <AddSessionPageOne control={control} />}
               {formStep === 1 && <AddSessionPageTwo control={control} />}
-              {formStep === 2 && <AddSessionPageThree control={control} />}
+              {formStep === 2 && (
+                <AddSessionPageThree getValues={getValues} control={control} />
+              )}
             </MultiPageForm>
           </form>
         </Form>

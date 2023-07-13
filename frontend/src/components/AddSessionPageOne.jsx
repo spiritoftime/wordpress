@@ -28,8 +28,8 @@ const AddSessionPageOne = ({ control }) => {
       label: "Next.js",
     },
     {
-      value: "poop.js",
-      label: "Poop.js",
+      value: "react.js",
+      label: "React.js",
     },
   ];
   const {
@@ -40,6 +40,7 @@ const AddSessionPageOne = ({ control }) => {
     control,
     name: "speakers",
   });
+  // console.log("moderators", moderators);
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex items-center gap-6">
@@ -125,22 +126,34 @@ const AddSessionPageOne = ({ control }) => {
           />
         </div>
         <div className="w-[25%]">
-          <FormItem>
-            <FormLabel>{"Presentation Duration (mins):"}</FormLabel>
-            <FormControl>
-              <Input placeholder="Duration" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          <FormField
+            control={control}
+            name="presentationDuration"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{"Presentation Duration (mins):"}</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Duration" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="w-[25%]">
-          <FormItem>
-            <FormLabel>{"Discussion Duration (mins):"}</FormLabel>
-            <FormControl>
-              <Input placeholder="Duration" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          <FormField
+            control={control}
+            name="discussionDuration"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{"Discussion Duration (mins):"}</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Duration" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
       <div className="flex items-center gap-10">

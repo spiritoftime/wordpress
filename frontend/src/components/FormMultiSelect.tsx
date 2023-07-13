@@ -4,11 +4,14 @@
 import { FancyMultiSelect } from "./ui/FancyMultiSelect";
 
 export default function FormMultiSelect({ field, options }) {
+  // console.log("field", field);
   return (
     <FancyMultiSelect
       options={options}
+      defaultValue={field?.value}
       onChange={(values) => {
-        field.onChange(values.map(({ value }) => value));
+        // console.log("values", values);
+        field.onChange(values.map((data) => data)); // react hook form requires the value
       }}
     />
   );

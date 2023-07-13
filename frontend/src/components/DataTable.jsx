@@ -24,7 +24,7 @@ import {
 } from "./ui/table";
 import { useEffect, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
-import { useNavigate, useOutletContext, useMatch } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 // rowType = 'conferences'/'speakers'/'sessions',etc
 // filterColumn = the key of the column you want to filter
@@ -39,7 +39,9 @@ export function DataTable({
 }) {
   const { setComboBoxValue, setSelectedTopics, selectedTopics } =
     useAppContext();
-  console.log("topics", selectedTopics);
+  // console.log("selected", selectedTopics);
+  const matchedSessionPath = useMatch("/add-session");
+  // console.log("topics", selectedTopics);
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
@@ -64,22 +66,24 @@ export function DataTable({
   });
   // to preserve selected topics state when you click back
   useEffect(() => {
-    if (selectedTopics.length > 0) {
+    if (selectedTopics.length > 0 && matchedSessionPath) {
       const rowsToSelectObj = {};
       selectedTopics.forEach((topic) => {
         rowsToSelectObj[topic.tableRow] = true;
       });
+      table.setRowSelection(selectedTopics);
     }
-    table.setRowSelection(selectedTopics);
   }, []);
   // whenever something is selected, just update the selectedTopics state
   useEffect(() => {
-    const selectedRows = table.getFilteredSelectedRowModel().rows;
-    const newSelectedTopics = selectedRows.map((s) => ({
-      ...s.original,
-      tableRow: s.index,
-    }));
-    setSelectedTopics(newSelectedTopics);
+    if (matchedSessionPath) {
+      const selectedRows = table.getFilteredSelectedRowModel().rows;
+      const newSelectedTopics = selectedRows.map((s) => ({
+        ...s.original,
+        tableRow: s.index,
+      }));
+      setSelectedTopics(newSelectedTopics);
+    }
   }, [table.getFilteredSelectedRowModel().rows.length]);
   // console.log("state", table.getState());
   // console.log("selected", table.getFilteredSelectedRowModel().rows);
