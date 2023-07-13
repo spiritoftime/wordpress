@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { useAppContext } from "../context/appContext";
 
 const TopicFieldArray = ({ control, fields: topicDetails }) => {
-  const speakers = [{ value: "", label: "" }];
+  const noOptions = [{ value: "", label: "" }];
   console.log("topicdetails", topicDetails);
 
   return (
@@ -82,7 +82,7 @@ const TopicFieldArray = ({ control, fields: topicDetails }) => {
                   <FormControl>
                     <FormMultiSelect
                       readOnly={true}
-                      options={speakers}
+                      options={noOptions}
                       field={field}
                     />
                   </FormControl>

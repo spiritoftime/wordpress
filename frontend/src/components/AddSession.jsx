@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "./PageHeader";
 import { FormProgress } from "./FormProgress";
 import { useAppContext } from "../context/appContext";
@@ -40,11 +40,15 @@ const AddSession = () => {
     control,
     watch,
     getValues,
+    unregister,
     formState: { errors, isValid },
   } = form;
   const onSubmit = (data) => {
     console.log("data", data);
   };
+  useEffect(() => {
+    if (formStep !== 2) unregister("topics");
+  }, [formStep, unregister]);
 
   console.log(errors, "errors");
   console.log("form validity", isValid);

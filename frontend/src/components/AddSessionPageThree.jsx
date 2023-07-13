@@ -19,9 +19,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
   const { selectedTopics } = useAppContext();
   const [isAllocated, setIsAllocated] = useState(false);
   const [topicsToAppend, setTopicsToAppend] = useState([]);
-  console.log("selected topics", selectedTopics);
 
-  console.log("haiyaaaaaaa");
   return (
     <div className="flex flex-col gap-6">
       <AddSessionPageOne control={control} />
