@@ -11,51 +11,69 @@ const AddSessionPageThree = ({ control, getValues }) => {
     fields: topicDetails,
     append,
     remove,
+    update,
   } = useFieldArray({
     control,
     name: "topics",
   });
   const { selectedTopics } = useAppContext();
   const [isAllocated, setIsAllocated] = useState(false);
+  const [topicsToAppend, setTopicsToAppend] = useState([]);
   console.log("selected topics", selectedTopics);
-  useEffect(() => {
-    let appendTopics = [];
-    selectedTopics.forEach((topic, index) => {
-      const appendTopic = {};
-      appendTopic[`topic`] = topic.title;
-      // if only one speaker in the row selected
-      if (typeof topic.speaker === "string") {
-        appendTopic[`speakers`] = [
-          { value: topic.speaker, label: topic.speaker },
-        ];
-      } else if (Array.isArray(topic.speaker)) {
-        const speakers = [];
-        topic.speaker.forEach((speaker) => {
-          speakers.push({ value: speaker, label: speaker });
-        });
-        appendTopic[`speakers`] = [...topic.speaker];
-      }
-      appendTopics.push(appendTopic);
-    });
-    const presentationDuration = +getValues("presentationDuration");
-    const discussionDuration = +getValues("discussionDuration");
-    const startTime = getValues("startTime");
-    appendTopics = allocateTime(
-      appendTopics,
-      startTime,
-      presentationDuration,
-      discussionDuration
-    );
-    remove(0);
-    append(appendTopics);
-  }, [isAllocated]);
+
+  console.log("haiyaaaaaaa");
   return (
     <div className="flex flex-col gap-6">
       <AddSessionPageOne control={control} />
       <div>
         <Button
           onClick={() => {
-            // update the fields and reallocate time
+            let appendTopics = [];
+            if (!isAllocated) {
+              selectedTopics.forEach((topic, index) => {
+                const appendTopic = {};
+                appendTopic[`topic`] = topic.title;
+                // if only one speaker in the row selected
+                if (typeof topic.speaker === "string") {
+                  appendTopic[`speakers`] = [
+                    { value: topic.speaker, label: topic.speaker },
+                  ];
+                } else if (Array.isArray(topic.speaker)) {
+                  const speakers = [];
+                  topic.speaker.forEach((speaker) => {
+                    speakers.push({ value: speaker, label: speaker });
+                  });
+                  appendTopic[`speakers`] = [...topic.speaker];
+                }
+
+                appendTopics.push(appendTopic);
+              });
+              const presentationDuration = +getValues("presentationDuration");
+              const discussionDuration = +getValues("discussionDuration");
+              const startTime = getValues("startTime");
+              appendTopics = allocateTime(
+                appendTopics,
+                startTime,
+                presentationDuration,
+                discussionDuration
+              );
+              setIsAllocated(true);
+              setTopicsToAppend(appendTopics);
+              remove(0);
+              append(appendTopics);
+            } else {
+              const presentationDuration = +getValues("presentationDuration");
+              const discussionDuration = +getValues("discussionDuration");
+              const startTime = getValues("startTime");
+              appendTopics = allocateTime(
+                topicsToAppend,
+                startTime,
+                presentationDuration,
+                discussionDuration
+              );
+              console.log("append topics", appendTopics);
+              for (const [i, topic] of appendTopics.entries()) update(i, topic);
+            }
           }}
           type="button"
           className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"

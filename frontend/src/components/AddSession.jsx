@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import PageHeader from "./PageHeader";
 import { FormProgress } from "./FormProgress";
 import { useAppContext } from "../context/appContext";
@@ -45,6 +45,7 @@ const AddSession = () => {
   const onSubmit = (data) => {
     console.log("data", data);
   };
+
   console.log(errors, "errors");
   console.log("form validity", isValid);
   return (
