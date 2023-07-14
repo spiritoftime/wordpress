@@ -53,8 +53,8 @@ const Conferences = ({ setNewComboBoxValue }) => {
       ),
     },
     {
-      accessorKey: "venue",
-      header: "Venue",
+      accessorKey: "country",
+      header: "Country",
     },
     {
       accessorKey: "startDate",

@@ -91,13 +91,11 @@ const Speaker = () => {
 
   useEffect(() => {
     if (fetchSuccess) {
-      console.log(speakerFromFetch);
       prefillData(speakerFromFetch);
     }
   }, [fetchSuccess]);
 
   const prefillData = (data) => {
-    console.log(data);
     if (data["Topics"] && data["Topics"].length > 0) {
       form.setValue("topicOne", {
         id: data["Topics"][0]?.id ?? "",
