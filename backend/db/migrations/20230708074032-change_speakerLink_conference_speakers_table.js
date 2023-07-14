@@ -11,7 +11,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.changeColumn("conference_speakers", "speaker_link", {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     });
   },
 };

@@ -16,22 +16,46 @@ import { SelectOption } from "./SelectOption";
 import { Trash } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "./ui/button";
-import { FancyMultiSelect } from "./ui/FancyMultiSelect";
 import FormMultiSelect from "./FormMultiSelect";
+import useGetContacts from "../custom_hooks/useQueries";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { useQuery } from "@tanstack/react-query";
+import { getContacts } from "../services/contacts";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
+  const getAccessToken = useGetAccessToken();
+  const {
+    data: speakers,
+    isLoading: isSpeakersLoading,
+    isFetching: isSpeakersFetching,
+  } = useQuery({
+    queryKey: ["contactNames"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      const contacts = await getContacts(accessToken);
+      const contactNames = await contacts.map((contact) => {
+        const res = {};
+        res.value = contact.fullName;
+        res.label = contact.fullName;
+        return res;
+      });
+      return contactNames;
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  console.log("speakers", speakers);
   //  to query
-  const speakers = [
-    {
-      value: "next.js",
-      label: "Next.js",
-    },
-    {
-      value: "react.js",
-      label: "React.js",
-    },
-  ];
+  // const speakers = [
+  //   {
+  //     value: "next.js",
+  //     label: "Next.js",
+  //   },
+  //   {
+  //     value: "react.js",
+  //     label: "React.js",
+  //   },
+  // ];
   const {
     fields: moderators,
     append,
