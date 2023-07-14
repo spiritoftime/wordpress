@@ -44,7 +44,7 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  console.log("speakers", speakers);
+  // console.log("speakers", speakers);
   //  to query
   // const speakers = [
   //   {
@@ -260,20 +260,26 @@ const AddSessionPageOne = ({ control }) => {
                 )}
               />
             </div>
-            <div className={"w-[45%]"}>
-              <FormField
-                control={control}
-                name={`speakers.${index}.speaker`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <FormMultiSelect options={speakers} field={field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {
+              <div className={"w-[45%]"}>
+                <FormField
+                  control={control}
+                  name={`speakers.${index}.speaker`}
+                  render={({ field }) => {
+                    return (
+                      !isSpeakersFetching && (
+                        <FormItem>
+                          <FormControl>
+                            <FormMultiSelect options={speakers} field={field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    );
+                  }}
+                />
+              </div>
+            }
 
             {index > 0 && (
               <div>
