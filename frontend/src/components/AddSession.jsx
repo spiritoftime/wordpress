@@ -34,7 +34,7 @@ const AddSession = () => {
       speakers: [{}],
       // topics: [{}],
     },
-    mode: "all",
+    mode: "onChange",
   });
   const {
     control,
@@ -47,11 +47,11 @@ const AddSession = () => {
     console.log("data", data);
   };
   useEffect(() => {
-    if (formStep !== 2) unregister("topics");
-  }, [formStep, unregister]);
+    if (formStep !== 2 && getValues("topics")) unregister("topics");
+  }, [formStep, unregister, getValues]);
 
-  console.log(errors, "errors");
-  console.log("form validity", isValid);
+  // console.log(errors, "errors");
+  // console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">

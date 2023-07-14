@@ -36,6 +36,7 @@ export function DataTable({
   rowNavigate,
   setData,
   setNewComboBoxValue,
+  clickable,
 }) {
   const { setComboBoxValue, setSelectedTopics, selectedTopics } =
     useAppContext();
@@ -129,10 +130,13 @@ export function DataTable({
                   <TableRow
                     className="cursor-pointer"
                     onClick={() => {
-                      matchedConferencePath &&
-                        setComboBoxValue(row.original.name);
-                      setData(row.original);
-                      rowNavigate(row.original.id);
+                      // added clickable prop so that user doesnt suddenly get navigated when adding session
+                      if (clickable) {
+                        matchedConferencePath &&
+                          setComboBoxValue(row.original.name);
+                        setData(row.original);
+                        rowNavigate(row.original.id);
+                      }
                     }}
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
