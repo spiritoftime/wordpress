@@ -36,7 +36,6 @@ const getSpeakers = async (req, res) => {
     const speakers = await Speaker.findAll({
       order: [["id", "ASC"]],
     });
-    console.log(speakers);
     return res.status(200).json(speakers);
   } catch (err) {
     return res.status(500).json(err);
@@ -194,7 +193,6 @@ const addSpeakersToConference = async (req, res) => {
 
     return res.status(200).json();
   } catch (err) {
-    console.log(err);
     return res.status(500).json(err);
   }
 };

@@ -7,7 +7,8 @@ const cors = require("cors");
 const { auth } = require("express-oauth2-jwt-bearer");
 
 const conferenceRouter = require("./routes/ConferenceRouter");
-const sepakerRouter = require("./routes/SpeakerRouter");
+const speakerRouter = require("./routes/SpeakerRouter");
+const topicRouter = require("./routes/TopicRouter");
 
 const app = express();
 
@@ -29,7 +30,8 @@ app.use(
 app.use(checkJwt);
 
 app.use("/conferences", conferenceRouter);
-app.use("/speakers", sepakerRouter);
+app.use("/speakers", speakerRouter);
+app.use("/topics", topicRouter);
 
 const port =
   process.env.NODE_ENV === "production"
