@@ -28,7 +28,7 @@ const getSessions = async (req, res) => {
       include: [{ model: Topic }, { model: Room }],
       where: { conferenceId },
     });
-    console.log("sessions", sessions);
+    // console.log("sessions", sessions);
     return res.status(200).json(sessions);
   } catch (err) {
     return res.status(500).json(err);

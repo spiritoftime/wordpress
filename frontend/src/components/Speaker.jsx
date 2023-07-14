@@ -23,6 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Loading from "./Loading";
 
 const Speaker = () => {
   const { speaker, showToaster } = useAppContext();
@@ -95,8 +96,7 @@ const Speaker = () => {
   }, [fetchSuccess]);
 
   const prefillData = (data) => {
-    console.log(data);
-    if (data["Topics"].length > 0) {
+    if (data["Topics"] && data["Topics"].length > 0) {
       form.setValue("topicOne", {
         id: data["Topics"][0]?.id ?? "",
         title: data["Topics"][0]?.title ?? "",
@@ -123,6 +123,10 @@ const Speaker = () => {
 
     updateData(data);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // const watch = form.watch;
 

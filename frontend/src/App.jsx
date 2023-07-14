@@ -38,7 +38,10 @@ function App() {
             path="speakers/:conferenceId/:speakerId"
             element={<Speaker />}
           />
-          <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
+          <Route
+            path="speakers/add-speakers/:conferenceId"
+            element={<AddSpeakers />}
+          />
 
           <Route path="sessions/:conferenceId" element={<Sessions />} />
           <Route
@@ -49,8 +52,11 @@ function App() {
             path="sessions/:conferenceId/:sessionId"
             element={<Session />}
           />
+          <Route
+            path="sessions/add-session/:conferenceId"
+            element={<AddSession />}
+          />
         </Route>
-        <Route path="/add-session" element={<AddSession />} />
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
@@ -60,27 +66,6 @@ function App() {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-
-  // return (
-  //   <Routes>
-  //     {isAuthenticated ? (
-  //       <Route path="/" element={<DashboardLayout />}>
-  //         <Route path="/" element={<Conferences />} />
-  //         <Route path="/conferences/:conferenceId" element={<Conference />} />
-  //         {/* <Route
-  //           path="conferences/:conferenceId/add-speakers"
-  //           element={<AddSpeakers />}
-  //         /> */}
-  //         <Route path="/add-conference" element={<AddConference />} />
-  //         <Route path="/contacts" element={<Contacts />} />
-  //         <Route path="/contacts/:contactId" element={<Contact />} />
-  //         <Route path="/add-contact" element={<AddContact />} />
-  //       </Route>
-  //     ) : (
-  //       <Route path="/" element={<Login />} />
-  //     )}
-  //   </Routes>
-  // );
 }
 
 export default App;

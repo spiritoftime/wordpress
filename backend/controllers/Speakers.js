@@ -48,7 +48,7 @@ const getContactsForAdding = async (req, res) => {
   const finalSpeakers = [];
   try {
     const speakers = await Speaker.findAll({
-      order: [["id", "ASC"]],
+      order: [["firstName", "ASC"]],
       include: [{ model: Conference }],
     });
     speakers.forEach((speaker) => {
@@ -105,9 +105,28 @@ const getSpeakerForConference = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
   try {
     const speaker = await Speaker.findByPk(speakerId, {
-      include: [{ model: Topic, where: { conferenceId: conferenceId } }],
+      include: [
+        {
+          model: Topic,
+          where: { conferenceId: conferenceId },
+          required: false,
+        },
+      ],
     });
     return res.status(200).json(speaker);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+// Function to count all speakers for a conference
+const getTotalSpeakers = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const speakersCount = await ConferenceSpeaker.findAndCountAll({
+      where: { conferenceId: conferenceId },
+    });
+    return res.status(200).json(speakersCount);
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -269,6 +288,7 @@ module.exports = {
   getSpeakers,
   getSpeakerForConference,
   getSpeakersForConference,
+  getTotalSpeakers,
   getContactsForAdding,
   addSpeaker,
   addSpeakersToConference,
