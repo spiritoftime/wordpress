@@ -66,27 +66,6 @@ function App() {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-
-  // return (
-  //   <Routes>
-  //     {isAuthenticated ? (
-  //       <Route path="/" element={<DashboardLayout />}>
-  //         <Route path="/" element={<Conferences />} />
-  //         <Route path="/conferences/:conferenceId" element={<Conference />} />
-  //         {/* <Route
-  //           path="conferences/:conferenceId/add-speakers"
-  //           element={<AddSpeakers />}
-  //         /> */}
-  //         <Route path="/add-conference" element={<AddConference />} />
-  //         <Route path="/contacts" element={<Contacts />} />
-  //         <Route path="/contacts/:contactId" element={<Contact />} />
-  //         <Route path="/add-contact" element={<AddContact />} />
-  //       </Route>
-  //     ) : (
-  //       <Route path="/" element={<Login />} />
-  //     )}
-  //   </Routes>
-  // );
 }
 
 export default App;

@@ -105,7 +105,13 @@ const getSpeakerForConference = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
   try {
     const speaker = await Speaker.findByPk(speakerId, {
-      include: [{ model: Topic, where: { conferenceId: conferenceId } }],
+      include: [
+        {
+          model: Topic,
+          where: { conferenceId: conferenceId },
+          required: false,
+        },
+      ],
     });
     return res.status(200).json(speaker);
   } catch (err) {
