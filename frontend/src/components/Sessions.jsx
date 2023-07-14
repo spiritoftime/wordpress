@@ -77,7 +77,9 @@ const Sessions = () => {
       <div className="container py-10 mx-auto">
         <PageHeader
           rowType="Sessions"
-          handleClick={() => navigate(`/conferences/sessions/add-session`)}
+          handleClick={() =>
+            navigate(`/conferences/sessions/add-session/${conferenceId}`)
+          }
           hasButton={true}
         />
         <DataTable

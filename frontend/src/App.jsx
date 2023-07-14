@@ -38,7 +38,10 @@ function App() {
             path="speakers/:conferenceId/:speakerId"
             element={<Speaker />}
           />
-          <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
+          <Route
+            path="speakers/add-speakers/:conferenceId"
+            element={<AddSpeakers />}
+          />
 
           <Route path="sessions/:conferenceId" element={<Sessions />} />
           <Route
@@ -49,7 +52,10 @@ function App() {
             path="sessions/:conferenceId/:sessionId"
             element={<Session />}
           />
-          <Route path="sessions/add-session" element={<AddSession />} />
+          <Route
+            path="sessions/add-session/:conferenceId"
+            element={<AddSession />}
+          />
         </Route>
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
