@@ -48,9 +48,9 @@ function App() {
             path="program-overview/:conferenceId"
             element={<div>This is the program overview page</div>}
           />
-          <Route path="/sessions/:sessionId" element={<Session />} />
-          <Route path="/add-session" element={<AddSession />} />
         </Route>
+        <Route path="/sessions/:sessionId" element={<Session />} />
+        <Route path="/add-session" element={<AddSession />} />
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
