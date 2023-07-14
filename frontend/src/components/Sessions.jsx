@@ -21,7 +21,7 @@ const Sessions = () => {
     isLoading: isSessionsLoading,
     isFetching: isSessionsFetching,
   } = useQuery({
-    queryKey: ["conferences"],
+    queryKey: ["sessions"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       return getSessions(accessToken, conferenceId);
@@ -77,7 +77,7 @@ const Sessions = () => {
       <div className="container py-10 mx-auto">
         <PageHeader
           rowType="Sessions"
-          handleClick={() => navigate(`/add-session`)}
+          handleClick={() => navigate(`/conferences/sessions/add-session`)}
           hasButton={true}
         />
         <DataTable

@@ -49,8 +49,8 @@ function App() {
             path="sessions/:conferenceId/:sessionId"
             element={<Session />}
           />
+          <Route path="sessions/add-session" element={<AddSession />} />
         </Route>
-        <Route path="/add-session" element={<AddSession />} />
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
