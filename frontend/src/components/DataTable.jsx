@@ -22,9 +22,9 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
-import { useNavigate, useOutletContext, useMatch } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 // rowType = 'conferences'/'speakers'/'sessions',etc
 // filterColumn = the key of the column you want to filter
@@ -36,8 +36,13 @@ export function DataTable({
   rowNavigate,
   setData,
   setNewComboBoxValue,
+  clickable,
 }) {
-  const { setComboBoxValue } = useAppContext();
+  const { setComboBoxValue, setSelectedTopics, selectedTopics } =
+    useAppContext();
+  // console.log("selected", selectedTopics);
+  const matchedSessionPath = useMatch("/add-session");
+  // console.log("topics", selectedTopics);
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
@@ -60,6 +65,30 @@ export function DataTable({
       rowSelection,
     },
   });
+  // to preserve selected topics state when you click back
+  useEffect(() => {
+    if (selectedTopics.length > 0 && matchedSessionPath) {
+      const rowsToSelectObj = {};
+      selectedTopics.forEach((topic) => {
+        rowsToSelectObj[topic.tableRow] = true;
+      });
+      table.setRowSelection(selectedTopics);
+    }
+  }, []);
+  // whenever something is selected, just update the selectedTopics state
+  useEffect(() => {
+    if (matchedSessionPath) {
+      const selectedRows = table.getFilteredSelectedRowModel().rows;
+      const newSelectedTopics = selectedRows.map((s) => ({
+        ...s.original,
+        tableRow: s.index,
+      }));
+      setSelectedTopics(newSelectedTopics);
+    }
+  }, [table.getFilteredSelectedRowModel().rows.length]);
+  // console.log("state", table.getState());
+  // console.log("selected", table.getFilteredSelectedRowModel().rows);
+
   const navigate = useNavigate();
   const matchedConferencePath = useMatch("/");
   return (
@@ -101,10 +130,13 @@ export function DataTable({
                   <TableRow
                     className="cursor-pointer"
                     onClick={() => {
-                      matchedConferencePath &&
-                        setComboBoxValue(row.original.name);
-                      setData(row.original);
-                      rowNavigate(row.original.id);
+                      // added clickable prop so that user doesnt suddenly get navigated when adding session
+                      if (clickable) {
+                        matchedConferencePath &&
+                          setComboBoxValue(row.original.name);
+                        setData(row.original);
+                        rowNavigate(row.original.id);
+                      }
                     }}
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}

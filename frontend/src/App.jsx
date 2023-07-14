@@ -10,10 +10,13 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
-import AddSpeakers from "./components/AddSpeakers";
+import Sessions from "./components/Sessions";
 import Speakers from "./components/Speakers";
-import NotFound from "./components/NotFound";
+import AddSpeakers from "./components/AddSpeakers";
 import Speaker from "./components/Speaker";
+import NotFound from "./components/NotFound";
+import AddSession from "./components/AddSession";
+import Session from "./components/Session";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -37,19 +40,22 @@ function App() {
           />
           <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
 
-          <Route
-            path="sessions/:conferenceId"
-            element={<div>This is the session page</div>}
-          />
+          <Route path="sessions/:conferenceId" element={<Sessions />} />
           <Route
             path="program-overview/:conferenceId"
             element={<div>This is the program overview page</div>}
           />
+          <Route
+            path="sessions/:conferenceId/:sessionId"
+            element={<Session />}
+          />
         </Route>
+        <Route path="/add-session" element={<AddSession />} />
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
         <Route path="add-contact" element={<AddContact />} />
+        {/* <Route path="/sessions" element={<Sessions />} /> */}
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

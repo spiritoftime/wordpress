@@ -54,14 +54,17 @@ const DashboardLayout = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0,
   });
-
+  console.log("wtf is conferences", conferences);
   useEffect(() => {
     if (!isAuthenticated) return;
     if (conferenceId !== undefined) {
       if (!isConferencesFetching) {
+        console.log("conferenceid", conferenceId, "conferences", conferences);
         const conference = conferences.find((c) => {
+          console.log(c, conferenceId, "jesus");
           return c.id === +conferenceId;
         });
+        // console.log(comboBoxValue, conference.name, "wtf");
         // setNewComboBoxValue(conference.name);
         setComboBoxValue(conference.name);
         setConference(conference);

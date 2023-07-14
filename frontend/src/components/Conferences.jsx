@@ -23,8 +23,8 @@ const Conferences = ({ setNewComboBoxValue }) => {
 
   const {
     data: conferences,
-    isLoading: isConferenceFetching,
-    isFetching: isConferenceRefetching,
+    isLoading: isConferenceLoading,
+    isFetching: isConferenceFetching,
   } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
@@ -68,7 +68,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
   ];
 
   // Use isConferenceRefetching to show loading screen when refetching
-  if (isConferenceFetching || isConferenceRefetching)
+  if (isConferenceLoading || isConferenceFetching)
     return (
       <div className="w-full mx-auto">
         <Loading />
@@ -80,7 +80,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
     <>
       <div className="container py-10 mx-auto">
         <PageHeader
-          rowType="Conference"
+          rowType="Conferences"
           handleClick={() => navigate("/add-conference")}
           hasButton={true}
         />
@@ -91,7 +91,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
           filterColumn={"name"}
           rowNavigate={rowNavigate}
           setData={setConference}
-          // setNewComboBoxValue={setNewComboBoxValue}
+          clickable={true}
         />
       </div>
       <Toaster />

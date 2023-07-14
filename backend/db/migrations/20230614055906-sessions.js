@@ -37,13 +37,19 @@ module.exports = {
           key: "id",
         },
       },
+      location:{
+        type: Sequelize.STRING,
+        allowNull: false,
+
+      },
       session_code: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      type: {
-        type: Sequelize.STRING,
+      session_type: {
+        type: Sequelize.ENUM("Symposia", "Masterclass"),
         allowNull: false,
+        defaultValue: "Symposia",
       },
       wordpress_url: {
         type: Sequelize.STRING,

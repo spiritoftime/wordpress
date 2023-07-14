@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "../lib/utils";
@@ -11,6 +10,7 @@ import {
   CommandItem,
 } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useState } from "react";
 
 // normal comboBox that is not part of a react hook form.
 export function NormalComboBox({
@@ -21,7 +21,8 @@ export function NormalComboBox({
   value,
   setValue,
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
   // console.log("Normal ComboBox Options: ", options);
   // console.log("Normal ComboBox Value: ", value);
   return (
