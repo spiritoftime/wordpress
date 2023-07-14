@@ -3,7 +3,7 @@ import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Toaster } from "./ui/toaster";
 
 import { DataTable } from "./DataTable";
@@ -15,7 +15,7 @@ import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
 import { useAppContext } from "../context/appContext";
 
-const Conferences = ({ setNewComboBoxValue }) => {
+const Conferences = () => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();

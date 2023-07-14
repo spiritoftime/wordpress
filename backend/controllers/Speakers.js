@@ -119,6 +119,19 @@ const getSpeakerForConference = async (req, res) => {
   }
 };
 
+// Function to count all speakers for a conference
+const getTotalSpeakers = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const speakersCount = await ConferenceSpeaker.findAndCountAll({
+      where: { conferenceId: conferenceId },
+    });
+    return res.status(200).json(speakersCount);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
 const addSpeaker = async (req, res) => {
   const {
     firstName,
@@ -275,6 +288,7 @@ module.exports = {
   getSpeakers,
   getSpeakerForConference,
   getSpeakersForConference,
+  getTotalSpeakers,
   getContactsForAdding,
   addSpeaker,
   addSpeakersToConference,

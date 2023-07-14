@@ -23,13 +23,25 @@ import * as z from "zod";
 import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
 import { formatDate } from "../utils/convertDate";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { editConference } from "../services/conferences";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { editConference, getSpeakersCount } from "../services/conferences";
+import { useNavigate, useParams } from "react-router-dom";
+
 const Conference = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { conferenceId } = useParams();
+
+  const { data: speakersCount } = useQuery({
+    queryKey: ["conferenceSpeakersCount", conferenceId],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getSpeakersCount(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+
   const FormSchema = z
     .object({
       conferenceName: z.string().min(1, {
@@ -71,8 +83,10 @@ const Conference = () => {
       api: "",
     },
   });
+
   const getAccessToken = useGetAccessToken();
   const control = form.control;
+
   const { mutate: editConferenceMutation } = useMutation({
     mutationFn: async ({ data, conferenceId }) => {
       const accessToken = await getAccessToken();
@@ -82,6 +96,7 @@ const Conference = () => {
       queryClient.invalidateQueries(["conferences"], { exact: true });
     },
   });
+
   const {
     fields: rooms,
     append,
@@ -91,6 +106,7 @@ const Conference = () => {
     control,
     name: "roomItems",
   });
+
   const onSubmit = (data) => {
     data.country = data.country["value"];
     editConferenceMutation({ data, conferenceId: conference.id });
@@ -128,7 +144,9 @@ const Conference = () => {
       <div className="flex w-full gap-6">
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total speakers</h2>
-          <h3 className="text-4xl font-semibold">120</h3>
+          <h3 className="text-4xl font-semibold">
+            {speakersCount ? speakersCount.count : 0}
+          </h3>
         </div>
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total Symposia</h2>

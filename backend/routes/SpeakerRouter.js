@@ -5,6 +5,7 @@ const {
   getSpeakerForConference,
   getSpeakersForConference,
   getContactsForAdding,
+  getTotalSpeakers,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,
@@ -22,6 +23,7 @@ router
 
 router.route("/add-to-conference/:conferenceId").post(addSpeakersToConference);
 router.route("/conference/:conferenceId").get(getSpeakersForConference);
+router.route("/speakers-count/:conferenceId").get(getTotalSpeakers);
 router.route("/input/:conferenceId").get(getContactsForAdding);
 router
   .route("/conference/:speakerId/:conferenceId/")
