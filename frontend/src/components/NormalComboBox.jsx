@@ -23,7 +23,6 @@ export function NormalComboBox({
 }) {
   const [open, setOpen] = useState(false);
 
-  const [open, setOpen] = React.useState(false);
   // console.log("Normal ComboBox Options: ", options);
   // console.log("Normal ComboBox Value: ", value);
   return (

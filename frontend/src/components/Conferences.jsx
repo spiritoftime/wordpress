@@ -91,11 +91,7 @@ const Conferences = ({ setNewComboBoxValue }) => {
           filterColumn={"name"}
           rowNavigate={rowNavigate}
           setData={setConference}
-<<<<<<< HEAD
-          // setNewComboBoxValue={setNewComboBoxValue}
-=======
           clickable={true}
->>>>>>> a6c7e9f (preserved selected table rows at page 2 of multi form page)
         />
       </div>
       <Toaster />
