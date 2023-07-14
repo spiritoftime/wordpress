@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("session_speakers", {
+    await queryInterface.createTable("topic_speakers", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -29,6 +29,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("session_speakers");
+    await queryInterface.dropTable("topic_speakers");
   },
 };

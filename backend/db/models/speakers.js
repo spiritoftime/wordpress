@@ -17,6 +17,15 @@ function initSpeaker(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      fullName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.firstName} ${this.lastName}`;
+        },
+        set(value) {
+          throw new Error("Do not try to set the `fullName` value!");
+        },
+      },
       country: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -36,9 +45,6 @@ function initSpeaker(sequelize) {
       organisation: {
         type: DataTypes.STRING,
         allowNull: true,
-      },
-      wordpressId: {
-        type: DataTypes.BIGINT,
       },
       biography: {
         type: DataTypes.TEXT,

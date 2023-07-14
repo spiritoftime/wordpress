@@ -21,6 +21,7 @@ const getConference = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
 const getConferences = async (req, res) => {
   try {
     const conferences = await Conference.findAll({ include: Room });

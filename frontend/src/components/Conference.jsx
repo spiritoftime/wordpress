@@ -26,7 +26,7 @@ import { formatDate } from "../utils/convertDate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { editConference } from "../services/conferences";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 const Conference = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -35,7 +35,12 @@ const Conference = () => {
       conferenceName: z.string().min(1, {
         message: "Required",
       }),
-      country: z.string().nonempty("Required"),
+      country: z
+        .object({
+          value: z.string().nonempty("Required"),
+          label: z.string().nonempty("Required"),
+        })
+        .required("Required"),
       startDate: z.date().min(new Date("1900-01-01"), {
         message: "Please input a date",
       }),
@@ -60,7 +65,7 @@ const Conference = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       conferenceName: "",
-      country: "",
+      country: {},
       roomItems: [{ room: "" }],
       venue: "",
       api: "",
@@ -87,6 +92,7 @@ const Conference = () => {
     name: "roomItems",
   });
   const onSubmit = (data) => {
+    data.country = data.country["value"];
     editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
     navigate("/");
@@ -96,11 +102,13 @@ const Conference = () => {
   };
   const { toast } = useToast();
   const { comboBoxValue, conference } = useAppContext();
+  // const [newComboBoxValue] = useOutletContext();
+
   useEffect(() => {
     if (conference) {
       form.reset({
         conferenceName: conference.name,
-        country: conference.country,
+        country: { value: conference.country, label: conference.country },
         venue: conference.venue,
         api: conference.wordpressApi,
         startDate: formatDate(conference.startDate),
@@ -113,9 +121,10 @@ const Conference = () => {
       replace([...rooms]);
     }
   }, [conference]);
+
   return (
-    <div className="flex flex-col w-full p-12">
-      <h1 className="text-4xl font-bold">{comboBoxValue}</h1>
+    <div className="flex flex-col w-full p-10">
+      <h1 className="text-3xl font-bold">{comboBoxValue}</h1>
       <div className="flex w-full gap-6">
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total speakers</h2>
@@ -162,12 +171,14 @@ const Conference = () => {
                       <FormItem>
                         <FormLabel>Country:</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={countries}
-                          fieldName="Country"
-                          validateProperty={"value"}
-                          displayProperty={"label"}
+                          displayName="Country"
+                          customHeight="160"
+                          fieldName={field.name}
+                          validateProperty="value"
+                          displayProperty="value"
                         />
                         <FormMessage />
                       </FormItem>

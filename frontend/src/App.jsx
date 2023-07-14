@@ -10,6 +10,10 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Loading from "./components/Loading";
 import Conference from "./components/Conference";
+import AddSpeakers from "./components/AddSpeakers";
+import Speakers from "./components/Speakers";
+import NotFound from "./components/NotFound";
+import Speaker from "./components/Speaker";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -20,20 +24,57 @@ function App() {
 
   return (
     <Routes>
-      {isAuthenticated ? (
-        <Route path="/" element={<DashboardLayout />}>
-          <Route path="/" element={<Conferences />} />
-          <Route path="/conferences/:conferenceId" element={<Conference />} />
-          <Route path="/add-conference" element={<AddConference />} />
-          <Route path="/contacts" element={<Contacts />} />
-          <Route path="/contacts/:contactId" element={<Contact />} />
-          <Route path="/add-contact" element={<AddContact />} />
+      <Route
+        path="/"
+        element={isAuthenticated ? <DashboardLayout /> : <Login />}
+      >
+        <Route path="conferences">
+          <Route path=":conferenceId" element={<Conference />} />
+          <Route path="speakers/:conferenceId" element={<Speakers />} />
+          <Route
+            path="speakers/:conferenceId/:speakerId"
+            element={<Speaker />}
+          />
+          <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
+
+          <Route
+            path="sessions/:conferenceId"
+            element={<div>This is the session page</div>}
+          />
+          <Route
+            path="program-overview/:conferenceId"
+            element={<div>This is the program overview page</div>}
+          />
         </Route>
-      ) : (
-        <Route path="/" element={<Login />} />
-      )}
+        <Route path="add-conference" element={<AddConference />} />
+        <Route path="contacts" element={<Contacts />} />
+        <Route path="contacts/:contactId" element={<Contact />} />
+        <Route path="add-contact" element={<AddContact />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
+
+  // return (
+  //   <Routes>
+  //     {isAuthenticated ? (
+  //       <Route path="/" element={<DashboardLayout />}>
+  //         <Route path="/" element={<Conferences />} />
+  //         <Route path="/conferences/:conferenceId" element={<Conference />} />
+  //         {/* <Route
+  //           path="conferences/:conferenceId/add-speakers"
+  //           element={<AddSpeakers />}
+  //         /> */}
+  //         <Route path="/add-conference" element={<AddConference />} />
+  //         <Route path="/contacts" element={<Contacts />} />
+  //         <Route path="/contacts/:contactId" element={<Contact />} />
+  //         <Route path="/add-contact" element={<AddContact />} />
+  //       </Route>
+  //     ) : (
+  //       <Route path="/" element={<Login />} />
+  //     )}
+  //   </Routes>
+  // );
 }
 
 export default App;

@@ -22,7 +22,8 @@ export function NormalComboBox({
   setValue,
 }) {
   const [open, setOpen] = React.useState(false);
-
+  // console.log("Normal ComboBox Options: ", options);
+  // console.log("Normal ComboBox Value: ", value);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -48,30 +49,38 @@ export function NormalComboBox({
           <CommandEmpty>{`No ${fieldName} found.`}</CommandEmpty>
           <CommandGroup>
             {options &&
-              options.map((option) => (
-                <CommandItem
-                  key={option[validateProperty]}
-                  value={option[validateProperty]}
-                  onSelect={(currentValue) => {
-                    setValue(
-                      currentValue.toUpperCase() === value.toUpperCase()
-                        ? ""
-                        : currentValue.toUpperCase()
-                    );
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      option[validateProperty] === value[validateProperty]
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  {option[displayProperty]}
-                </CommandItem>
-              ))}
+              options.map((option) => {
+                // console.log(option);
+                return (
+                  <CommandItem
+                    key={option[validateProperty]}
+                    value={option[validateProperty]}
+                    onSelect={(currentValue) => {
+                      // If user reselect the same option, do not change the selected value
+                      if (currentValue.toUpperCase() !== value.toUpperCase()) {
+                        setValue(currentValue.toUpperCase());
+                      }
+                      // setValue(
+                      //   currentValue.toUpperCase() === value.toUpperCase()
+                      //     ? ""
+                      //     : currentValue.toUpperCase()
+                      // );
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        option &&
+                          option[validateProperty] === value[validateProperty]
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {option[displayProperty]}
+                  </CommandItem>
+                );
+              })}
           </CommandGroup>
         </Command>
       </PopoverContent>

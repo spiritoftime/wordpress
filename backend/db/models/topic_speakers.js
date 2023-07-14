@@ -1,4 +1,5 @@
 const { sequelize, DataTypes } = require("sequelize");
+
 function initTopicSpeaker(sequelize) {
   const TopicSpeaker = sequelize.define(
     "TopicSpeaker",
@@ -26,7 +27,10 @@ function initTopicSpeaker(sequelize) {
         },
       },
     },
-    { underscored: true, timestamps: false }
+    {
+      underscored: true,
+      timestamps: false,
+    }
   );
   return TopicSpeaker;
 }

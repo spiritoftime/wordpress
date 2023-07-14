@@ -15,19 +15,27 @@ module.exports = {
       },
       session_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "sessions",
           key: "id",
         },
       },
+      conference_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "conferences",
+          key: "id",
+        },
+      },
       start_time: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       end_time: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
       },
     });
   },

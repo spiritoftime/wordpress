@@ -24,8 +24,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 import { Edit, Loader2 } from "lucide-react";
 
+import Loading from "./Loading";
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import { useForm } from "react-hook-form";
@@ -57,14 +64,10 @@ const Contact = () => {
   const { contactId } = useParams();
 
   const { data: contactFromFetch, isSuccess: fetchSuccess } = useQuery({
-    queryKey: ["contact"],
+    queryKey: ["contact", contactId],
     queryFn: async () => {
-      if (contact) {
-        return contact;
-      } else {
-        const accessToken = await getAccessToken();
-        return getContact(contactId, accessToken);
-      }
+      const accessToken = await getAccessToken();
+      return getContact(contactId, accessToken);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0, // Disable data cache
@@ -73,7 +76,6 @@ const Contact = () => {
   useEffect(() => {
     if (fetchSuccess) {
       prefillData(contactFromFetch);
-      // queryClient.invalidateQueries(["contact"], { exact: true });
     }
   }, [fetchSuccess]);
 
@@ -84,8 +86,16 @@ const Contact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
-    country: z.string().nonempty("Required"),
-    title: z.string().nonempty("Required"),
+    // country: z.string(),
+    // title: z.string(),
+    country: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+    title: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
     email: z.string().min(1, {
       message: "Required",
     }),
@@ -110,6 +120,11 @@ const Contact = () => {
     },
   });
 
+  // console.log("Form: ", form);
+  // console.log("Error: ", form.formState.errors);
+
+  // const watch = form.watch;
+
   const handleInputClick = () => {
     inputRef.current.click();
   };
@@ -120,8 +135,9 @@ const Contact = () => {
   };
 
   const onSubmit = (data) => {
-    data.country = convertToTitleCase(data.country);
-    data.title = convertToTitleCase(data.title);
+    console.log(data);
+    data.country = data.country["value"];
+    data.title = data.title["value"];
 
     // Check if there is a change in admin status
     // If there is no change in admin status, do not need to search for user in Auth0
@@ -142,8 +158,8 @@ const Contact = () => {
   const prefillData = (data) => {
     form.setValue("firstName", data.firstName);
     form.setValue("lastName", data.lastName);
-    form.setValue("country", data.country);
-    form.setValue("title", data.title);
+    form.setValue("country", { value: data.country, label: data.country });
+    form.setValue("title", { value: data.title, label: data.title });
     form.setValue("email", data.email);
     form.setValue("organisation", data.organisation);
     form.setValue("biography", data.biography);
@@ -205,6 +221,10 @@ const Contact = () => {
       }
     }
   }, [updateHasError, updateError]);
+
+  if (!fetchSuccess) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full p-10">
@@ -299,10 +319,11 @@ const Contact = () => {
                       <FormItem>
                         <FormLabel>Country*</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={countries}
-                          fieldName="Country"
+                          fieldName={field.name}
+                          displayName="Country"
                           customHeight="160"
                           validateProperty="value"
                           displayProperty="value"
@@ -320,10 +341,11 @@ const Contact = () => {
                       <FormItem>
                         <FormLabel>Title*</FormLabel>
                         <Combobox
-                          field={field}
+                          value={field.value}
                           setValue={form.setValue}
                           options={titles}
-                          fieldName="Title"
+                          fieldName={field.name}
+                          displayName="Title"
                           customHeight="160"
                           validateProperty="value"
                           displayProperty="value"
@@ -441,10 +463,29 @@ const Contact = () => {
           </Form>
         </TabsContent>
         <TabsContent value="conferences">
-          List of participated conferences here.
+          {contactFromFetch && contactFromFetch["Conferences"].length > 0 ? (
+            contactFromFetch["Conferences"].map((conference, index) => (
+              <Accordion
+                type="single"
+                collapsible
+                key={`${conference.name}-${index}`}
+              >
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{conference.name}</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))
+          ) : (
+            <p className="p-3">
+              {`${contactFromFetch.title} ${contactFromFetch.firstName} ${contactFromFetch.lastName} did not participate in any
+              conference.`}
+            </p>
+          )}
         </TabsContent>
       </Tabs>
-
       <Toaster />
     </div>
   );

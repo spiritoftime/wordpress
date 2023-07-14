@@ -3,7 +3,7 @@ import { RowActions } from "./RowActions";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { Toaster } from "./ui/toaster";
 
 import { DataTable } from "./DataTable";
@@ -15,11 +15,12 @@ import { deleteConference, getConferences } from "../services/conferences";
 import Loading from "./Loading";
 import { useAppContext } from "../context/appContext";
 
-const Conferences = () => {
+const Conferences = ({ setNewComboBoxValue }) => {
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const queryClient = useQueryClient();
   const { setConference } = useAppContext();
+
   const {
     data: conferences,
     isLoading: isConferenceFetching,
@@ -32,6 +33,7 @@ const Conferences = () => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
   const { mutate: deleteConferenceMutation } = useMutation({
     mutationFn: async ({ rowData }) => {
       const accessToken = await getAccessToken();
@@ -41,6 +43,7 @@ const Conferences = () => {
       queryClient.invalidateQueries(["conferences"], { exact: true });
     },
   });
+
   const columns = [
     RowCheckBox,
     {
@@ -88,6 +91,7 @@ const Conferences = () => {
           filterColumn={"name"}
           rowNavigate={rowNavigate}
           setData={setConference}
+          // setNewComboBoxValue={setNewComboBoxValue}
         />
       </div>
       <Toaster />

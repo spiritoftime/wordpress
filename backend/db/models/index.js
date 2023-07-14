@@ -52,11 +52,14 @@ db.Session = initSession(sequelize);
 db.Speaker = initSpeaker(sequelize);
 db.TopicSpeaker = initTopicSpeaker(sequelize);
 db.Topic = initTopic(sequelize);
+
 // ONE TO MANY
 // one conference can have many sessions
 db.Conference.hasMany(db.Session);
-
 db.Session.belongsTo(db.Conference);
+// one conference can have many topics
+db.Conference.hasMany(db.Topic);
+db.Topic.belongsTo(db.Conference);
 // one conference can have many rooms
 db.Conference.hasMany(db.Room);
 db.Room.belongsTo(db.Conference);
@@ -89,7 +92,7 @@ db.SessionSpeakerRole.belongsToMany(db.SessionSpeaker, {
 db.Speaker.belongsToMany(db.Topic, {
   through: db.TopicSpeaker,
 });
-db.Topic.belongsToMany(db.Session, {
+db.Topic.belongsToMany(db.Speaker, {
   through: db.TopicSpeaker,
 });
 

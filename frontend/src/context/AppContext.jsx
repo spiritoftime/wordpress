@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState, useRef } from "react";
 import React from "react";
 import { useToast } from "../components/ui/use-toast";
 import { convertToTitleCase } from "../utils/convertText";
@@ -9,7 +9,18 @@ const AppProvider = ({ children }) => {
   const [comboBoxValue, setComboBoxValue] = useState("");
   const [conference, setConference] = useState("");
   const [contact, setContact] = useState("");
+  const [speaker, setSpeaker] = useState("");
   const { toast } = useToast();
+
+  // const comboBoxRef = useRef("");
+  // let comboBoxValue = comboBoxRef.current;
+
+  // const setComboBoxValue = (value) => {
+  //   console.log("inside set combobox value");
+  //   comboBoxRef.current = value;
+  //   comboBoxValue = comboBoxRef.current;
+  //   console.log("ComboBoxValue after set value: ", comboBoxValue);
+  // };
 
   /**
    * Function to show toaster
@@ -36,6 +47,8 @@ const AppProvider = ({ children }) => {
         showToaster,
         contact,
         setContact,
+        speaker,
+        setSpeaker,
       }}
     >
       {children}

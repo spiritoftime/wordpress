@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { getConference, getConferences } from "../services/conferences";
+import { getConferences } from "../services/conferences";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { NormalComboBox } from "./NormalComboBox";
+import Combobox from "./Combobox";
 
 import { ProfileIcon } from "./ProfileIcon";
 import {
@@ -19,13 +20,14 @@ import {
   Users,
   CalendarDays,
   ClipboardList,
+  CopySlash,
 } from "lucide-react";
 import { Outlet, useLocation, Link, useMatch } from "react-router-dom";
 import { cn } from "../lib/utils";
-import { useAuth0 } from "@auth0/auth0-react";
-
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useAppContext } from "../context/appContext";
 import Loading from "./Loading";
+import Conferences from "./Conferences";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -33,20 +35,26 @@ const DashboardLayout = () => {
   const matchedConferencePath = useMatch("/conferences/:conferenceId");
   const matchedContactPath = useMatch("/contacts/:contactId");
 
+  // const [newComboBoxValue, setNewComboBoxValue] = useState();
+
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
+  // const { setConference } = useAppContext();
   const { comboBoxValue, setComboBoxValue, setConference } = useAppContext();
   const getAccessToken = useGetAccessToken();
+
   const { data: conferences, isLoading: isConferencesFetching } = useQuery({
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       return getConferences(accessToken);
     },
-    enabled: conferenceId !== undefined,
+    // enabled: conferenceId !== undefined,
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
+    cacheTime: 0,
   });
+
   useEffect(() => {
     if (!isAuthenticated) return;
     if (conferenceId !== undefined) {
@@ -54,20 +62,34 @@ const DashboardLayout = () => {
         const conference = conferences.find((c) => {
           return c.id === +conferenceId;
         });
+        // setNewComboBoxValue(conference.name);
         setComboBoxValue(conference.name);
         setConference(conference);
       } else return;
     }
-  }, [isConferencesFetching]);
+  }, [conferences, isConferencesFetching]);
+
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    if (!isConferencesFetching && comboBoxValue !== undefined) {
+    if (
+      !isConferencesFetching &&
+      comboBoxValue !== undefined &&
+      comboBoxValue !== ""
+    ) {
       const conference = conferences.find((c) => {
         return c.name.toUpperCase() === comboBoxValue.toUpperCase();
       });
 
+      // if (matchedConferencePath) {
+      //   navigate(`/conferences/${conference.id}`);
+      // } else if (pathname !== "/") {
+      //   const newPath = pathname.slice(0, -2);
+      //   navigate(`${newPath}/${conference.id}`);
+      // }
+
       navigate(`/conferences/${conference.id}`);
+
       setConference(conference);
     }
   }, [comboBoxValue]);
@@ -92,7 +114,7 @@ const DashboardLayout = () => {
             onClick={() => navigate("/")}
           >
             <img
-              src="../src/assets/logo-transparent.png"
+              src="../../../src/assets/logo-transparent.png"
               alt="auto mate logo"
               width="80%"
               className="m-auto"
@@ -100,13 +122,15 @@ const DashboardLayout = () => {
           </div>
           {conferenceSelected && (
             <div className="w-[69%]">
-              {!isConferencesFetching && isAuthenticated && (
+              {!isConferencesFetching && isAuthenticated && comboBoxValue && (
                 <NormalComboBox
                   options={conferences}
                   validateProperty={"name"}
                   displayProperty={"name"}
                   fieldName={"conference"}
+                  // value={newComboBoxValue}
                   value={comboBoxValue}
+                  // setValue={setNewComboBoxValue}
                   setValue={setComboBoxValue}
                 />
               )}
@@ -133,7 +157,13 @@ const DashboardLayout = () => {
       <div className="flex flex-1">
         <div className="border-r-2 ">
           <div className="flex flex-col items-center gap-6 px-3 pt-8 ">
-            <Link to={"/"}>
+            <Link
+              to={
+                pathname.includes("conferences")
+                  ? `/conferences/${conferenceId}`
+                  : "/"
+              }
+            >
               <div
                 className={cn(
                   (pathname.endsWith("dashboard") ||
@@ -146,7 +176,7 @@ const DashboardLayout = () => {
                 )}
               >
                 <Home />
-                <h3 className="font-bold">Conferences</h3>
+                <h3 className="font-bold">Conference</h3>
               </div>
             </Link>
             {!conferenceSelected && (
@@ -167,44 +197,61 @@ const DashboardLayout = () => {
             )}
             {conferenceSelected && (
               <>
-                <div
-                  className={cn(
-                    pathname.endsWith("speakers") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <Users />
-                  <h3 className="font-bold">Speakers</h3>
-                </div>
-                <div
-                  className={cn(
-                    pathname.endsWith("sessions") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <ClipboardList />
-                  <h3 className="font-bold">Sessions</h3>
-                </div>
-                <div
-                  className={cn(
-                    pathname.endsWith("program") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <CalendarDays />
-                  <h3 className="font-bold">Program Overview</h3>
-                </div>
+                <Link to={`conferences/speakers/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("speakers") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <Users />
+                    <h3 className="font-bold">Speakers</h3>
+                  </div>
+                </Link>
+                <Link to={`conferences/sessions/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("sessions") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <ClipboardList />
+                    <h3 className="font-bold">Sessions</h3>
+                  </div>
+                </Link>
+                <Link to={`conferences/program-overview/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("program-overview") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <CalendarDays />
+                    <h3 className="font-bold">Program Overview</h3>
+                  </div>
+                </Link>
               </>
             )}
           </div>
         </div>
-        <Outlet />
+        {/* <Outlet /> */}
+        {pathname === "/" ? <Conferences /> : <Outlet />}
+        {/* {pathname === "/" ? (
+          <Conferences setNewComboBoxValue={setNewComboBoxValue} />
+        ) : (
+          <Outlet context={[newComboBoxValue, setNewComboBoxValue]} />
+        )} */}
       </div>
     </div>
   );
 };
 
 export default DashboardLayout;
+
+// export default withAuthenticationRequired(DashboardLayout, {
+//   // Show a message while the user waits to be redirected to the login page.
+//   onRedirecting: () => <div>Redirecting you to the login page...</div>,
+// });

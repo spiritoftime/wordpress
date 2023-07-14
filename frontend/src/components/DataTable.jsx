@@ -24,7 +24,7 @@ import {
 } from "./ui/table";
 import { useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext, useMatch } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 // rowType = 'conferences'/'speakers'/'sessions',etc
 // filterColumn = the key of the column you want to filter
@@ -35,6 +35,7 @@ export function DataTable({
   filterColumn,
   rowNavigate,
   setData,
+  setNewComboBoxValue,
 }) {
   const { setComboBoxValue } = useAppContext();
   const [sorting, setSorting] = useState([]);
@@ -60,6 +61,7 @@ export function DataTable({
     },
   });
   const navigate = useNavigate();
+  const matchedConferencePath = useMatch("/");
   return (
     <div>
       <div className="flex items-center py-4">
@@ -99,7 +101,8 @@ export function DataTable({
                   <TableRow
                     className="cursor-pointer"
                     onClick={() => {
-                      setComboBoxValue(row.original.name);
+                      matchedConferencePath &&
+                        setComboBoxValue(row.original.name);
                       setData(row.original);
                       rowNavigate(row.original.id);
                     }}

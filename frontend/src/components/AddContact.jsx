@@ -55,27 +55,30 @@ const AddContact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
-    country: z.string().nonempty("Required"),
-    title: z.string().nonempty("Required"),
+    country: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+    title: z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
     email: z.string().min(1, {
       message: "Required",
     }),
     organisation: z.string().optional(),
     biography: z.string().optional(),
-    photo: z.any(),
+    // photo: z.any(),
     isAdmin: z.boolean().optional(),
-    // photo: z
-    //   .any()
-    //   .refine((value) => value.length === 0, "Required")
-    //   .refine(
-    //     // (files) => console.log(files),
-    //     (file) => file?.size <= maxFileSize,
-    //     `Max image size is 5MB.`
-    //   )
-    //   .refine(
-    //     (file) => acceptedImageTypes.includes(file?.type),
-    //     "Only .jpg, .jpeg and .png formats are supported."
-    //   ),
+    photo: z.any().refine(
+      (file) => {
+        const isValid = file?.size <= maxFileSize && file?.size >= 0;
+        return isValid;
+      },
+      {
+        message: `Please upload an image that is less than 5MB.`,
+      }
+    ),
   });
 
   const form = useForm({
@@ -158,9 +161,10 @@ const AddContact = () => {
   }, [addHasError, addError]);
 
   const onSubmit = (data) => {
-    data.country = convertToTitleCase(data.country);
-    data.title = convertToTitleCase(data.title);
-    uploadContact(data);
+    data.country = data.country["value"];
+    data.title = data.title["value"];
+    console.log(data);
+    // uploadContact(data);
   };
 
   return (
@@ -240,10 +244,11 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Country*</FormLabel>
                     <Combobox
-                      field={field}
+                      value={field.value}
                       setValue={form.setValue}
                       options={countries}
-                      fieldName="Country"
+                      displayName="Country"
+                      fieldName={field.name}
                       customHeight="160"
                       validateProperty="value"
                       displayProperty="value"
@@ -261,10 +266,11 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Title*</FormLabel>
                     <Combobox
-                      field={field}
+                      value={field.value}
                       setValue={form.setValue}
                       options={titles}
-                      fieldName="Title"
+                      fieldName={field.name}
+                      displayName="Title"
                       customHeight="160"
                       validateProperty="value"
                       displayProperty="value"
