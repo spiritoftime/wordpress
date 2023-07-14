@@ -2,8 +2,11 @@ import React from "react";
 import { DataTable } from "./DataTable";
 import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
+import { useAppContext } from "../context/appContext";
 
 const AddSessionPageTwo = ({ control }) => {
+  const { selectedTopics } = useAppContext();
+  console.log("selectedtopics", selectedTopics);
   const topics = [
     {
       title: "Topic 1",

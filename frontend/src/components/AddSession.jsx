@@ -13,7 +13,7 @@ import AddSessionPageThree from "./AddSessionPageThree";
 import { formSchemas } from "../utils/multiPageFormZod";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
-  console.log("formstep", formStep);
+  // console.log("formstep", formStep);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
@@ -50,8 +50,8 @@ const AddSession = () => {
     if (formStep !== 2 && getValues("topics")) unregister("topics");
   }, [formStep, unregister, getValues]);
 
-  // console.log(errors, "errors");
-  // console.log("form validity", isValid);
+  console.log(errors, "errors");
+  console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">

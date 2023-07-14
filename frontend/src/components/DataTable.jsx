@@ -41,7 +41,9 @@ export function DataTable({
   const { setComboBoxValue, setSelectedTopics, selectedTopics } =
     useAppContext();
   // console.log("selected", selectedTopics);
-  const matchedSessionPath = useMatch("/add-session");
+  const matchedSessionPath = useMatch(
+    "/conferences/sessions/add-session/:conferenceId"
+  );
   // console.log("topics", selectedTopics);
   const [sorting, setSorting] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
