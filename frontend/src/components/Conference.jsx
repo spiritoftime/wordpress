@@ -130,6 +130,7 @@ const Conference = () => {
         startDate: formatDate(conference.startDate),
         endDate: formatDate(conference.endDate),
       });
+
       const rooms = conference.Rooms.map((room) => {
         room.roomId = room.id;
         return room;
@@ -285,8 +286,8 @@ const Conference = () => {
                         }}
                       />
                     </div>
-                    {rooms.length > 0 && (
-                      <div className="w-[5%] mt-6 pl-3">
+                    {index > 0 && (
+                      <div className="w-[5%] mt-5 pl-3 cursor-pointer">
                         <Trash
                           type="button"
                           size={18}
@@ -301,6 +302,7 @@ const Conference = () => {
                 <Button
                   type="button"
                   variant="ghost"
+                  className="mt-2"
                   onClick={() => {
                     append({ room: "" });
                   }}
