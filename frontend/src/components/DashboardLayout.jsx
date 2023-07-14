@@ -98,8 +98,7 @@ const DashboardLayout = () => {
     setUserName(user.name);
   }, [user]);
 
-  const conferenceSelected =
-    pathname.includes("conferences") || pathname.includes("sessions");
+  const conferenceSelected = pathname.includes("conferences");
 
   return (
     <div className="flex flex-col min-h-screen layout ">
@@ -198,20 +197,22 @@ const DashboardLayout = () => {
             )}
             {conferenceSelected && (
               <>
-                <div
-                  className={cn(
-                    pathname.endsWith("speakers") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <Users />
-                  <h3 className="font-bold">Speakers</h3>
-                </div>
-                <Link to={"/contacts"}>
+                <Link to={`conferences/speakers/${conferenceId}`}>
                   <div
                     className={cn(
-                      pathname.endsWith("sessions") &&
+                      pathname.includes("speakers") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <Users />
+                    <h3 className="font-bold">Speakers</h3>
+                  </div>
+                </Link>
+                <Link to={`conferences/sessions/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("sessions") &&
                         "text-[#0D05F2] bg-[#F9FAFB]",
                       "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
                     )}
@@ -220,16 +221,18 @@ const DashboardLayout = () => {
                     <h3 className="font-bold">Sessions</h3>
                   </div>
                 </Link>
-                <div
-                  className={cn(
-                    pathname.endsWith("program") &&
-                      "text-[#0D05F2] bg-[#F9FAFB]",
-                    "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
-                  )}
-                >
-                  <CalendarDays />
-                  <h3 className="font-bold">Program Overview</h3>
-                </div>
+                <Link to={`conferences/program-overview/${conferenceId}`}>
+                  <div
+                    className={cn(
+                      pathname.includes("program-overview") &&
+                        "text-[#0D05F2] bg-[#F9FAFB]",
+                      "flex gap-2 w-[200px] h-[50px] cursor-pointer p-3 rounded-[10px]"
+                    )}
+                  >
+                    <CalendarDays />
+                    <h3 className="font-bold">Program Overview</h3>
+                  </div>
+                </Link>
               </>
             )}
           </div>

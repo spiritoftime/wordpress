@@ -2,7 +2,7 @@ import React from "react";
 import PageHeader from "./PageHeader";
 import { DataTable } from "./DataTable";
 import { Toaster } from "./ui/toaster";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
 import { RowActions } from "./RowActions";
@@ -13,6 +13,7 @@ import Loading from "./Loading";
 import { useAppContext } from "../context/appContext";
 
 const Sessions = () => {
+  const { conferenceId } = useParams();
   const { setSession } = useAppContext();
   const getAccessToken = useGetAccessToken();
   const {
@@ -23,11 +24,11 @@ const Sessions = () => {
     queryKey: ["conferences"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
-      return getSessions(accessToken);
+      return getSessions(accessToken, conferenceId);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  const conferenceId = 1;
+
   const navigate = useNavigate();
   const deleteSessionMutation = () => {};
 
@@ -63,7 +64,8 @@ const Sessions = () => {
     },
     RowActions("Session", deleteSessionMutation),
   ];
-  const rowNavigate = (rowId) => navigate(`/sessions/${rowId}`);
+  const rowNavigate = (rowId) => navigate(`${rowId}`);
+
   if (isSessionsFetching || isSessionsLoading)
     return (
       <div className="w-full mx-auto">

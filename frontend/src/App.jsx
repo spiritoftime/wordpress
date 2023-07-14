@@ -40,22 +40,22 @@ function App() {
           />
           <Route path="add-speakers/:conferenceId" element={<AddSpeakers />} />
 
-          <Route
-            path="sessions/:conferenceId"
-            element={<div>This is the session page</div>}
-          />
+          <Route path="sessions/:conferenceId" element={<Sessions />} />
           <Route
             path="program-overview/:conferenceId"
             element={<div>This is the program overview page</div>}
           />
+          <Route
+            path="sessions/:conferenceId/:sessionId"
+            element={<Session />}
+          />
         </Route>
-        <Route path="/sessions/:sessionId" element={<Session />} />
         <Route path="/add-session" element={<AddSession />} />
         <Route path="add-conference" element={<AddConference />} />
         <Route path="contacts" element={<Contacts />} />
         <Route path="contacts/:contactId" element={<Contact />} />
         <Route path="add-contact" element={<AddContact />} />
-        <Route path="/sessions" element={<Sessions />} />
+        {/* <Route path="/sessions" element={<Sessions />} /> */}
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

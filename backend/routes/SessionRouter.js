@@ -7,9 +7,9 @@ const {
   getSession,
 } = require("../controllers/Sessions");
 const router = express.Router();
-router.route("/").get(getSessions).post(addSession);
+router.route("/conference/:conferenceId").get(getSessions).post(addSession);
 router
-  .route("/:sessionId")
+  .route("/conference/:sessionId/:conferenceId/")
   .get(getSession)
   .patch(EditSession)
   .delete(DeleteSession);

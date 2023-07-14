@@ -22,9 +22,11 @@ const getSession = async (req, res) => {
   }
 };
 const getSessions = async (req, res) => {
+  const { conferenceId } = req.params;
   try {
     const sessions = await Session.findAll({
       include: [{ model: Topic }, { model: Room }],
+      where: { conferenceId },
     });
     return res.status(200).json(sessions);
   } catch (err) {
