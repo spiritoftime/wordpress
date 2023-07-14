@@ -48,7 +48,7 @@ const getContactsForAdding = async (req, res) => {
   const finalSpeakers = [];
   try {
     const speakers = await Speaker.findAll({
-      order: [["id", "ASC"]],
+      order: [["firstName", "ASC"]],
       include: [{ model: Conference }],
     });
     speakers.forEach((speaker) => {
