@@ -35,22 +35,31 @@ const getSessions = async (req, res) => {
   }
 };
 const addSession = async (req, res) => {
-  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
-    req.body;
+  const { conferenceId } = req.params;
+  const {
+    date,
+    startTime,
+    endTime,
+    isPublish,
+    location,
+    presentationDuration,
+    sessionCode,
+    sessionType,
+    speakers,
+    synopsis,
+    title,
+    topics,
+  } = req.body;
   try {
-    const conference = await Conference.create({
-      startDate,
-      endDate,
-      name,
-      country,
-      venue,
-      wordpressApi,
+    const session = await Session.create({
+      title,
+      synopsis,
+      date,
+      startTime,
+      endTime,
+      conferenceId,
+      sessionCode,
     });
-    const sessionId = conference.dataValues.id;
-    roomItems.forEach((room) => {
-      room.sessionId = sessionId;
-    });
-    const rooms = await Room.bulkCreate(roomItems);
 
     return res.status(200).json(conference);
   } catch (err) {

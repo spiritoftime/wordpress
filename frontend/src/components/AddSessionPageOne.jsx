@@ -22,9 +22,12 @@ import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
+import { getConferenceRooms } from "../services/rooms";
+import { useParams } from "react-router-dom";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
+  const { conferenceId } = useParams();
   const getAccessToken = useGetAccessToken();
   const {
     data: speakers,
@@ -42,6 +45,18 @@ const AddSessionPageOne = ({ control }) => {
         return res;
       });
       return contactNames;
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  const {
+    data: conferenceRooms,
+    isLoading: isConferenceRoomsLoading,
+    isFetching: isConferenceRoomsFetching,
+  } = useQuery({
+    queryKey: ["conferenceRooms"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getConferenceRooms(accessToken, conferenceId);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
@@ -212,15 +227,22 @@ const AddSessionPageOne = ({ control }) => {
           <FormField
             control={control}
             name="location"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Location:</FormLabel>
-                <FormControl>
-                  <Input placeholder="Location" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              return (
+                !isConferenceRoomsFetching && (
+                  <FormItem>
+                    <FormControl>
+                      <SelectOption
+                        field={field}
+                        placeholder="Select a location"
+                        options={conferenceRooms}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              );
+            }}
           />
         </div>
       </div>
