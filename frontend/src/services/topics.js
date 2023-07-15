@@ -10,3 +10,6 @@ export function updateTopics(accessToken, data, speakerId, conferenceId) {
     }
   );
 }
+export function getTopicsForAddingToSession(accessToken) {
+  return makeRequest(`/topics`, accessToken);
+}

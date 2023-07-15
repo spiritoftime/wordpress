@@ -1,7 +1,46 @@
 const db = require("../db/models");
-const { Topic, TopicSpeaker } = db;
+const {
+  Speaker,
+  Topic,
+  TopicSpeaker,
+  ConferenceSpeaker,
+  Conference,
+  Session,
+  SessionSpeaker,
+  Sequelize,
+} = db;
 const { Op } = require("sequelize");
+const getTopicsForAddingToSession = async (req, res) => {
+  try {
+    // console.log("runningggggg");
+    const speakers = await Topic.findAll({
+      attributes: ["title", "id"],
+      where: { sessionId: { [Op.eq]: null } },
+      include: [
+        {
+          model: Speaker,
+          attributes: ["fullName", "firstName", "lastName", "country", "id"],
+          through: {
+            model: TopicSpeaker,
+            attributes: [],
+          },
+          include: [
+            {
+              model: Session,
+              attributes: ["id"],
+            },
+          ],
+        },
+      ],
+    });
 
+    // console.log(speakers, "speakers");
+    return res.status(200).json(speakers);
+  } catch (err) {
+    console.log("err", err);
+    return res.status(500).json(err);
+  }
+};
 // Function to add or update topics
 const addOrUpdateTopic = async (req, res) => {
   const data = req.body;
@@ -37,4 +76,5 @@ const addOrUpdateTopic = async (req, res) => {
 
 module.exports = {
   addOrUpdateTopic,
+  getTopicsForAddingToSession,
 };

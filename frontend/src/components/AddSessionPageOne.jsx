@@ -21,6 +21,7 @@ import useGetContacts from "../custom_hooks/useQueries";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../services/contacts";
+import { getTopicsForAddingToSession } from "../services/topics";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
@@ -44,6 +45,19 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+  const {
+    data: topicsForAddingSession,
+    isLoading: isTopicsForAddingSessionLoading,
+    isFetching: isTopicsForAddingSessionFetching,
+  } = useQuery({
+    queryKey: ["topicsForAddingSession"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getTopicsForAddingToSession(accessToken);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  console.log(topicsForAddingSession, "topicsForAddingSession");
   // console.log("speakers", speakers);
   //  to query
   // const speakers = [

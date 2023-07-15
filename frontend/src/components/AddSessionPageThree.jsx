@@ -17,6 +17,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
     name: "topics",
   });
   const { selectedTopics } = useAppContext();
+  console.log("selectedTopics", selectedTopics);
   const [isAllocated, setIsAllocated] = useState(false);
   const [topicsToAppend, setTopicsToAppend] = useState([]);
 
@@ -41,7 +42,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
                   topic.speaker.forEach((speaker) => {
                     speakers.push({ value: speaker, label: speaker });
                   });
-                  appendTopic[`speakers`] = [...topic.speaker];
+                  appendTopic[`speakers`] = [...speakers];
                 }
 
                 appendTopics.push(appendTopic);
