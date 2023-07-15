@@ -30,11 +30,11 @@ module.exports = {
         },
       },
       start_time: {
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
         allowNull: true,
       },
       end_time: {
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
         allowNull: true,
       },
     });

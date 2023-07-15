@@ -11,11 +11,35 @@ import { Form } from "./ui/form";
 import AddSessionPageTwo from "./AddSessionPageTwo";
 import AddSessionPageThree from "./AddSessionPageThree";
 import { formSchemas } from "../utils/multiPageFormZod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { useNavigate, useParams } from "react-router-dom";
+import { addSession } from "../services/sessions";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
-  console.log("formstep", formStep);
+  const { conferenceId } = useParams();
+
+  const getAccessToken = useGetAccessToken();
+  const { showToaster } = useAppContext();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  // console.log("formstep", formStep);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
+  const { mutate: addToDatabase, isLoading } = useMutation(
+    async (data) => {
+      const accessToken = await getAccessToken();
+      return addSession(accessToken, conferenceId, data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["sessions"], { exact: true });
+        form.reset();
+        navigate(`/conferences/sessions/${conferenceId}`);
+        showToaster("Session Added");
+      },
+    }
+  );
 
   const FormSchema = formSchemas[formStep];
   const form = useForm({
@@ -45,13 +69,14 @@ const AddSession = () => {
   } = form;
   const onSubmit = (data) => {
     console.log("data", data);
+    addToDatabase(data);
   };
   useEffect(() => {
     if (formStep !== 2 && getValues("topics")) unregister("topics");
   }, [formStep, unregister, getValues]);
 
-  // console.log(errors, "errors");
-  // console.log("form validity", isValid);
+  console.log(errors, "errors");
+  console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">

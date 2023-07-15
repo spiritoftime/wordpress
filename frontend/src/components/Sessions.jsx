@@ -28,7 +28,7 @@ const Sessions = () => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-
+  console.log("sessions", sessions);
   const navigate = useNavigate();
   const deleteSessionMutation = () => {};
 
@@ -51,7 +51,7 @@ const Sessions = () => {
       },
     },
     {
-      accessorKey: "location",
+      accessorKey: "Conference.country",
       header: "Location",
     },
     {

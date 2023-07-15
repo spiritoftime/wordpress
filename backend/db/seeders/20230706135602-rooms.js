@@ -6,7 +6,9 @@ module.exports = {
       { room: "Room 1", conference_id: 1 },
       { room: "Room 2", conference_id: 1 },
       { room: "Room 3", conference_id: 1 },
-      { room: "Room 2", conference_id: 2 },
+      { room: "Hall A, Level 5, Suntec", conference_id: 2 },
+      { room: "Hall B, Level 4, Suntec", conference_id: 3 },
+      { room: "Room 2", conference_id: 3 },
     ]);
   },
 

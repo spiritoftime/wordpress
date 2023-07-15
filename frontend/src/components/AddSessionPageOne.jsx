@@ -16,22 +16,76 @@ import { SelectOption } from "./SelectOption";
 import { Trash } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "./ui/button";
-import { FancyMultiSelect } from "./ui/FancyMultiSelect";
 import FormMultiSelect from "./FormMultiSelect";
+import useGetContacts from "../custom_hooks/useQueries";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import { useQuery } from "@tanstack/react-query";
+import { getContacts } from "../services/contacts";
+import { getTopicsForAddingToSession } from "../services/topics";
+import { getConferenceRooms } from "../services/rooms";
+import { useParams } from "react-router-dom";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
+  const { conferenceId } = useParams();
+  const getAccessToken = useGetAccessToken();
+  const {
+    data: speakers,
+    isLoading: isSpeakersLoading,
+    isFetching: isSpeakersFetching,
+  } = useQuery({
+    queryKey: ["contactNames"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      const contacts = await getContacts(accessToken);
+      const contactNames = await contacts.map((contact) => {
+        const res = { id: contact.id };
+        res.value = contact.fullName;
+        res.label = contact.fullName;
+        return res;
+      });
+      return contactNames;
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  const {
+    data: conferenceRooms,
+    isLoading: isConferenceRoomsLoading,
+    isFetching: isConferenceRoomsFetching,
+  } = useQuery({
+    queryKey: ["conferenceRooms"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getConferenceRooms(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  const {
+    data: topicsForAddingSession,
+    isLoading: isTopicsForAddingSessionLoading,
+    isFetching: isTopicsForAddingSessionFetching,
+  } = useQuery({
+    queryKey: ["topicsForAddingSession"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getTopicsForAddingToSession(accessToken);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+  // console.log(conferenceRooms, "conferencerooms");
+  // console.log(topicsForAddingSession, "topicsForAddingSession");
+  // console.log("speakers", speakers);
   //  to query
-  const speakers = [
-    {
-      value: "next.js",
-      label: "Next.js",
-    },
-    {
-      value: "react.js",
-      label: "React.js",
-    },
-  ];
+  // const speakers = [
+  //   {
+  //     value: "next.js",
+  //     label: "Next.js",
+  //   },
+  //   {
+  //     value: "react.js",
+  //     label: "React.js",
+  //   },
+  // ];
   const {
     fields: moderators,
     append,
@@ -174,15 +228,23 @@ const AddSessionPageOne = ({ control }) => {
           <FormField
             control={control}
             name="location"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Location:</FormLabel>
-                <FormControl>
-                  <Input placeholder="Location" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              return (
+                !isConferenceRoomsFetching && (
+                  <FormItem>
+                    <FormLabel>Location:</FormLabel>
+                    <FormControl>
+                      <SelectOption
+                        field={field}
+                        placeholder="Select a location"
+                        options={conferenceRooms.map((room) => room.room)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              );
+            }}
           />
         </div>
       </div>
@@ -236,20 +298,26 @@ const AddSessionPageOne = ({ control }) => {
                 )}
               />
             </div>
-            <div className={"w-[45%]"}>
-              <FormField
-                control={control}
-                name={`speakers.${index}.speaker`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <FormMultiSelect options={speakers} field={field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {
+              <div className={"w-[45%]"}>
+                <FormField
+                  control={control}
+                  name={`speakers.${index}.speaker`}
+                  render={({ field }) => {
+                    return (
+                      !isSpeakersFetching && (
+                        <FormItem>
+                          <FormControl>
+                            <FormMultiSelect options={speakers} field={field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    );
+                  }}
+                />
+              </div>
+            }
 
             {index > 0 && (
               <div>
