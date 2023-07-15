@@ -86,19 +86,24 @@ const Contact = () => {
     lastName: z.string().min(1, {
       message: "Required",
     }),
-    // country: z.string(),
-    // title: z.string(),
     country: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().min(1, {
+        message: "Required",
+      }),
+      label: z.string().min(1, {
+        message: "Required",
+      }),
     }),
     title: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().nonempty("Required"),
+      label: z.string().nonempty("Required"),
     }),
-    email: z.string().min(1, {
-      message: "Required",
-    }),
+    email: z
+      .string()
+      .min(1, {
+        message: "Required",
+      })
+      .email("This is not a valid email."),
     organisation: z.string().optional(),
     biography: z.string().optional(),
     photo: z.any(),

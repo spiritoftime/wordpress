@@ -35,12 +35,14 @@ const AddConference = () => {
       name: z.string().min(1, {
         message: "Required",
       }),
-      country: z
-        .object({
-          value: z.string().nonempty("Required"),
-          label: z.string().nonempty("Required"),
-        })
-        .required("Required"),
+      country: z.object({
+        value: z.string().min(1, {
+          message: "Required",
+        }),
+        label: z.string().min(1, {
+          message: "Required",
+        }),
+      }),
       startDate: z.date().min(new Date("1900-01-01"), {
         message: "Please input a date",
       }),
@@ -65,7 +67,7 @@ const AddConference = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      country: "",
+      country: { value: "", label: "" },
       roomItems: [{ room: "" }],
       venue: "",
       wordpressApi: "",
@@ -147,7 +149,11 @@ const AddConference = () => {
                         validateProperty="value"
                         displayProperty="value"
                       />
-                      <FormMessage />
+                      {form.formState?.errors?.country?.value.message && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.country.value.message}
+                        </p>
+                      )}
                     </FormItem>
                   );
                 }}

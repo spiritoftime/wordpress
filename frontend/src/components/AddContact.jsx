@@ -46,7 +46,6 @@ const AddContact = () => {
   const queryClient = useQueryClient();
 
   const maxFileSize = 500000;
-  const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
   const FormSchema = z.object({
     firstName: z.string().min(1, {
@@ -56,22 +55,29 @@ const AddContact = () => {
       message: "Required",
     }),
     country: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().min(1, {
+        message: "Required",
+      }),
+      label: z.string().min(1, {
+        message: "Required",
+      }),
     }),
     title: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().nonempty("Required"),
+      label: z.string().nonempty("Required"),
     }),
-    email: z.string().min(1, {
-      message: "Required",
-    }),
+    email: z
+      .string()
+      .min(1, {
+        message: "Required",
+      })
+      .email("This is not a valid email."),
     organisation: z.string().optional(),
     biography: z.string().optional(),
-    // photo: z.any(),
     isAdmin: z.boolean().optional(),
     photo: z.any().refine(
       (file) => {
+        console.log(file);
         const isValid = file?.size <= maxFileSize && file?.size >= 0;
         return isValid;
       },
@@ -87,8 +93,8 @@ const AddContact = () => {
       photo: "",
       firstName: "",
       lastName: "",
-      country: "",
-      title: "",
+      country: { value: "", label: "" },
+      title: { value: "", label: "" },
       email: "",
       organisation: "",
       biography: "",
@@ -102,8 +108,14 @@ const AddContact = () => {
 
   const handlePhotoInput = (event) => {
     // Create a preview of the file before uploading it onto database
-    setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
+    if (event.target.files[0]) {
+      console.log("have files");
+      setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
+    }
   };
+
+  // const watch = form.watch;
+  console.log(form.formState.errors);
 
   const {
     mutate: uploadContact,
@@ -163,8 +175,8 @@ const AddContact = () => {
   const onSubmit = (data) => {
     data.country = data.country["value"];
     data.title = data.title["value"];
-    console.log(data);
-    // uploadContact(data);
+    // console.log(data);
+    uploadContact(data);
   };
 
   return (
@@ -195,7 +207,7 @@ const AddContact = () => {
                     accept="image/*"
                     type="file"
                     onChange={(e) => {
-                      field.onChange(e.target.files[0]);
+                      e.target.files[0] && field.onChange(e.target.files[0]);
                       handlePhotoInput(e);
                     }}
                   />
@@ -253,7 +265,11 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    <FormMessage />
+                    {form.formState?.errors?.country?.value.message && (
+                      <p className="text-sm font-medium text-destructive">
+                        {form.formState.errors.country.value.message}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -275,7 +291,11 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    <FormMessage />
+                    {form.formState?.errors?.title?.value.message && (
+                      <p className="text-sm font-medium text-destructive">
+                        {form.formState.errors.title.value.message}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -368,6 +388,7 @@ const AddContact = () => {
         </form>
       </Form>
       <Toaster />
+      {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
     </div>
   );
 };
