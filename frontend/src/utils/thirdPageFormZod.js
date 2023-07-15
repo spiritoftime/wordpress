@@ -61,11 +61,11 @@ export const thirdPageZod = z.object({
           "Please input a valid 24-hour format time"
         ),
       topic: z.string().nonempty("Required"),
+      topicId: z.number().optional(),
       speakers: z.array(
         z.object({
           value: z.string().nonempty("Required"),
           label: z.string().nonempty("Required"),
-          id: z.number().optional(),
         })
       ),
     })

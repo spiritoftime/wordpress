@@ -29,6 +29,7 @@ const AddSessionPageTwo = ({ control }) => {
         obj.numSessions = topic.Speakers.map(
           (speaker) => speaker.Sessions.length
         );
+        obj.topicId = topic.id;
         return obj;
       });
       return res;

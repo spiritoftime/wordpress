@@ -86,6 +86,7 @@ const addSession = async (req, res) => {
     );
     // for the moderators who are not presenting a topic
     // speaker is an array containing {id,value,label}
+    // tried to create together but got EagerLoadingError [SequelizeEagerLoadingError]: SessionSpeaker is not associated to Session! Im assuming you cant eager create rows in a join table.
     let addSessionSpeakers = [];
     speakers.map(({ speakerRole, speaker: speakers }) => {
       for (const speaker of speakers) {
@@ -107,11 +108,15 @@ const addSession = async (req, res) => {
       addTopic.endTime = t.endTime;
       addTopic.conferenceId = conferenceId;
       addTopic.sessionId = session.id;
+      addTopic.id = t.topicId;
       return addTopic;
     });
-    console.log("addtopics", addTopics);
-    await Topic.bulkCreate(addTopics, { updateOnDuplicate: ["title"] });
-    return res.status(200).json(session);
+    // console.log("addtopics", addTopics);
+    const updatedTopics = await Topic.bulkCreate(addTopics, {
+      updateOnDuplicate: ["startTime", "endTime", "sessionId"],
+    });
+    // console.log("updatedTopics", updatedTopics);
+    return res.status(200).json(updatedTopics);
   } catch (err) {
     console.log(err, "err");
     return res.status(500).json(err);

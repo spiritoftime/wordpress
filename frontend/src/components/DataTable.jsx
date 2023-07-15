@@ -85,6 +85,7 @@ export function DataTable({
         ...s.original,
         tableRow: s.index,
       }));
+      // console.log("new", newSelectedTopics);
       setSelectedTopics(newSelectedTopics);
     }
   }, [table.getFilteredSelectedRowModel().rows.length]);
