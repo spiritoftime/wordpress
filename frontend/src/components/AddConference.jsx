@@ -117,12 +117,12 @@ const AddConference = () => {
         >
           <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-5">
             <div className="w-[48%]">
+              <FormLabel>Conference Name:</FormLabel>
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Conference Name:</FormLabel>
                     <FormControl>
                       <Input placeholder="Conference Name" {...field} />
                     </FormControl>
@@ -132,13 +132,13 @@ const AddConference = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Country:</FormLabel>
               <FormField
                 control={form.control}
                 name="country"
                 render={({ field }) => {
                   return (
                     <FormItem>
-                      <FormLabel>Country:</FormLabel>
                       <Combobox
                         value={field.value}
                         setValue={form.setValue}
@@ -149,23 +149,24 @@ const AddConference = () => {
                         validateProperty="value"
                         displayProperty="value"
                       />
-                      {form.formState?.errors?.country?.value.message && (
-                        <p className="text-sm font-medium text-destructive">
-                          {form.formState.errors.country.value.message}
-                        </p>
-                      )}
+                      {form.formState?.errors?.country?.value.message &&
+                        field.value.value.length <= 0 && (
+                          <p className="text-sm font-medium text-destructive">
+                            {form.formState.errors.country.value.message}
+                          </p>
+                        )}
                     </FormItem>
                   );
                 }}
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Start Date</FormLabel>
               <FormField
                 control={form.control}
                 name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Start Date</FormLabel>
                     <DatePicker field={field} />
                     <FormMessage />
                   </FormItem>
@@ -173,12 +174,12 @@ const AddConference = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>End Date</FormLabel>
               <FormField
                 control={form.control}
                 name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>End Date</FormLabel>
                     <DatePicker field={field} />
                     <FormMessage />
                   </FormItem>
@@ -186,12 +187,12 @@ const AddConference = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Venue:</FormLabel>
               <FormField
                 control={form.control}
                 name="venue"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Venue:</FormLabel>
                     <FormControl>
                       <Input placeholder="Venue" {...field} />
                     </FormControl>
@@ -201,12 +202,12 @@ const AddConference = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>WordPress API Key:</FormLabel>
               <FormField
                 control={form.control}
                 name="wordpressApi"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>WordPress API Key:</FormLabel>
                     <FormControl>
                       <Input placeholder="WordPress API Key" {...field} />
                     </FormControl>

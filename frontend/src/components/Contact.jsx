@@ -140,7 +140,6 @@ const Contact = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     data.country = data.country["value"];
     data.title = data.title["value"];
 
