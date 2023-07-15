@@ -27,6 +27,7 @@ const getTopicsForAddingToSession = async (req, res) => {
           include: [
             {
               model: Session,
+              through: { model: SessionSpeaker, attributes: [] },
               attributes: ["id"],
             },
           ],
