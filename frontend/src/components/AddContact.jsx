@@ -115,7 +115,7 @@ const AddContact = () => {
   };
 
   // const watch = form.watch;
-  console.log(form.formState.errors);
+  // console.log(form.formState.errors);
 
   const {
     mutate: uploadContact,
