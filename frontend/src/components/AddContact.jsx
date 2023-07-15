@@ -77,7 +77,6 @@ const AddContact = () => {
     isAdmin: z.boolean().optional(),
     photo: z.any().refine(
       (file) => {
-        console.log(file);
         const isValid = file?.size <= maxFileSize && file?.size >= 0;
         return isValid;
       },
@@ -109,7 +108,6 @@ const AddContact = () => {
   const handlePhotoInput = (event) => {
     // Create a preview of the file before uploading it onto database
     if (event.target.files[0]) {
-      console.log("have files");
       setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
     }
   };
@@ -219,12 +217,12 @@ const AddContact = () => {
           <p className="mt-10 text-lg font-bold">Contact Details</p>
           <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-2">
             <div className="w-[48%]">
+              <FormLabel>First Name*</FormLabel>
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="First Name" {...field} />
                     </FormControl>
@@ -234,12 +232,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Last Name*</FormLabel>
               <FormField
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="Last Name" {...field} />
                     </FormControl>
@@ -249,12 +247,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Country*</FormLabel>
               <FormField
                 control={form.control}
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country*</FormLabel>
                     <Combobox
                       value={field.value}
                       setValue={form.setValue}
@@ -265,22 +263,23 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    {form.formState?.errors?.country?.value.message && (
-                      <p className="text-sm font-medium text-destructive">
-                        {form.formState.errors.country.value.message}
-                      </p>
-                    )}
+                    {form.formState?.errors?.country?.value.message &&
+                      field.value.value.length <= 0 && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.country.value.message}
+                        </p>
+                      )}
                   </FormItem>
                 )}
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Title*</FormLabel>
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title*</FormLabel>
                     <Combobox
                       value={field.value}
                       setValue={form.setValue}
@@ -291,22 +290,23 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    {form.formState?.errors?.title?.value.message && (
-                      <p className="text-sm font-medium text-destructive">
-                        {form.formState.errors.title.value.message}
-                      </p>
-                    )}
+                    {form.formState?.errors?.title?.value.message &&
+                      field.value.value.length <= 0 && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.title.value.message}
+                        </p>
+                      )}
                   </FormItem>
                 )}
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Email*</FormLabel>
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email*</FormLabel>
                     <FormControl>
                       <Input placeholder="Email" {...field} />
                     </FormControl>
@@ -316,12 +316,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Organisation</FormLabel>
               <FormField
                 control={form.control}
                 name="organisation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Organisation</FormLabel>
                     <FormControl>
                       <Input placeholder="Organisation" {...field} />
                     </FormControl>
@@ -331,12 +331,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[100%]">
+              <FormLabel>Biography</FormLabel>
               <FormField
                 control={form.control}
                 name="biography"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Biography</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Biography" {...field} />
                     </FormControl>
@@ -346,25 +346,19 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[100%]">
+              <FormLabel>Admin Access</FormLabel>
               <FormField
                 control={form.control}
                 name="isAdmin"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex flex-wrap w-full">
-                      <div className="w-full">
-                        <FormLabel>Admin Access</FormLabel>
-                      </div>
-                      <div className="w-full">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            {...field}
-                          />
-                        </FormControl>
-                      </div>
-                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

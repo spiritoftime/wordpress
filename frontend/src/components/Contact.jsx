@@ -287,12 +287,12 @@ const Contact = () => {
               />
               <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-4">
                 <div className="w-[48%]">
+                  <FormLabel>First Name*</FormLabel>
                   <FormField
                     control={form.control}
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name*</FormLabel>
                         <FormControl>
                           <Input placeholder="First Name" {...field} />
                         </FormControl>
@@ -302,12 +302,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[48%]">
+                  <FormLabel>Last Name*</FormLabel>
                   <FormField
                     control={form.control}
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Name*</FormLabel>
                         <FormControl>
                           <Input placeholder="Last Name" {...field} />
                         </FormControl>
@@ -317,12 +317,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[48%]">
+                  <FormLabel>Country*</FormLabel>
                   <FormField
                     control={form.control}
                     name="country"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Country*</FormLabel>
                         <Combobox
                           value={field.value}
                           setValue={form.setValue}
@@ -339,12 +339,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[48%]">
+                  <FormLabel>Title*</FormLabel>
                   <FormField
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title*</FormLabel>
                         <Combobox
                           value={field.value}
                           setValue={form.setValue}
@@ -361,12 +361,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[48%]">
+                  <FormLabel>Email*</FormLabel>
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email*</FormLabel>
                         <FormControl>
                           <TooltipProvider>
                             <Tooltip>
@@ -393,12 +393,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[48%]">
+                  <FormLabel>Organisation</FormLabel>
                   <FormField
                     control={form.control}
                     name="organisation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Organisation</FormLabel>
                         <FormControl>
                           <Input placeholder="Organisation" {...field} />
                         </FormControl>
@@ -408,12 +408,12 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[100%]">
+                  <FormLabel>Biography</FormLabel>
                   <FormField
                     control={form.control}
                     name="biography"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Biography</FormLabel>
                         <FormControl>
                           <Textarea placeholder="Biography" {...field} />
                         </FormControl>
@@ -423,27 +423,19 @@ const Contact = () => {
                   />
                 </div>
                 <div className="w-[100%]">
+                  <FormLabel className="w-full">Admin Access</FormLabel>
                   <FormField
                     control={form.control}
                     name="isAdmin"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex flex-wrap w-full">
-                          <div className="w-full">
-                            <FormLabel className="w-full">
-                              Admin Access
-                            </FormLabel>
-                          </div>
-                          <div className="w-full">
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                {...field}
-                              />
-                            </FormControl>
-                          </div>
-                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
