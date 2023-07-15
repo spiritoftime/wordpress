@@ -33,10 +33,6 @@ async function getAllWordPressPost() {
 }
 
 async function updateOnePage(pageId, data) {
-  // const data = {
-  //   content: newContent,
-  //   type: "page",
-  // };
   try {
     const token = await getWordPressToken();
     console.log("At updateOnePage utils");
