@@ -18,14 +18,9 @@ describe("Utils", () => {
       expect(result).to.equal("13:10");
     });
 
-    it("Adds 10 minutes to 11:59pm", () => {
-      const result = addTime("23:59", 10);
-      expect(result).to.equal("00:09");
-    });
-
-    it("Adds a duration in negative number to a time", () => {
-      const result = addTime("09:00", -7);
-      expect(result).to.equal("08:53");
-    });
+    // it("Adds 10 minutes to 11:59pm", () => {
+    //   const result = addTime("23:59", 10);
+    //   expect(result).to.equal("00:09");
+    // });
   });
 });

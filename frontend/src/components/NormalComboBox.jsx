@@ -20,6 +20,7 @@ export function NormalComboBox({
   fieldName,
   value,
   setValue,
+  disabled,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -33,6 +34,7 @@ export function NormalComboBox({
           role="combobox"
           aria-expanded={open}
           className="w-[300px] justify-between"
+          disabled={disabled}
         >
           {value
             ? options.find((option) => {

@@ -140,6 +140,7 @@ const DashboardLayout = () => {
                   fieldName={"conference"}
                   value={comboBoxValue}
                   setValue={setComboBoxValue}
+                  disabled={pathname.includes("add") ? true : false}
                 />
               )}
             </div>
