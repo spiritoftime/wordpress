@@ -46,7 +46,6 @@ const AddContact = () => {
   const queryClient = useQueryClient();
 
   const maxFileSize = 500000;
-  const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
   const FormSchema = z.object({
     firstName: z.string().min(1, {
@@ -56,19 +55,25 @@ const AddContact = () => {
       message: "Required",
     }),
     country: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().min(1, {
+        message: "Required",
+      }),
+      label: z.string().min(1, {
+        message: "Required",
+      }),
     }),
     title: z.object({
-      value: z.string(),
-      label: z.string(),
+      value: z.string().nonempty("Required"),
+      label: z.string().nonempty("Required"),
     }),
-    email: z.string().min(1, {
-      message: "Required",
-    }),
+    email: z
+      .string()
+      .min(1, {
+        message: "Required",
+      })
+      .email("This is not a valid email."),
     organisation: z.string().optional(),
     biography: z.string().optional(),
-    // photo: z.any(),
     isAdmin: z.boolean().optional(),
     photo: z.any().refine(
       (file) => {
@@ -87,8 +92,8 @@ const AddContact = () => {
       photo: "",
       firstName: "",
       lastName: "",
-      country: "",
-      title: "",
+      country: { value: "", label: "" },
+      title: { value: "", label: "" },
       email: "",
       organisation: "",
       biography: "",
@@ -102,8 +107,13 @@ const AddContact = () => {
 
   const handlePhotoInput = (event) => {
     // Create a preview of the file before uploading it onto database
-    setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
+    if (event.target.files[0]) {
+      setPhotoPreviewLink(URL.createObjectURL(event.target.files[0]));
+    }
   };
+
+  // const watch = form.watch;
+  // console.log(form.formState.errors);
 
   const {
     mutate: uploadContact,
@@ -163,8 +173,8 @@ const AddContact = () => {
   const onSubmit = (data) => {
     data.country = data.country["value"];
     data.title = data.title["value"];
-    console.log(data);
-    // uploadContact(data);
+    // console.log(data);
+    uploadContact(data);
   };
 
   return (
@@ -195,7 +205,7 @@ const AddContact = () => {
                     accept="image/*"
                     type="file"
                     onChange={(e) => {
-                      field.onChange(e.target.files[0]);
+                      e.target.files[0] && field.onChange(e.target.files[0]);
                       handlePhotoInput(e);
                     }}
                   />
@@ -207,12 +217,12 @@ const AddContact = () => {
           <p className="mt-10 text-lg font-bold">Contact Details</p>
           <div className="flex flex-wrap justify-between gap-y-6 gap-x-0.5 mt-2">
             <div className="w-[48%]">
+              <FormLabel>First Name*</FormLabel>
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="First Name" {...field} />
                     </FormControl>
@@ -222,12 +232,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Last Name*</FormLabel>
               <FormField
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name*</FormLabel>
                     <FormControl>
                       <Input placeholder="Last Name" {...field} />
                     </FormControl>
@@ -237,12 +247,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Country*</FormLabel>
               <FormField
                 control={form.control}
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country*</FormLabel>
                     <Combobox
                       value={field.value}
                       setValue={form.setValue}
@@ -253,18 +263,23 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    <FormMessage />
+                    {form.formState?.errors?.country?.value.message &&
+                      field.value.value.length <= 0 && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.country.value.message}
+                        </p>
+                      )}
                   </FormItem>
                 )}
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Title*</FormLabel>
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title*</FormLabel>
                     <Combobox
                       value={field.value}
                       setValue={form.setValue}
@@ -275,18 +290,23 @@ const AddContact = () => {
                       validateProperty="value"
                       displayProperty="value"
                     />
-                    <FormMessage />
+                    {form.formState?.errors?.title?.value.message &&
+                      field.value.value.length <= 0 && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.title.value.message}
+                        </p>
+                      )}
                   </FormItem>
                 )}
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Email*</FormLabel>
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email*</FormLabel>
                     <FormControl>
                       <Input placeholder="Email" {...field} />
                     </FormControl>
@@ -296,12 +316,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[48%]">
+              <FormLabel>Organisation</FormLabel>
               <FormField
                 control={form.control}
                 name="organisation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Organisation</FormLabel>
                     <FormControl>
                       <Input placeholder="Organisation" {...field} />
                     </FormControl>
@@ -311,12 +331,12 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[100%]">
+              <FormLabel>Biography</FormLabel>
               <FormField
                 control={form.control}
                 name="biography"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Biography</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Biography" {...field} />
                     </FormControl>
@@ -326,25 +346,19 @@ const AddContact = () => {
               />
             </div>
             <div className="w-[100%]">
+              <FormLabel>Admin Access</FormLabel>
               <FormField
                 control={form.control}
                 name="isAdmin"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex flex-wrap w-full">
-                      <div className="w-full">
-                        <FormLabel>Admin Access</FormLabel>
-                      </div>
-                      <div className="w-full">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            {...field}
-                          />
-                        </FormControl>
-                      </div>
-                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -368,6 +382,7 @@ const AddContact = () => {
         </form>
       </Form>
       <Toaster />
+      {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
     </div>
   );
 };
