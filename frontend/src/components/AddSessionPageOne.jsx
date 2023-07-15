@@ -39,7 +39,7 @@ const AddSessionPageOne = ({ control }) => {
       const accessToken = await getAccessToken();
       const contacts = await getContacts(accessToken);
       const contactNames = await contacts.map((contact) => {
-        const res = {};
+        const res = { id: contact.id };
         res.value = contact.fullName;
         res.label = contact.fullName;
         return res;
@@ -72,7 +72,8 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  console.log(topicsForAddingSession, "topicsForAddingSession");
+  // console.log(conferenceRooms, "conferencerooms");
+  // console.log(topicsForAddingSession, "topicsForAddingSession");
   // console.log("speakers", speakers);
   //  to query
   // const speakers = [
@@ -231,11 +232,12 @@ const AddSessionPageOne = ({ control }) => {
               return (
                 !isConferenceRoomsFetching && (
                   <FormItem>
+                    <FormLabel>Location:</FormLabel>
                     <FormControl>
                       <SelectOption
                         field={field}
                         placeholder="Select a location"
-                        options={conferenceRooms}
+                        options={conferenceRooms.map((room) => room.room)}
                       />
                     </FormControl>
                     <FormMessage />

@@ -65,6 +65,7 @@ export const thirdPageZod = z.object({
         z.object({
           value: z.string().nonempty("Required"),
           label: z.string().nonempty("Required"),
+          id: z.number().optional(),
         })
       ),
     })
@@ -77,6 +78,7 @@ export const thirdPageZod = z.object({
         z.object({
           value: z.string().nonempty("Required"),
           label: z.string().nonempty("Required"),
+          id: z.number().optional(),
         })
       ),
     })

@@ -28,14 +28,14 @@ const AddSession = () => {
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
   const { mutate: addToDatabase, isLoading } = useMutation(
     async (data) => {
-      const accessToken = await getAccessToken;
+      const accessToken = await getAccessToken();
       return addSession(accessToken, conferenceId, data);
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["sessions"], { exact: true });
         form.reset();
-        navigate(`conferences/sessions/${conferenceId}`);
+        navigate(`/conferences/sessions/${conferenceId}`);
         showToaster("Session Added");
       },
     }
@@ -69,7 +69,7 @@ const AddSession = () => {
   } = form;
   const onSubmit = (data) => {
     console.log("data", data);
-    addToDatabase(data)
+    addToDatabase(data);
   };
   useEffect(() => {
     if (formStep !== 2 && getValues("topics")) unregister("topics");

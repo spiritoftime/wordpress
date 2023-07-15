@@ -30,6 +30,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
             let appendTopics = [];
             if (!isAllocated) {
               selectedTopics.forEach((topic, index) => {
+                console.log("topicaaaaa", topic);
                 const appendTopic = {};
                 appendTopic[`topic`] = topic.title;
                 // if only one speaker in the row selected
@@ -43,6 +44,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
                     speakers.push({ value: speaker, label: speaker });
                   });
                   appendTopic[`speakers`] = [...speakers];
+                  appendTopic[`id`] = [...topic.speakersId];
                 }
 
                 appendTopics.push(appendTopic);

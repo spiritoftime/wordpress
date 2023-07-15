@@ -48,12 +48,9 @@ function initSession(sequelize) {
       },
       wordpressUrl: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
-      location: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+
       roomId: {
         type: DataTypes.INTEGER,
         allowNull: false,

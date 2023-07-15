@@ -37,11 +37,7 @@ module.exports = {
           key: "id",
         },
       },
-      location:{
-        type: Sequelize.STRING,
-        allowNull: false,
 
-      },
       session_code: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -53,7 +49,7 @@ module.exports = {
       },
       wordpress_url: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       room_id: {
         type: Sequelize.INTEGER,

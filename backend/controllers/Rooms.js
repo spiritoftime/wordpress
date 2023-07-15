@@ -14,7 +14,6 @@ const { Op } = require("sequelize");
 
 const getConferenceRooms = async (req, res) => {
   const { conferenceId } = req.params;
-  console.log("conferenceId", conferenceId);
   try {
     const conferenceRooms = await Room.findAll({
       where: { conferenceId: conferenceId },

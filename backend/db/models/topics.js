@@ -30,11 +30,11 @@ function initTopic(sequelize) {
         },
       },
       startTime: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: true,
       },
       endTime: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: true,
       },
     },

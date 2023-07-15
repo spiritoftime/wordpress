@@ -25,12 +25,17 @@ const getSessions = async (req, res) => {
   const { conferenceId } = req.params;
   try {
     const sessions = await Session.findAll({
-      include: [{ model: Topic }, { model: Room }],
+      include: [
+        { model: Topic },
+        { model: Room },
+        { model: Conference, attributes: { include: ["country"] } },
+      ],
       where: { conferenceId },
     });
     // console.log("sessions", sessions);
     return res.status(200).json(sessions);
   } catch (err) {
+    console.log("error", err);
     return res.status(500).json(err);
   }
 };
@@ -50,19 +55,65 @@ const addSession = async (req, res) => {
     title,
     topics,
   } = req.body;
+  console.log("location", location);
   try {
-    const session = await Session.create({
-      title,
-      synopsis,
-      date,
-      startTime,
-      endTime,
-      conferenceId,
-      sessionCode,
+    const room = await Room.findOne({
+      where: { room: location, conferenceId: conferenceId },
     });
-
-    return res.status(200).json(conference);
+    const roomId = room.id;
+    // console.log("roomid", room.id);
+    const session = await Session.create(
+      {
+        title,
+        synopsis,
+        isPublish,
+        sessionType,
+        date,
+        startTime,
+        endTime,
+        conferenceId,
+        roomId: room.id,
+        sessionCode,
+        // sessionSpeaker: addSessionSpeakers,
+      }
+      // {
+      //   include: [
+      //     {
+      //       association: SessionSpeaker,
+      //     },
+      //   ],
+      // }
+    );
+    // for the moderators who are not presenting a topic
+    // speaker is an array containing {id,value,label}
+    let addSessionSpeakers = [];
+    speakers.map(({ speakerRole, speaker: speakers }) => {
+      for (const speaker of speakers) {
+        const sessionSpeaker = {};
+        sessionSpeaker.speakerId = speaker.id;
+        sessionSpeaker.role = speakerRole;
+        sessionSpeaker.sessionId = session.id;
+        addSessionSpeakers.push(sessionSpeaker);
+      }
+    });
+    // console.log(addSessionSpeakers, "addSessionSpeakers");
+    await SessionSpeaker.bulkCreate(addSessionSpeakers);
+    // to update the session id in the topics table
+    const addTopics = topics.map((t) => {
+      console.log("topic", t);
+      const addTopic = {};
+      addTopic.title = t.topic;
+      addTopic.startTime = t.startTime;
+      addTopic.endTime = t.endTime;
+      addTopic.conferenceId = conferenceId;
+      addTopic.sessionId = session.id;
+      return addTopic;
+    });
+    console.log("addtopics", addTopics);
+    await Topic.bulkCreate(addTopics, { updateOnDuplicate: ["title"] });
+    return res.status(200).json(session);
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };
