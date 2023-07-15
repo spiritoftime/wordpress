@@ -279,7 +279,7 @@ async function updateSpeaker(req, res) {
 
     return res.json(updatedSpeaker);
   } catch (err) {
-    return res.status(400).json({ error: true, msg: err });
+    return res.status(400).json(err);
   }
 }
 
