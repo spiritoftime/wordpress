@@ -14,6 +14,10 @@ export function getConference(accessToken, conferenceId) {
   return makeRequest(`/conferences/${conferenceId}`, accessToken);
 }
 
+export function getSpeakersCount(accessToken, conferenceId) {
+  return makeRequest(`/speakers/speakers-count/${conferenceId}`, accessToken);
+}
+
 export function addConference(accessToken, data) {
   return makeRequest(`/conferences`, accessToken, {
     method: "POST",

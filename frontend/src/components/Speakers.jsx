@@ -97,7 +97,7 @@ const Speakers = () => {
         <PageHeader
           rowType="Speakers"
           handleClick={() =>
-            navigate(`/conferences/add-speakers/${conferenceId}`)
+            navigate(`/conferences/speakers/add-speakers/${conferenceId}`)
           }
           hasButton={true}
         />
@@ -108,6 +108,7 @@ const Speakers = () => {
           filterColumn={"lastName"}
           rowNavigate={rowNavigate}
           setData={setSpeaker}
+          clickable={true}
         />
       </div>
       <Toaster />
