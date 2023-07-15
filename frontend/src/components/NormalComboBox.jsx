@@ -53,7 +53,6 @@ export function NormalComboBox({
           <CommandGroup>
             {options &&
               options.map((option) => {
-                // console.log(option);
                 return (
                   <CommandItem
                     key={option[validateProperty]}
@@ -63,19 +62,16 @@ export function NormalComboBox({
                       if (currentValue.toUpperCase() !== value.toUpperCase()) {
                         setValue(currentValue.toUpperCase());
                       }
-                      // setValue(
-                      //   currentValue.toUpperCase() === value.toUpperCase()
-                      //     ? ""
-                      //     : currentValue.toUpperCase()
-                      // );
                       setOpen(false);
                     }}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        option &&
-                          option[validateProperty] === value[validateProperty]
+                        value &&
+                          option &&
+                          option[validateProperty].toUpperCase() ===
+                            value.toUpperCase()
                           ? "opacity-100"
                           : "opacity-0"
                       )}
