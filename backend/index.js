@@ -10,6 +10,7 @@ const conferenceRouter = require("./routes/ConferenceRouter");
 const speakerRouter = require("./routes/SpeakerRouter");
 const topicRouter = require("./routes/TopicRouter");
 const sessionRouter = require("./routes/SessionRouter");
+const roomRouter = require("./routes/RoomRouter");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/conferences", conferenceRouter);
 app.use("/speakers", speakerRouter);
 app.use("/topics", topicRouter);
 app.use("/sessions", sessionRouter);
+app.use("/rooms", roomRouter);
 
 const port =
   process.env.NODE_ENV === "production"

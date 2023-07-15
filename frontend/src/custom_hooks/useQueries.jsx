@@ -10,6 +10,7 @@ const useGetContacts = () => {
       const accessToken = await getAccessToken();
       return getContacts(accessToken);
     },
+
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 };

@@ -47,7 +47,7 @@ const Speakers = () => {
   });
 
   const columns = [
-    RowCheckBox,
+    // RowCheckBox,
     {
       accessorKey: "title",
       header: "Title",

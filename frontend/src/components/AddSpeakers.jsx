@@ -63,21 +63,8 @@ const AddSpeakers = () => {
             organisation: z.string(),
             photoUrl: z.string(),
             title: z.string(),
-            // firstName: z.string().nonempty("Required"),
-            // lastName: z.string().nonempty("Required"),
-            // country: z.string().nonempty("Required"),
-            // biography: z.string().nonempty("Required"),
-            // email: z.string().nonempty("Required"),
-            // id: z.number().positive(),
-            // isAdmin: z.boolean({ required_error: "Required" }),
-            // organisation: z.string().nonempty("Required"),
-            // photoUrl: z.string().nonempty("Required"),
-            // title: z.string().nonempty("Required"),
           })
           .required(),
-        // .refine((val) => val.firstName.length >= 1, {
-        //   message: "Speaker name is required",
-        // }),
         topicOne: z.string(),
         topicTwo: z.string(),
         topicThree: z.string(),
@@ -91,15 +78,14 @@ const AddSpeakers = () => {
     defaultValues: {
       speakerItems: [
         {
-          // name: {},
           name: {
             firstName: "",
             lastName: "",
             country: "",
             biography: "",
             email: "",
-            id: "",
-            isAdmin: "",
+            id: null,
+            isAdmin: null,
             organisation: "",
             photoUrl: "",
             title: "",
@@ -112,6 +98,8 @@ const AddSpeakers = () => {
       ],
     },
   });
+
+  // console.log(form.formState.errors);
 
   const control = form.control;
 
@@ -191,7 +179,13 @@ const AddSpeakers = () => {
                               displayProperty="fullName"
                               buttonClassName="bg-white"
                             />
-                            <FormMessage />
+                            {form?.formState &&
+                              Object.keys(form.formState?.errors).length > 0 &&
+                              field.value.id === null && (
+                                <p className="text-sm font-medium text-destructive">
+                                  Please select a contact
+                                </p>
+                              )}
                           </FormItem>
                         )}
                       />

@@ -25,6 +25,21 @@ module.exports = {
           key: "id",
         },
       },
+      role: {
+        type: Sequelize.ENUM,
+        values: [
+          "Course Director",
+          "Co-Course Director",
+          "Chair",
+          "Co-Chair",
+          "Moderator",
+          "Judge",
+          "Chief Judge",
+          "Faculty",
+          "Speaker",
+        ],
+        allowNull: false,
+      },
     });
   },
 

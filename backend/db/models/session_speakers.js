@@ -25,6 +25,21 @@ function initSessionSpeaker(sequelize) {
           key: "id",
         },
       },
+      role: {
+        type: DataTypes.ENUM,
+        values: [
+          "Course Director",
+          "Co-Course Director",
+          "Chair",
+          "Co-Chair",
+          "Moderator",
+          "Judge",
+          "Chief Judge",
+          "Faculty",
+          "Speaker",
+        ],
+        allowNull: false,
+      },
     },
     { underscored: true, timestamps: false }
   );

@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { getConferences } from "../services/conferences";
-import { useParams, useNavigate } from "react-router-dom";
-
 import { NormalComboBox } from "./NormalComboBox";
-import Combobox from "./Combobox";
+import Loading from "./Loading";
+import Conferences from "./Conferences";
 
 import { ProfileIcon } from "./ProfileIcon";
 import {
@@ -22,25 +20,30 @@ import {
   ClipboardList,
   CopySlash,
 } from "lucide-react";
-import { Outlet, useLocation, Link, useMatch } from "react-router-dom";
+
+import {
+  Outlet,
+  useLocation,
+  Link,
+  useMatch,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "../lib/utils";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useAppContext } from "../context/appContext";
-import Loading from "./Loading";
-import Conferences from "./Conferences";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const matchedConferencePath = useMatch("/conferences/:conferenceId");
   const matchedContactPath = useMatch("/contacts/:contactId");
-
-  // const [newComboBoxValue, setNewComboBoxValue] = useState();
+  const comboBoxValueRef = useRef();
 
   const { logout, user, isAuthenticated } = useAuth0();
   const { conferenceId } = useParams();
   const [userName, setUserName] = useState("");
-  // const { setConference } = useAppContext();
   const { comboBoxValue, setComboBoxValue, setConference } = useAppContext();
   const getAccessToken = useGetAccessToken();
 
@@ -65,8 +68,9 @@ const DashboardLayout = () => {
           return c.id === +conferenceId;
         });
         // console.log(comboBoxValue, conference.name, "wtf");
-        // setNewComboBoxValue(conference.name);
+
         setComboBoxValue(conference.name);
+        comboBoxValueRef.current = conference.name;
         setConference(conference);
       } else return;
     }
@@ -91,10 +95,13 @@ const DashboardLayout = () => {
       //   navigate(`${newPath}/${conference.id}`);
       // }
 
-      navigate(`/conferences/${conference.id}`);
+      if (comboBoxValue !== comboBoxValueRef.current) {
+        navigate(`/conferences/${conference.id}`);
+      }
 
       setConference(conference);
     }
+    comboBoxValueRef.current = comboBoxValue;
   }, [comboBoxValue]);
 
   useEffect(() => {
@@ -131,10 +138,9 @@ const DashboardLayout = () => {
                   validateProperty={"name"}
                   displayProperty={"name"}
                   fieldName={"conference"}
-                  // value={newComboBoxValue}
                   value={comboBoxValue}
-                  // setValue={setNewComboBoxValue}
                   setValue={setComboBoxValue}
+                  disabled={pathname.includes("add") ? true : false}
                 />
               )}
             </div>
@@ -240,13 +246,7 @@ const DashboardLayout = () => {
             )}
           </div>
         </div>
-        {/* <Outlet /> */}
         {pathname === "/" ? <Conferences /> : <Outlet />}
-        {/* {pathname === "/" ? (
-          <Conferences setNewComboBoxValue={setNewComboBoxValue} />
-        ) : (
-          <Outlet context={[newComboBoxValue, setNewComboBoxValue]} />
-        )} */}
       </div>
     </div>
   );

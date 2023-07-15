@@ -45,7 +45,7 @@ const Conferences = () => {
   });
 
   const columns = [
-    RowCheckBox,
+    // RowCheckBox,
     {
       accessorKey: "name",
       header: ({ column }) => (

@@ -27,7 +27,7 @@ module.exports = {
       },
       speaker_link: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     });
   },

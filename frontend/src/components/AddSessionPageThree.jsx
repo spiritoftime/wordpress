@@ -17,6 +17,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
     name: "topics",
   });
   const { selectedTopics } = useAppContext();
+  console.log("selectedTopics", selectedTopics);
   const [isAllocated, setIsAllocated] = useState(false);
   const [topicsToAppend, setTopicsToAppend] = useState([]);
 
@@ -29,20 +30,31 @@ const AddSessionPageThree = ({ control, getValues }) => {
             let appendTopics = [];
             if (!isAllocated) {
               selectedTopics.forEach((topic, index) => {
+                console.log("topicaaaaa", topic);
                 const appendTopic = {};
                 appendTopic[`topic`] = topic.title;
                 // if only one speaker in the row selected
                 if (typeof topic.speaker === "string") {
                   appendTopic[`speakers`] = [
-                    { value: topic.speaker, label: topic.speaker },
+                    {
+                      value: topic.speaker,
+                      label: topic.speaker,
+                      topicId: topic.id,
+                    },
                   ];
                 } else if (Array.isArray(topic.speaker)) {
                   const speakers = [];
                   topic.speaker.forEach((speaker) => {
-                    speakers.push({ value: speaker, label: speaker });
+                    speakers.push({
+                      value: speaker,
+                      label: speaker,
+                      topicId: topic.id,
+                    });
                   });
-                  appendTopic[`speakers`] = [...topic.speaker];
+                  appendTopic[`speakers`] = [...speakers];
+                  appendTopic[`id`] = [...topic.speakersId];
                 }
+                appendTopic[`topicId`] = topic.topicId;
 
                 appendTopics.push(appendTopic);
               });

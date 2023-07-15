@@ -28,36 +28,101 @@ const getSessions = async (req, res) => {
   const { conferenceId } = req.params;
   try {
     const sessions = await Session.findAll({
-      include: [{ model: Topic }, { model: Room }],
+      include: [
+        { model: Topic },
+        { model: Room },
+        { model: Conference, attributes: { include: ["country"] } },
+      ],
       where: { conferenceId },
     });
     // console.log("sessions", sessions);
     return res.status(200).json(sessions);
   } catch (err) {
+    console.log("error", err);
     return res.status(500).json(err);
   }
 };
 
 const addSession = async (req, res) => {
-  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
-    req.body;
+  const { conferenceId } = req.params;
+  const {
+    date,
+    startTime,
+    endTime,
+    isPublish,
+    location,
+    presentationDuration,
+    sessionCode,
+    sessionType,
+    speakers,
+    synopsis,
+    title,
+    topics,
+  } = req.body;
+  console.log("location", location);
   try {
-    const conference = await Conference.create({
-      startDate,
-      endDate,
-      name,
-      country,
-      venue,
-      wordpressApi,
+    const room = await Room.findOne({
+      where: { room: location, conferenceId: conferenceId },
     });
-    const sessionId = conference.dataValues.id;
-    roomItems.forEach((room) => {
-      room.sessionId = sessionId;
+    const roomId = room.id;
+    // console.log("roomid", room.id);
+    const session = await Session.create(
+      {
+        title,
+        synopsis,
+        isPublish,
+        sessionType,
+        date,
+        startTime,
+        endTime,
+        conferenceId,
+        roomId: room.id,
+        sessionCode,
+        // sessionSpeaker: addSessionSpeakers,
+      }
+      // {
+      //   include: [
+      //     {
+      //       association: SessionSpeaker,
+      //     },
+      //   ],
+      // }
+    );
+    // for the moderators who are not presenting a topic
+    // speaker is an array containing {id,value,label}
+    // tried to create together but got EagerLoadingError [SequelizeEagerLoadingError]: SessionSpeaker is not associated to Session! Im assuming you cant eager create rows in a join table.
+    let addSessionSpeakers = [];
+    speakers.map(({ speakerRole, speaker: speakers }) => {
+      for (const speaker of speakers) {
+        const sessionSpeaker = {};
+        sessionSpeaker.speakerId = speaker.id;
+        sessionSpeaker.role = speakerRole;
+        sessionSpeaker.sessionId = session.id;
+        addSessionSpeakers.push(sessionSpeaker);
+      }
     });
-    const rooms = await Room.bulkCreate(roomItems);
-
-    return res.status(200).json(conference);
+    // console.log(addSessionSpeakers, "addSessionSpeakers");
+    await SessionSpeaker.bulkCreate(addSessionSpeakers);
+    // to update the session id in the topics table
+    const addTopics = topics.map((t) => {
+      console.log("topic", t);
+      const addTopic = {};
+      addTopic.title = t.topic;
+      addTopic.startTime = t.startTime;
+      addTopic.endTime = t.endTime;
+      addTopic.conferenceId = conferenceId;
+      addTopic.sessionId = session.id;
+      addTopic.id = t.topicId;
+      return addTopic;
+    });
+    // console.log("addtopics", addTopics);
+    const updatedTopics = await Topic.bulkCreate(addTopics, {
+      updateOnDuplicate: ["startTime", "endTime", "sessionId"],
+    });
+    // console.log("updatedTopics", updatedTopics);
+    return res.status(200).json(updatedTopics);
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };
