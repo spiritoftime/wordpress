@@ -28,6 +28,8 @@ app.use(
   })
 );
 
+// app.use(cors());
+
 app.use(checkJwt);
 
 app.use("/conferences", conferenceRouter);

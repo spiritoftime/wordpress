@@ -1,113 +1,46 @@
-import { useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ReactDOM } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { updateProgram } from "../services/sessions";
+import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 
-export function DemoApp() {
-  const [weekendsVisible, setWeekendsVisible] = useState(false);
-  const [currentEvents, setCurrentEvents] = useState([
-    { title: "event 1", date: "2023-07-10" },
-    { title: "event 2", date: "2023-07-24" },
-  ]);
+import Calendar from "./Calendar";
+import { useEffect } from "react";
 
-  let eventGuid = 0;
-  let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
+const ProgramOverview = () => {
+  const getAccessToken = useGetAccessToken();
 
-  const createEventId = () => {
-    return String(eventGuid++);
-  };
+  const html = renderToStaticMarkup(<Calendar />);
 
-  const INITIAL_EVENTS = [
-    {
-      id: createEventId(),
-      title: "All-day event",
-      start: todayStr,
-      date: "2023-07-10",
-    },
-    {
-      id: createEventId(),
-      title: "Timed event",
-      start: todayStr + "T12:00:00",
-    },
-  ];
-
-  const handleWeekendsToggle = () => {
-    setWeekendsVisible(!weekendsVisible);
-  };
-
-  const handleDateSelect = (selectInfo) => {
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = selectInfo.view.calendar;
-
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      });
+  const { mutate: updateProgramOverview, isLoading } = useMutation(
+    async (data) => {
+      const accessToken = await getAccessToken();
+      return updateProgram(accessToken, data);
     }
-  };
+    // {
+    //   onSuccess: () => {
 
-  const handleEventClick = (clickInfo) => {
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`
-      )
-    ) {
-      clickInfo.event.remove();
-    }
-  };
-
-  const handleEvents = (events) => {
-    setCurrentEvents({
-      currentEvents: events,
-    });
-  };
-
-  const renderEventContent = (eventInfo) => {
-    return (
-      <>
-        {/* <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i> */}
-        <p>New Event</p>
-      </>
-    );
-  };
-
-  return (
-    <div className="demo-app">
-      <div className="demo-app-main">
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={weekendsVisible}
-          events={currentEvents}
-          //initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-          // select={handleDateSelect}
-          eventContent={renderEventContent} // custom render function
-          eventClick={handleEventClick}
-          // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-          /* you can update a remote database when these fire:
-            eventAdd={function(){}}
-            eventChange={function(){}}
-            eventRemove={function(){}}
-            */
-        />
-      </div>
-    </div>
+    //     navigate(`/conferences/speakers/${conferenceId}`);
+    //     showToaster("Speakers Added");
+    //   },
+    // }
   );
-}
+
+  // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
+
+  const calendarHtml = `<code><html lang='en'><head><meta charset='utf-8' /><script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script><script>document.addEventListener('DOMContentLoaded', function() {var calendarEl = document.getElementById('calendar');var calendar = new FullCalendar.Calendar(calendarEl, {initialView: 'dayGridMonth'});calendar.render();});</script></head><body><div id='calendar'></div></body></html></code>`;
+
+  useEffect(() => {
+    console.log("At useEffect");
+    console.log(html);
+    const data = {
+      content: calendarHtml,
+      type: "page",
+    };
+    updateProgramOverview(data);
+  }, []);
+
+  return <Calendar />;
+};
+
+export default ProgramOverview;
