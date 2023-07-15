@@ -37,7 +37,7 @@ const Contacts = () => {
   });
 
   const columns = [
-    RowCheckBox,
+    // RowCheckBox,
     {
       accessorKey: "title",
       header: "Title",
