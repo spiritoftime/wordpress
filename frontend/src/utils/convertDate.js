@@ -2,6 +2,8 @@
 // example:
 // const formattedDate = formatDate('2021-06-25');
 
+import { fi } from "date-fns/locale";
+
 // console.log(formattedDate); // Output: Fri, Jun 25, 2021, 00:00:00 GMT+8
 export function formatDate(dateString) {
   const date = new Date(dateString);
@@ -40,7 +42,7 @@ export const removeTimeFromDate = (date) => {
  * @param {string} end end date
  * @param {array} sessions array of sessions that the speaker is involved during the conference
  * @returns {array} dates in between the start and end date
- * Exaple output: ['31/07/2023', '01/08/2023', '02/08/2023']
+ * Exaple output: ['Monday, 31 July 2023', 'Tuesday, 1 August 2023', 'Wednesday, 2 August 2023']
  */
 export const createDateArray = (start, end, sessions) => {
   const days = [];
@@ -56,7 +58,13 @@ export const createDateArray = (start, end, sessions) => {
     const daysInMiliseconds = 86400000 * i;
     const newDay = new Date(
       startDate.getTime() + daysInMiliseconds
-    ).toLocaleDateString("en-GB");
+    ).toLocaleDateString("en-GB", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     if (sessionDates.includes(newDay)) {
       days.push(newDay);
     }
@@ -81,7 +89,13 @@ export const getSessionDates = (sessions) => {
  */
 export const convertDateFormat = (date) => {
   const newDate = new Date(removeTimeFromDate(date));
-  return newDate.toLocaleDateString("en-GB");
+
+  return newDate.toLocaleDateString("en-GB", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 /**

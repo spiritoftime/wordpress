@@ -471,7 +471,9 @@ const Contact = () => {
                 key={`${conference.name}-${index}`}
               >
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>{conference.name}</AccordionTrigger>
+                  <AccordionTrigger className="font-bold">
+                    {conference.name}
+                  </AccordionTrigger>
                   <AccordionContent>
                     <ScheduleTable
                       conference={conference}
