@@ -1,60 +1,167 @@
-const htmlPost = `<!DOCTYPE html>
+const { formatDateToLocale, addTime } = require("./timeDateFunctions");
+const { minifyHtml } = require("./minifyHTML");
+// const data = {
+//   title: "TRENDING TECHNOLOGIES – Highway to the Future",
+//   synopsis:
+//     "This combined symposium of the three leading cataract and refractive societies will take a critical look at trending technologies, some nascent, some current, and some which are finding their place in the sun. We aim to separate the chaff from the wheat and help attendees decide which technologies to take seriously.",
+//   startTime: "11:00",
+//   endTime: "12:30",
+//   presentationDuration: 10,
+//   discussionDuration: 5,
+//   sessionCode: "S6",
+//   location: "Room 2",
+//   isPublish: false,
+//   date: "2023-06-08T16:00:00.000Z",
+//   topics: [
+//     {
+//       startTime: "11:00",
+//       endTime: "11:10",
+//       topic: "english",
+//       topicId: 4,
+//       speakers: [
+//         {
+//           value: "Bob Ng",
+//           label: "Bob Ng",
+//         },
+//       ],
+//     },
+//     {
+//       startTime: "11:15",
+//       endTime: "11:25",
+//       topic: "web dev",
+//       topicId: 5,
+//       speakers: [
+//         {
+//           value: "David Lee",
+//           label: "David Lee",
+//         },
+//       ],
+//     },
+//   ],
+//   sessionType: "Symposia",
+//   speakers: [
+//     {
+//       speakerRole: "Chair",
+//       speaker: [
+//         {
+//           value: "Harrison Moris",
+//           label: "Harrison Moris",
+//           id: 1,
+//         },
+//         {
+//           value: "John Doe",
+//           label: "John Doe",
+//           id: 3,
+//         },
+//         {
+//           value: "Michael Johnson",
+//           label: "Michael Johnson",
+//           id: 5,
+//         },
+//       ],
+//     },
+//   ],
+// };
+const generateHTML = (data) => {
+  const {
+    synopsis,
+    startTime,
+    endTime,
+    sessionCode,
+    location,
+    title,
+    date,
+    topics,
+    sessionType,
+    speakers,
+    discussionDuration,
+  } = data;
+  const moderators = concatSpeakers(speakers);
+
+  const moderatorString = moderators
+    .map((moderator) => `<p>${moderator}</p>`)
+    .join("");
+
+  const topicsString = topics
+    .map(({ startTime, endTime, topic, speakers }, index) => {
+      const speakerNames = speakers
+        .map(({ value: speakerName }) => `<span>${speakerName}</span>`)
+        .join("");
+      return `<tr class="presentation">
+        <td class="presentation-duration">${startTime} - ${endTime}hrs</td>
+        <td class="topic">${topic}</td>
+        <td class="speaker-name">${speakerNames}</td>
+      </tr>
+      <tr class="presentation discussion">
+        <td class="presentation-duration">${endTime} - ${addTime(
+        endTime,
+        discussionDuration
+      )}</td>
+        <td class="topic">Discussion</td>
+        <td class="speaker-name"></td>
+      </tr>`;
+    })
+    .join("");
+
+  const htmlPost = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S5 - THE CATARACT METAVERSE 1</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      margin: 20px;
-    }
-    h1 {
-      color: #007bff;
-    }
-    .icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
-      vertical-align: middle;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border:none;
-    }
-    th, td {
-            padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color:  #384044;
-      color:#fff;
-      text-align:center;
-    }
-    .speaker-name {
-      font-weight: bold;
-      text-align:center;
-    }
-    .discussion{
-      background-color:#CBD5DC;
-    }
-    .topic{
-      font-weight: bold;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+  }
+  h1 {
+    color: #007bff;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border:none;
+  }
+  th, td {
+          padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color:  #384044;
+    color:#fff;
+    text-align:center;
+  }
+  .speaker-name {
+    font-weight: bold;
+    text-align:center;
+  }
+  .discussion{
+    background-color:#CBD5DC;
+  }
+  .topic{
+    font-weight: bold;
+  }
+  .synopsis{
+    font-size: 16px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 15px;
+  }
   </style>
 </head>
 <body>
-  <p><span class="icon">📅</span>Friday, 9 June 2023</p>
-  <p><span class="icon">⏰</span>07:30 – 08:50hrs</p>
-  <p><span class="icon">📍</span>Hall B, Level 4, Suntec</p>
-  <p>
-    Experts will provide the most up-to-date and comprehensive teaching on the various steps in phaco ranging from incision to surgical steps. Expect a fast and furious session from top international phaco surgeons.
-  </p>
-  <p>
-    Chairs: Mahbubur CHOWDHURY, Bangladesh • Ronald YEOH, Singapore
-  </p>
+  <h1>(${sessionCode}) ${title}</h1>
+  <p><span class="icon">📅</span>${formatDateToLocale(date)}</p>
+  <p><span class="icon">⏰</span>${startTime} - ${endTime} hrs</p>
+  <p><span class="icon">📍</span>${location}</p>
+  <p class="synopsis">${synopsis}</p>
+  ${moderatorString}
   <table>
     <thead>
       <tr>
@@ -64,87 +171,31 @@ const htmlPost = `<!DOCTYPE html>
       </tr>
     </thead>
     <tbody>
-      <tr class="presentation">
-        <td class="presentation-duration">07:30 - 07:37hrs</td>
-        <td class="topic">Phaco through a Fog</td>
-        <td class="speaker-name">John WONG<br>Singapore</td>
-      </tr>
-      <tr class="discussion">
-        <td class="presentation-duration">07:37 - 07:40hrs</td>
-        <td class="topic">Discussion</td>
-        <td class="speaker-name"></td>
-      </tr>
-      <tr>
-        <td>07:40 - 07:47hrs</td>
-        <td>Phacoemulsification in Corneal Opacities/Corneal Ectasias</td>
-        <td class="speaker-name">Namrata SHARMA<br>India</td>
-      </tr>
-      <tr>
-        <td>07:47 - 07:50hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>07:50 - 07:57hrs</td>
-        <td>Wavefront IOL for Post Laser Refractive Surgery</td>
-        <td class="speaker-name">Pichit NARIPTHAPHAN<br>Thailand</td>
-      </tr>
-      <tr>
-        <td>07:57 - 08:00hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>08:00 - 08:07hrs</td>
-        <td>IOLs in Keratoconus</td>
-        <td class="speaker-name">Filomena RIBEIRO<br>Portugal</td>
-      </tr>
-      <tr>
-        <td>08:07 - 08:10hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>08:10 - 08:17hrs</td>
-        <td>Miyake Maneuvers</td>
-        <td class="speaker-name">Wilson Takashi HIDA<br>Brazil</td>
-      </tr>
-      <tr>
-        <td>08:17 - 08:20hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>08:20 - 08:27hrs</td>
-        <td>Advanced Radio-Frequency (RF) Technology for Treatment of Ocular Surface Diseases</td>
-        <td class="speaker-name">Chul Young CHOI<br>South Korea</td>
-      </tr>
-      <tr>
-        <td>08:27 - 08:30hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>08:30 - 08:37hrs</td>
-        <td>Cataract Surgery & Dementia: A growing problem for us all</td>
-        <td class="speaker-name">Paul G. URSELL<br>UK</td>
-      </tr>
-      <tr>
-        <td>08:37 - 08:40hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>08:40 - 08:47hrs</td>
-        <td>Dysfunctional Lens Index: A game changer in refractive surgery decision making?</td>
-        <td class="speaker-name">Gaurav LUTHRA<br>India</td>
-      </tr>
-      <tr>
-        <td>08:47 - 08:50hrs</td>
-        <td>Discussion</td>
-        <td></td>
-      </tr>
+      ${topicsString}
     </tbody>
   </table>
 </body>
 </html>`;
+
+  return htmlPost;
+};
+
+const concatSpeakers = (speakers) => {
+  const res = speakers.map(({ speakerRole, speaker }) => {
+    let speakerString = `${speakerRole}:`;
+    speaker.map(({ value: speakerName }) => {
+      speakerString = speakerString + ` ${speakerName},`;
+    });
+    return speakerString;
+  });
+  return res;
+};
+// const test = async () => {
+//   const content = generateHTML(data);
+//   // console.log("content", content);
+//   const minifiedContent = await minifyHtml(content);
+//   console.log("minifiedContent", minifiedContent);
+//   return minifiedContent;
+// };
+// test();
+module.exports = { generateHTML };

@@ -12,7 +12,13 @@ const {
 } = db;
 const { Op } = require("sequelize");
 
-const { getAllWordPressPost, updateOnePage } = require("../utils/wordpress");
+const {
+  getAllWordPressPost,
+  updateOnePage,
+  createPost,
+} = require("../utils/wordpress");
+const { generateHTML } = require("../utils/postMockup");
+const { minifyHtml } = require("../utils/minifyHTML");
 
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
@@ -45,6 +51,7 @@ const getSessions = async (req, res) => {
 
 const addSession = async (req, res) => {
   const { conferenceId } = req.params;
+  const data = req.body;
   const {
     date,
     startTime,
@@ -59,7 +66,7 @@ const addSession = async (req, res) => {
     synopsis,
     title,
     topics,
-  } = req.body;
+  } = data;
   console.log("location", location);
   console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
@@ -109,7 +116,6 @@ const addSession = async (req, res) => {
     await SessionSpeaker.bulkCreate(addSessionSpeakers);
     // to update the session id in the topics table
     const addTopics = topics.map((t) => {
-      console.log("topic", t);
       const addTopic = {};
       addTopic.title = t.topic;
       addTopic.startTime = t.startTime;
@@ -124,6 +130,17 @@ const addSession = async (req, res) => {
       updateOnDuplicate: ["startTime", "endTime", "sessionId"],
     });
     // console.log("updatedTopics", updatedTopics);
+    if (isPublish) {
+      const postContent = generateHTML(data);
+      const minifiedContent = await minifyHtml(postContent);
+      // console.log("postContent", postContent);
+      const wordpressLink = await createPost(
+        minifiedContent,
+        title,
+        sessionCode
+      );
+      console.log("link", wordpressLink);
+    }
     return res.status(200).json(updatedTopics);
   } catch (err) {
     console.log(err, "err");
