@@ -12,6 +12,8 @@ const {
 } = db;
 const { Op } = require("sequelize");
 
+const { getAllWordPressPost, updateOnePage } = require("../utils/wordpress");
+
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
   try {
@@ -21,6 +23,7 @@ const getSession = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
 const getSessions = async (req, res) => {
   const { conferenceId } = req.params;
   try {
@@ -39,6 +42,7 @@ const getSessions = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
 const addSession = async (req, res) => {
   const { conferenceId } = req.params;
   const {
@@ -122,6 +126,7 @@ const addSession = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
 const EditSession = async (req, res) => {
   const { sessionId } = req.params;
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
@@ -142,6 +147,7 @@ const EditSession = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
 const DeleteSession = async (req, res) => {
   const { conferenceId } = req.params;
   try {
@@ -153,10 +159,25 @@ const DeleteSession = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
+const updateProgramOverview = async (req, res) => {
+  // console.log("hello");
+  const newContent = req.body;
+  console.log(newContent);
+  console.log("At updateProgram controller");
+  try {
+    await updateOnePage(33323, newContent);
+    return res.status(200).json("Program Overview Updated");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
 module.exports = {
   addSession,
   getSessions,
   EditSession,
   DeleteSession,
   getSession,
+  updateProgramOverview,
 };

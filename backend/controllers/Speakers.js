@@ -15,7 +15,7 @@ const {
   addUserToAuth,
   getUserFromAuth,
   deleteUserFromAuth,
-} = require("../utils");
+} = require("../utils/auth");
 
 // Function to get a specific contact
 const getSpeaker = async (req, res) => {
