@@ -57,7 +57,7 @@ const DashboardLayout = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0,
   });
-  console.log("wtf is conferences", conferences);
+  // console.log("wtf is conferences", conferences);
   useEffect(() => {
     if (!isAuthenticated) return;
     if (conferenceId !== undefined) {
