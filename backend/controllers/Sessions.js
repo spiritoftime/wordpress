@@ -52,6 +52,7 @@ const addSession = async (req, res) => {
     isPublish,
     location,
     discussionDuration,
+    presentationDuration,
     sessionCode,
     sessionType,
     speakers,
@@ -60,6 +61,7 @@ const addSession = async (req, res) => {
     topics,
   } = req.body;
   console.log("location", location);
+  console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
@@ -74,6 +76,7 @@ const addSession = async (req, res) => {
         sessionType,
         date,
         discussionDuration,
+        presentationDuration,
         startTime,
         endTime,
         conferenceId,
