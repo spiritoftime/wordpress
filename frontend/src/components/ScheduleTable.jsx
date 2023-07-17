@@ -26,7 +26,13 @@ const ScheduleTable = ({ conference, dates }) => {
                           <tr>
                             <td>{session.Room.room}</td>
                             <td>
-                              <strong>{session.title}</strong>
+                              <strong>{`(${session.sessionCode}) ${
+                                session.title
+                              } (${removeSecondsFromTime(
+                                session.startTime
+                              )} - ${removeSecondsFromTime(
+                                session.endTime
+                              )}hrs)`}</strong>
                             </td>
                           </tr>
                           {session.Speakers.length > 0 &&
@@ -48,7 +54,7 @@ const ScheduleTable = ({ conference, dates }) => {
                                     topic.startTime
                                   )} - ${removeSecondsFromTime(
                                     topic.endTime
-                                  )} hrs`}</p>
+                                  )}hrs`}</p>
                                 </td>
                                 <td>
                                   <p>{topic.title}</p>

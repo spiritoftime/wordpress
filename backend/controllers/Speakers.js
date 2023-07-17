@@ -35,6 +35,7 @@ const getSpeaker = async (req, res) => {
                   model: Speaker,
                   where: { id: speakerId },
                   through: { attributes: ["role"] },
+                  required: false,
                 },
                 {
                   model: Topic,
