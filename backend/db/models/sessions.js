@@ -41,6 +41,14 @@ function initSession(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      discussionDuration: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      presentationDuration: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       sessionType: {
         type: DataTypes.ENUM("Symposia", "Masterclass"),
         allowNull: false,

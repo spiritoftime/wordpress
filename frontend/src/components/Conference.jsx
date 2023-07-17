@@ -68,6 +68,7 @@ const Conference = () => {
       roomItems: z.array(
         z.object({
           room: z.string().nonempty("Required"),
+          id: z.number().optional(),
         })
       ),
     })
@@ -78,7 +79,7 @@ const Conference = () => {
     defaultValues: {
       conferenceName: "",
       country: {},
-      roomItems: [{ room: "" }],
+      roomItems: [{ room: "", id: "" }],
       venue: "",
       api: "",
     },
@@ -106,9 +107,9 @@ const Conference = () => {
     control,
     name: "roomItems",
   });
-
   const onSubmit = (data) => {
     data.country = data.country["value"];
+    console.log("data", data);
     editConferenceMutation({ data, conferenceId: conference.id });
     form.reset();
     navigate("/");
@@ -132,6 +133,7 @@ const Conference = () => {
       });
 
       const rooms = conference.Rooms.map((room) => {
+        console.log("room", room);
         room.roomId = room.id;
         return room;
       });

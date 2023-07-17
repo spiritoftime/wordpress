@@ -42,6 +42,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      discussion_duration: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      presentation_duration: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       session_type: {
         type: Sequelize.ENUM("Symposia", "Masterclass"),
         allowNull: false,

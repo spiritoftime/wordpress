@@ -9,3 +9,10 @@ export function addSession(accessToken, conferenceId, data) {
     data: data,
   });
 }
+
+export function updateProgram(accessToken, data) {
+  return makeRequest(`/sessions/program-overview`, accessToken, {
+    method: "POST",
+    data: data,
+  });
+}

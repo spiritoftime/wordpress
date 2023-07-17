@@ -60,21 +60,23 @@ const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
     req.body;
-
+  console.log("roomitems", roomItems);
   console.log(startDate);
 
   try {
-    await Room.destroy({ where: { conferenceId } });
     roomItems.forEach((room) => {
       room.conferenceId = conferenceId;
     });
-    await Room.bulkCreate(roomItems);
+    await Room.bulkCreate(roomItems, { updateOnDuplicate: ["room"] });
+    console.log("work2");
     const conference = await Conference.update(
       { startDate, endDate, name, country, venue, wordpressApi },
       { where: { id: conferenceId } }
     );
+    console.log("last");
     return res.status(200).json(conference);
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };
