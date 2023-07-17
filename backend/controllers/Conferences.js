@@ -61,6 +61,8 @@ const EditConference = async (req, res) => {
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
     req.body;
 
+  console.log(startDate);
+
   try {
     await Room.destroy({ where: { conferenceId } });
     roomItems.forEach((room) => {

@@ -7,6 +7,8 @@ const {
   Conference,
   Session,
   SessionSpeaker,
+  Role,
+  Room,
 } = db;
 const { Op } = require("sequelize");
 
@@ -22,7 +24,31 @@ const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   try {
     const speaker = await Speaker.findByPk(speakerId, {
-      include: [{ model: Conference }],
+      include: [
+        {
+          model: Conference,
+          include: [
+            {
+              model: Session,
+              include: [
+                {
+                  model: Speaker,
+                  where: { id: speakerId },
+                  through: { attributes: ["role"] },
+                },
+                {
+                  model: Topic,
+                  include: [{ model: Speaker, where: { id: speakerId } }],
+                },
+                {
+                  model: Room,
+                },
+              ],
+              order: [["date", "ASC"]],
+            },
+          ],
+        },
+      ],
     });
     return res.status(200).json(speaker);
   } catch (err) {
