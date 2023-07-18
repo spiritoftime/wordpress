@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { fullCountries as countries } from "../utils/countriesFull";
 import { convertToTitleCase } from "../utils/convertText";
+import { createDateArray } from "../utils/convertDate";
 import { addContact, getContact, updateContact } from "../services/contacts";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useAppContext } from "../context/appContext";
@@ -32,6 +33,7 @@ import {
 } from "./ui/accordion";
 import { Edit, Loader2 } from "lucide-react";
 
+import ScheduleTable from "./ScheduleTable";
 import Loading from "./Loading";
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
@@ -124,6 +126,8 @@ const Contact = () => {
       isAdmin: false,
     },
   });
+
+  console.log("ContactFromFetch: ", contactFromFetch);
 
   // console.log("Form: ", form);
   // console.log("Error: ", form.formState.errors);
@@ -467,9 +471,18 @@ const Contact = () => {
                 key={`${conference.name}-${index}`}
               >
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>{conference.name}</AccordionTrigger>
+                  <AccordionTrigger className="font-bold">
+                    {conference.name}
+                  </AccordionTrigger>
                   <AccordionContent>
-                    Yes. It adheres to the WAI-ARIA design pattern.
+                    <ScheduleTable
+                      conference={conference}
+                      dates={createDateArray(
+                        conference.startDate,
+                        conference.endDate,
+                        conference.Sessions
+                      )}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

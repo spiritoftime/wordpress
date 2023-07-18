@@ -23,12 +23,14 @@ import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
+// import { getRoles } from "../services/roles";
 import { useParams } from "react-router-dom";
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control }) => {
   const { conferenceId } = useParams();
   const getAccessToken = useGetAccessToken();
+
   const {
     data: speakers,
     isLoading: isSpeakersLoading,
@@ -48,6 +50,7 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
   const {
     data: conferenceRooms,
     isLoading: isConferenceRoomsLoading,
@@ -60,6 +63,7 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
   const {
     data: topicsForAddingSession,
     isLoading: isTopicsForAddingSessionLoading,
@@ -72,6 +76,20 @@ const AddSessionPageOne = ({ control }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
+  // const {
+  //   data: roles,
+  //   isLoading: isRolesLoading,
+  //   isFetching: isRolesFetching,
+  // } = useQuery({
+  //   queryKey: ["roles"],
+  //   queryFn: async () => {
+  //     const accessToken = await getAccessToken();
+  //     return getRoles(accessToken);
+  //   },
+  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  // });
+
   // console.log(conferenceRooms, "conferencerooms");
   // console.log(topicsForAddingSession, "topicsForAddingSession");
   // console.log("speakers", speakers);
@@ -277,6 +295,12 @@ const AddSessionPageOne = ({ control }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
+                      {/* <SelectOption
+                        field={field}
+                        placeholder="Select a role"
+                        options={roles ?? []}
+                        validateProperty="name"
+                      /> */}
                       <SelectOption
                         field={field}
                         placeholder="Select a role"
