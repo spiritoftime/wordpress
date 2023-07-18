@@ -16,6 +16,7 @@ const {
   getAllWordPressPost,
   updateOnePage,
   createPost,
+  createPage,
 } = require("../utils/wordpress");
 const { generateHTML } = require("../utils/postMockup");
 const { minifyHtml } = require("../utils/minifyHTML");
@@ -67,8 +68,8 @@ const addSession = async (req, res) => {
     title,
     topics,
   } = data;
-  console.log("location", location);
-  console.log("discussionDuration", discussionDuration, presentationDuration);
+  // console.log("location", location);
+  // console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
@@ -134,12 +135,16 @@ const addSession = async (req, res) => {
       const postContent = generateHTML(data);
       const minifiedContent = await minifyHtml(postContent);
       // console.log("postContent", postContent);
-      const wordpressLink = await createPost(
+      const wordpressLink = await createPage(
         minifiedContent,
         title,
         sessionCode
       );
-      console.log("link", wordpressLink);
+      console.log(wordpressLink, "wordpressLink");
+      await Session.update(
+        { wordpressUrl: wordpressLink },
+        { where: { id: session.id } }
+      );
     }
     return res.status(200).json(updatedTopics);
   } catch (err) {
