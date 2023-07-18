@@ -54,3 +54,13 @@ export function updateContact(id, data, accessToken) {
     data: data,
   });
 }
+
+export function removeSpeaker(accessToken, speakerId, conferenceId) {
+  return makeRequest(
+    `/speakers/conference/${speakerId}/${conferenceId}`,
+    accessToken,
+    {
+      method: "DELETE",
+    }
+  );
+}

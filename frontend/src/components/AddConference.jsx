@@ -75,6 +75,7 @@ const AddConference = () => {
   });
 
   const control = form.control;
+  const watch = form.watch;
 
   const {
     fields: rooms,
@@ -281,6 +282,7 @@ const AddConference = () => {
           </Button>
         </form>
       </Form>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </div>
   );
 };

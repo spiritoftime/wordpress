@@ -1,5 +1,5 @@
-import { MoreHorizontal } from "lucide-react";
-
+import { CopyMinus, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -20,15 +20,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { useState } from "react";
+
 // takes in rowType - 'conference'/'speaker'/'session',etc
 export const RowActions = (rowType, deleteMutation) => {
+  const [rowData, setRowData] = useState();
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+
   return {
     id: "actions",
     cell: ({ row }) => {
       // const rowId = row.original.id;
-      const rowData = row.original;
+      const selectedData = row.original;
+      // console.log(rowData);
       return (
         <>
           <DropdownMenu>
@@ -42,7 +45,10 @@ export const RowActions = (rowType, deleteMutation) => {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
               <DropdownMenuItem
-                onClick={(e) => e.stopPropagation()} // prevent the row from being clicked too
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRowData(selectedData);
+                }} // prevent the row from being clicked too
                 onSelect={() => setShowDeleteAlert(true)}
               >
                 {`Delete ${rowType}`}

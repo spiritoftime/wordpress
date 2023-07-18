@@ -10,6 +10,7 @@ const {
   addSpeakersToConference,
   deleteSpeaker,
   updateSpeaker,
+  removeSpeakerFromConference,
 } = require("../controllers/Speakers");
 
 const router = express.Router();
@@ -27,6 +28,7 @@ router.route("/speakers-count/:conferenceId").get(getTotalSpeakers);
 router.route("/input/:conferenceId").get(getContactsForAdding);
 router
   .route("/conference/:speakerId/:conferenceId/")
-  .get(getSpeakerForConference);
+  .get(getSpeakerForConference)
+  .delete(removeSpeakerFromConference);
 
 module.exports = router;

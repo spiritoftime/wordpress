@@ -17,6 +17,9 @@ const {
   deleteUserFromAuth,
 } = require("../utils/auth");
 
+const { generateSpeakersPost } = require("../utils/postMockup");
+const { createPost, getPostCategoriesId } = require("../utils/wordpress");
+
 // Function to get a specific contact
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
@@ -170,6 +173,7 @@ const addSpeaker = async (req, res) => {
 const addSpeakersToConference = async (req, res) => {
   const { speakerItems } = req.body;
   const speakersId = [];
+  // console.log(speakerItems);
 
   const { conferenceId } = req.params;
 
@@ -178,11 +182,41 @@ const addSpeakersToConference = async (req, res) => {
       const topicsArr = [];
       const topicSpeakersData = [];
 
+      // Add to wordpress here
+      // Get the wordpress speaker link and post id then add to conferenceSpeaker table
+
+      //Generate html data for speaker's post
+
+      const postCategoryId = await getPostCategoriesId(
+        speakerItems[i]["name"]["country"]
+      );
+
+      console.log("category id: ", postCategoryId);
+
+      const speakersInfo = {
+        biography: speakerItems[i]["name"]["biography"],
+        photoUrl: speakerItems[i]["name"]["photoUrl"],
+      };
+      const speakerName = `${speakerItems[i]["name"]["firstName"]} ${speakerItems[i]["name"]["lastName"]}`;
+
+      console.log(speakersInfo);
+
+      const html = generateSpeakersPost(speakersInfo);
+      console.log("html: ", html);
+      const { wordPressPostLink, wordPressPostId } = await createPost(
+        html,
+        speakerName,
+        postCategoryId
+      );
+      console.log(wordPressPostLink, wordPressPostId);
+
+      // Generate speakers object to add into conferenceSpeaker table
       speakersId.push({
         speakerId: speakerItems[i].name.id,
         conferenceId: conferenceId,
       });
 
+      // Generate topics array to add into Topic table
       for (const key in speakerItems[i]) {
         if (key !== "name" && speakerItems[i][key].length > 0) {
           topicsArr.push({
@@ -228,6 +262,21 @@ const deleteSpeaker = async (req, res) => {
       const response = await deleteUserFromAuth(userId);
     }
     return res.status(200).json("Speaker deleted");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+const removeSpeakerFromConference = async (req, res) => {
+  const { speakerId, conferenceId } = req.params;
+  console.log("speakerId: ", speakerId);
+  console.log("conferenceId: ", conferenceId);
+  try {
+    await ConferenceSpeaker.destroy({
+      where: { speakerId: speakerId, conferenceId: conferenceId },
+    });
+
+    return res.status(200).json("Speaker removed from conference");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -294,4 +343,5 @@ module.exports = {
   addSpeakersToConference,
   deleteSpeaker,
   updateSpeaker,
+  removeSpeakerFromConference,
 };

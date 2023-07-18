@@ -31,14 +31,17 @@ async function getAllWordPressPost() {
     // return res.status(400).json({ error: true, msg: err });
   }
 }
-async function createPost(html, title, sessionCode) {
+async function createPost(html, title, postCategoryId) {
   try {
+    console.log("inside create post");
     const token = await getWordPressToken();
     // console.log(token, "token");
     const wordPressPost = await axios.post(
       "https://hweitian.com/wp-json/wp/v2/posts",
       {
         content: html,
+        title: title,
+        categories: [postCategoryId],
         status: "publish",
       },
       {
@@ -48,12 +51,64 @@ async function createPost(html, title, sessionCode) {
       }
     );
     console.log(wordPressPost, "wordpresspost");
-    return wordPressPost.data.link;
+    return {
+      wordPressPostLink: wordPressPost.data.link,
+      wordPressPostId: wordPressPost.data.id,
+    };
+    // return wordPressPost.data.link;
   } catch (err) {
     console.log(err);
     // return res.status(400).json({ error: true, msg: err });
   }
 }
+
+async function getPostCategoriesId(speakerCountry) {
+  const slug = speakerCountry.toLowerCase();
+  try {
+    const token = await getWordPressToken();
+    const { data } = await axios.get(
+      `https://hweitian.com/wp-json/wp/v2/categories/?per_page=100`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+
+    // If a category is found, return the category ID
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].name === speakerCountry) {
+        console.log("Country existed");
+        return data[i].id;
+      }
+    }
+    // data.forEach((country) => {
+    //   if (country.name === speakerCountry) {
+    //     console.log("Country existed");
+    //     return country.id;
+    //   }
+    // });
+
+    // If no category matches, create a new category and return the category ID
+    const catergory = await axios.post(
+      "https://hweitian.com/wp-json/wp/v2/categories",
+      {
+        name: speakerCountry,
+        slug: slug,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+
+    return catergory.data.id;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function updateOnePage(pageId, data) {
   try {
     const token = await getWordPressToken();
@@ -79,4 +134,5 @@ module.exports = {
   getAllWordPressPost,
   updateOnePage,
   createPost,
+  getPostCategoriesId,
 };
