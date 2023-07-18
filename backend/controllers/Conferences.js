@@ -61,6 +61,7 @@ const EditConference = async (req, res) => {
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
     req.body;
   console.log("roomitems", roomItems);
+
   try {
     roomItems.forEach((room) => {
       room.conferenceId = conferenceId;
