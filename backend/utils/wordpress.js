@@ -31,7 +31,7 @@ async function getAllWordPressPost() {
     // return res.status(400).json({ error: true, msg: err });
   }
 }
-async function createPost(html, title, postCategoryId) {
+async function createPost(html, title, postCategoryId, featuredImageId) {
   try {
     console.log("inside create post");
     const token = await getWordPressToken();
@@ -42,6 +42,7 @@ async function createPost(html, title, postCategoryId) {
         content: html,
         title: title,
         categories: [postCategoryId],
+        featured_media: featuredImageId,
         status: "publish",
       },
       {
@@ -61,6 +62,26 @@ async function createPost(html, title, postCategoryId) {
     // return res.status(400).json({ error: true, msg: err });
   }
 }
+
+// async function addMedia() {
+//   try {
+//     const token = await getWordPressToken();
+//     console.log("At add media");
+//     const wordPressPost = await axios.post(
+//       `https://hweitian.com/wp-json/wp/v2/media`,
+//       data,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+//         },
+//       }
+//     );
+//     // console.log(wordPressPost);
+//     return wordPressPost;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
 
 async function getPostCategoriesId(speakerCountry) {
   const slug = speakerCountry.toLowerCase();
@@ -129,10 +150,29 @@ async function updateOnePage(pageId, data) {
   }
 }
 
+async function deletePost(id) {
+  try {
+    const token = await getWordPressToken();
+    const wordPressPost = await axios.delete(
+      `https://hweitian.com/wp-json/wp/v2/posts/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+    // console.log(wordPressPost);
+    return wordPressPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getWordPressToken,
   getAllWordPressPost,
   updateOnePage,
   createPost,
   getPostCategoriesId,
+  deletePost,
 };

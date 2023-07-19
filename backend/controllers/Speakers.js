@@ -20,7 +20,11 @@ const {
 } = require("../utils/auth");
 
 const { generateSpeakersPost } = require("../utils/postMockup");
-const { createPost, getPostCategoriesId } = require("../utils/wordpress");
+const {
+  createPost,
+  getPostCategoriesId,
+  deletePost,
+} = require("../utils/wordpress");
 
 // Function to get a specific contact
 const getSpeaker = async (req, res) => {
@@ -241,6 +245,8 @@ const addSpeakersToConference = async (req, res) => {
       speakersId.push({
         speakerId: speakerItems[i].name.id,
         conferenceId: conferenceId,
+        speakerPostId: wordPressPostId,
+        speakerLink: wordPressPostLink,
       });
 
       // Generate topics array to add into Topic table
@@ -296,12 +302,44 @@ const deleteSpeaker = async (req, res) => {
 
 const removeSpeakerFromConference = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
-  console.log("speakerId: ", speakerId);
-  console.log("conferenceId: ", conferenceId);
+  // console.log("speakerId: ", speakerId);
+  // console.log("conferenceId: ", conferenceId);
   try {
+    const speakerDetails = await ConferenceSpeaker.findAll({
+      where: {
+        [Op.and]: [{ speakerId: speakerId }, { conferenceId: conferenceId }],
+      },
+    });
+
+    const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
+
+    // console.log(speakerPostId);
+
+    // Remove speaker from WordPress
+    await deletePost(speakerPostId);
+
+    // Remove speaker from the specific conference
     await ConferenceSpeaker.destroy({
       where: { speakerId: speakerId, conferenceId: conferenceId },
     });
+
+    // Find all topics related to the speaker for that specific conference
+    const relatedTopics = await Topic.findAll({
+      where: { conferenceId: conferenceId },
+      include: {
+        model: Speaker,
+        where: { id: speakerId },
+      },
+    });
+
+    const topicIds = [];
+    relatedTopics.forEach((topic) => {
+      topicIds.push(topic.dataValues.id);
+    });
+
+    // Delete all topics related to the speaker for that specific conference
+    await TopicSpeaker.destroy({ where: { id: topicIds } });
+    await Topic.destroy({ where: { id: topicIds } });
 
     return res.status(200).json("Speaker removed from conference");
   } catch (err) {

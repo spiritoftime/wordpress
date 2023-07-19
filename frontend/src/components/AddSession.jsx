@@ -75,8 +75,8 @@ const AddSession = () => {
     if (formStep !== 2 && getValues("topics")) unregister("topics");
   }, [formStep, unregister, getValues]);
 
-  console.log(errors, "errors");
-  console.log("form validity", isValid);
+  // console.log(errors, "errors");
+  // console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">

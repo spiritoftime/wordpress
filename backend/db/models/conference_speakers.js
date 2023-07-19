@@ -25,6 +25,10 @@ function initConferenceSpeaker(sequelize) {
           key: "id",
         },
       },
+      speakerPostId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       speakerLink: {
         type: DataTypes.STRING,
         allowNull: false,
