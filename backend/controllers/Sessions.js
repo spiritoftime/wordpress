@@ -1,6 +1,7 @@
 const db = require("../db/models");
 const {
   Conference,
+  Speaker,
   ConferenceSpeaker,
   Session,
   SessionSpeaker,
@@ -24,9 +25,15 @@ const { minifyHtml } = require("../utils/minifyHTML");
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
   try {
-    const session = await Session.findByPk(sessionId);
+    const session = await Session.findByPk(sessionId, {
+      include: [
+        { model: Topic, include: [{ model: Speaker }] },
+        { model: Room },
+      ],
+    });
     return res.status(200).json(session);
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };

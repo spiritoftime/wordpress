@@ -1,4 +1,4 @@
-// used for formatting date from the backend to the frontendee
+// used for formatting date from the backend to the frontend
 // example:
 // const formattedDate = formatDate('2021-06-25');
 

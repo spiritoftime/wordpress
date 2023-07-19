@@ -84,7 +84,7 @@ const Conference = () => {
       api: "",
     },
   });
-
+  const watch = form.watch;
   const getAccessToken = useGetAccessToken();
   const control = form.control;
 
@@ -323,6 +323,7 @@ const Conference = () => {
         </Form>
         <Toaster />
       </div>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </div>
   );
 };

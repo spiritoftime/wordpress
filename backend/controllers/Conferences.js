@@ -86,6 +86,7 @@ const DeleteConference = async (req, res) => {
     });
     return res.status(200).json("Conference deleted");
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };
