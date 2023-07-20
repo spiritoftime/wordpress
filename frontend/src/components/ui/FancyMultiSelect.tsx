@@ -25,6 +25,7 @@ export const FancyMultiSelect = ({
   const [selected, setSelected] = React.useState<Framework[]>(
     defaultValue || []
   );
+  console.log("selected", selected);
   const [inputValue, setInputValue] = React.useState("");
 
   const handleUnselect = React.useCallback((framework: Framework) => {

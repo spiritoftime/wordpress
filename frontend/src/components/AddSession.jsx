@@ -76,6 +76,7 @@ const AddSession = () => {
     control,
     name: "speakers",
   });
+  console.log(moderators, "moderators");
   const onSubmit = (data) => {
     // console.log("data", data);
     addToDatabase(data);

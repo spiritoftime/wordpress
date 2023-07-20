@@ -29,7 +29,34 @@ const EditSession = () => {
   });
   console.log("session", session);
   const FormSchema = formSchemas[2];
+  function combineSpeakersByRole(moderators) {
+    const speakerMap = {};
 
+    moderators.forEach((moderator) => {
+      const speakerRole = moderator.SessionSpeaker.role;
+
+      if (!speakerMap[speakerRole]) {
+        speakerMap[speakerRole] = {
+          speakerRole,
+          speaker: [
+            {
+              id: moderator.id,
+              value: moderator.fullName,
+              label: moderator.fullName,
+            },
+          ],
+        };
+      } else {
+        speakerMap[speakerRole].speaker.push({
+          id: moderator.id,
+          value: moderator.fullName,
+          label: moderator.fullName,
+        });
+      }
+    });
+
+    return Object.values(speakerMap);
+  }
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -62,16 +89,9 @@ const EditSession = () => {
         isPublish: session.wordpressUrl ? true : false,
         date: new Date(session.date),
       });
-      const moderators = session.Speakers.map(
-        ({ SessionSpeaker: { role }, fullName }) => {
-          return {
-            value: fullName,
-            label: fullName,
-            role: role,
-          };
-        }
-      );
-      replace([...moderators]);
+      const moderators = session.Speakers;
+      const combinedSpeakers = combineSpeakersByRole(moderators);
+      replace(combinedSpeakers);
       // const rooms = conference.Rooms.map((room) => {
       //   console.log("room", room);
       //   room.roomId = room.id;
