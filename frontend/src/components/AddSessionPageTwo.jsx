@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DataTable } from "./DataTable";
 import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
@@ -6,36 +6,52 @@ import { useAppContext } from "../context/appContext";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getTopicsForAddingToSession } from "../services/topics";
+import { useParams } from "react-router-dom";
 
-const AddSessionPageTwo = ({ control }) => {
+const AddSessionPageTwo = ({ control, topicsForAddingSession }) => {
   // const { selectedTopics } = useAppContext();
   // console.log("selectedtopics", selectedTopics);
-  const getAccessToken = useGetAccessToken();
-  const {
-    data: topicsForAddingSession,
-    isLoading: isTopicsForAddingSessionLoading,
-    isFetching: isTopicsForAddingSessionFetching,
-  } = useQuery({
-    queryKey: ["topicsForAddingSession"],
-    queryFn: async () => {
-      const accessToken = await getAccessToken();
-      const data = await getTopicsForAddingToSession(accessToken);
-      const res = data.map((topic) => {
-        const obj = {};
-        obj.title = topic.title;
-        obj.speaker = topic.Speakers.map((speaker) => speaker.fullName);
-        obj.country = topic.Speakers.map((speaker) => speaker.country);
-        obj.speakersId = topic.Speakers.map((speaker) => speaker.id);
-        obj.numSessions = topic.Speakers.map(
-          (speaker) => speaker.Sessions.length
-        );
-        obj.topicId = topic.id;
-        return obj;
-      });
-      return res;
-    },
-    refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  });
+  const { conferenceId } = useParams();
+  console.log("conference id in addSessionPageTwo: ", conferenceId);
+  // const getAccessToken = useGetAccessToken();
+
+  // const {
+  //   data: topicsForAddingSession,
+  //   isLoading: isTopicsForAddingSessionLoading,
+  //   isFetching: isTopicsForAddingSessionFetching,
+  // } = useQuery({
+  //   queryKey: ["topicsForAddingSession"],
+  //   queryFn: async () => {
+  //     const accessToken = await getAccessToken();
+  //     const data = await getTopicsForAddingToSession(accessToken, conferenceId);
+  //     const res = data.map((topic) => {
+  //       const obj = {};
+  //       obj.title = topic.title;
+  //       obj.speaker = topic.Speakers.map((speaker) => speaker.fullName);
+  //       obj.country = topic.Speakers.map((speaker) => speaker.country);
+  //       obj.speakersId = topic.Speakers.map((speaker) => speaker.id);
+  //       obj.numSessions = topic.Speakers.map(
+  //         (speaker) => speaker.Sessions.length
+  //       );
+  //       obj.topicId = topic.id;
+  //       obj.speakerPostId = topic.Speakers.map(
+  //         (speaker) => speaker.Conferences[0].ConferenceSpeaker.speakerPostId
+  //       );
+  //       obj.speakerLink = topic.Speakers.map(
+  //         (speaker) => speaker.Conferences[0].ConferenceSpeaker.speakerLink
+  //       );
+  //       return obj;
+  //     });
+  //     return res;
+  //   },
+  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  // });
+
+  // useEffect(() => {
+  //   console.log("useEffect ran in AddSessionPageTwo");
+  //   refetchTopics();
+  // }, []);
+
   console.log(topicsForAddingSession, "topicsForAddingSession");
   // const topics = [
   //   {

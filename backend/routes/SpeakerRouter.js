@@ -6,6 +6,7 @@ const {
   getSpeakersForConference,
   getContactsForAdding,
   getTotalSpeakers,
+  getSchedule,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,
@@ -28,7 +29,13 @@ router.route("/speakers-count/:conferenceId").get(getTotalSpeakers);
 router.route("/input/:conferenceId").get(getContactsForAdding);
 router
   .route("/conference/:speakerId/:conferenceId/")
-  .get(getSpeakerForConference)
+  .get(getSchedule)
   .delete(removeSpeakerFromConference);
+// router
+//   .route("/conference/:speakerId/:conferenceId/")
+//   .get(getSpeakerForConference)
+//   .delete(removeSpeakerFromConference);
+
+// router.route("/schedule/:speakerId/:conferenceId/").get(getSchedule);
 
 module.exports = router;

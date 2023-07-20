@@ -168,6 +168,50 @@ async function deletePost(id) {
   }
 }
 
+async function updateOnePost(postId, data) {
+  try {
+    const token = await getWordPressToken();
+    console.log("At updateOnePost utils");
+    const wordPressPost = await axios.post(
+      `https://hweitian.com/wp-json/wp/v2/posts/${pagpostIdeId}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+    // console.log(wordPressPost);
+    return wordPressPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function createPage(html, title, sessionCode) {
+  try {
+    const token = await getWordPressToken();
+    // console.log(token, "token");
+    const wordPressPost = await axios.post(
+      "https://hweitian.com/wp-json/wp/v2/pages",
+      {
+        content: html,
+        status: "publish",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+    console.log(wordPressPost, "wordpresspost");
+    return wordPressPost.data.link;
+  } catch (err) {
+    console.log(err);
+    // return res.status(400).json({ error: true, msg: err });
+  }
+}
+
 module.exports = {
   getWordPressToken,
   getAllWordPressPost,
@@ -175,4 +219,6 @@ module.exports = {
   createPost,
   getPostCategoriesId,
   deletePost,
+  updateOnePost,
+  createPage,
 };

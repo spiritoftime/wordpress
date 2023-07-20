@@ -24,9 +24,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Loading from "./Loading";
+import parse from "html-react-parser";
 
 const Speaker = () => {
   const { speaker, showToaster } = useAppContext();
+  const [speakerFromFetch, setSpeakerFromFetch] = useState();
   const [photoPreviewLink, setPhotoPreviewLink] = useState(
     speaker && speaker.photoUrl
   );
@@ -35,7 +37,7 @@ const Speaker = () => {
   const queryClient = useQueryClient();
   const { conferenceId, speakerId } = useParams();
 
-  const { data: speakerFromFetch, isSuccess: fetchSuccess } = useQuery({
+  const { data: dataFromFetch, isSuccess: fetchSuccess } = useQuery({
     queryKey: ["speaker", speakerId],
     queryFn: async () => {
       const accessToken = await getAccessToken();
@@ -91,7 +93,9 @@ const Speaker = () => {
 
   useEffect(() => {
     if (fetchSuccess) {
-      prefillData(speakerFromFetch);
+      prefillData(dataFromFetch.speaker);
+      setSpeakerFromFetch(dataFromFetch.speaker);
+      setPhotoPreviewLink(dataFromFetch.speaker.photoUrl);
     }
   }, [fetchSuccess]);
 
@@ -130,6 +134,9 @@ const Speaker = () => {
 
   // const watch = form.watch;
 
+  console.log("dataFromFetch: ", dataFromFetch);
+  // console.log("schedule: ", dataFromFetch && dataFromFetch.schedule);
+
   return (
     <div className="w-full p-10">
       <div className="flex gap-4 justify-normal">
@@ -166,8 +173,8 @@ const Speaker = () => {
             Proposed Topics
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="schedule" className="px-5 py-2">
-          Schedule to be generated once Session part is completed
+        <TabsContent value="schedule" className="px-5 py-2 w-[70%]">
+          {dataFromFetch && parse(dataFromFetch.schedule)}
         </TabsContent>
         <TabsContent value="topics" className="py-2 px-7">
           <Form {...form}>

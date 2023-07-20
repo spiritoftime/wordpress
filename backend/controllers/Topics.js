@@ -11,11 +11,16 @@ const {
 } = db;
 const { Op } = require("sequelize");
 const getTopicsForAddingToSession = async (req, res) => {
+  const { conferenceId } = req.params;
+  console.log("runningggggg");
+  console.log(req.params);
   try {
-    // console.log("runningggggg");
     const speakers = await Topic.findAll({
       attributes: ["title", "id"],
-      where: { sessionId: { [Op.eq]: null } },
+      where: {
+        sessionId: { [Op.eq]: null },
+        conferenceId: conferenceId,
+      },
       include: [
         {
           model: Speaker,
@@ -30,12 +35,17 @@ const getTopicsForAddingToSession = async (req, res) => {
               through: { model: SessionSpeaker, attributes: [] },
               attributes: ["id"],
             },
+            {
+              model: Conference,
+              // through: { model: ConferenceSpeaker, attributes: [] },
+              // attributes: ["id"],
+            },
           ],
         },
       ],
     });
 
-    // console.log(speakers, "speakers");
+    console.log(speakers, "speakers");
     return res.status(200).json(speakers);
   } catch (err) {
     console.log("err", err);

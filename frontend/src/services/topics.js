@@ -10,6 +10,8 @@ export function updateTopics(accessToken, data, speakerId, conferenceId) {
     }
   );
 }
-export function getTopicsForAddingToSession(accessToken) {
-  return makeRequest(`/topics`, accessToken);
+export function getTopicsForAddingToSession(accessToken, conferenceId) {
+  console.log("conference id in service: ", conferenceId);
+  // return makeRequest(`/topics/conferenceId`, accessToken);
+  return makeRequest(`/topics/${conferenceId}`, accessToken);
 }

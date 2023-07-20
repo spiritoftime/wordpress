@@ -11,10 +11,12 @@ import { Form } from "./ui/form";
 import AddSessionPageTwo from "./AddSessionPageTwo";
 import AddSessionPageThree from "./AddSessionPageThree";
 import { formSchemas } from "../utils/multiPageFormZod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useNavigate, useParams } from "react-router-dom";
 import { addSession } from "../services/sessions";
+import { getTopicsForAddingToSession } from "../services/topics";
+
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
   const { conferenceId } = useParams();
@@ -26,6 +28,7 @@ const AddSession = () => {
   // console.log("formstep", formStep);
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
+
   const { mutate: addToDatabase, isLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
@@ -40,6 +43,40 @@ const AddSession = () => {
       },
     }
   );
+
+  const {
+    data: topicsForAddingSession,
+    isLoading: isTopicsForAddingSessionLoading,
+    isFetching: isTopicsForAddingSessionFetching,
+  } = useQuery({
+    queryKey: ["topicsForAddingSession"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      const data = await getTopicsForAddingToSession(accessToken, conferenceId);
+      const res = data.map((topic) => {
+        const obj = {};
+        obj.title = topic.title;
+        obj.speaker = topic.Speakers.map((speaker) => speaker.fullName);
+        obj.country = topic.Speakers.map((speaker) => speaker.country);
+        obj.speakersId = topic.Speakers.map((speaker) => speaker.id);
+        obj.numSessions = topic.Speakers.map(
+          (speaker) => speaker.Sessions.length
+        );
+        obj.topicId = topic.id;
+        obj.speakerPostId = topic.Speakers.map(
+          (speaker) => speaker.Conferences[0].ConferenceSpeaker.speakerPostId
+        );
+        obj.speakerLink = topic.Speakers.map(
+          (speaker) => speaker.Conferences[0].ConferenceSpeaker.speakerLink
+        );
+        return obj;
+      });
+      return res;
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+
+  // console.log("AddSession - Topics", topicsForAddingSession);
 
   const FormSchema = formSchemas[formStep];
   const form = useForm({
@@ -96,7 +133,12 @@ const AddSession = () => {
               prevFormStep={prevFormStep}
             >
               {formStep === 0 && <AddSessionPageOne control={control} />}
-              {formStep === 1 && <AddSessionPageTwo control={control} />}
+              {formStep === 1 && (
+                <AddSessionPageTwo
+                  control={control}
+                  topicsForAddingSession={topicsForAddingSession}
+                />
+              )}
               {formStep === 2 && (
                 <AddSessionPageThree getValues={getValues} control={control} />
               )}

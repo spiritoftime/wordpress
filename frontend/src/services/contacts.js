@@ -19,6 +19,13 @@ export function getSpeaker(accessToken, speakerId, conferenceId) {
   );
 }
 
+// export function getPresentationSchedule(accessToken, speakerId, conferenceId) {
+//   return makeRequest(
+//     `/speakers/schedule/${speakerId}/${conferenceId}`,
+//     accessToken
+//   );
+// }
+
 export function getContact(id, accessToken) {
   return makeRequest(`/speakers/${id}`, accessToken);
 }

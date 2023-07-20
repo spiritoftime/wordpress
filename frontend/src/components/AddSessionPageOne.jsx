@@ -20,7 +20,7 @@ import FormMultiSelect from "./FormMultiSelect";
 import useGetContacts from "../custom_hooks/useQueries";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
-import { getContacts } from "../services/contacts";
+import { getContacts, getSpeakers } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
 // import { getRoles } from "../services/roles";
@@ -39,17 +39,23 @@ const AddSessionPageOne = ({ control }) => {
     queryKey: ["contactNames"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
-      const contacts = await getContacts(accessToken);
+      const contacts = await getSpeakers(accessToken, conferenceId);
+      // console.log(contacts);
       const contactNames = await contacts.map((contact) => {
         const res = { id: contact.id };
         res.value = contact.fullName;
         res.label = contact.fullName;
+        res.speakerLink = contact.Conferences[0].ConferenceSpeaker.speakerLink;
+        res.speakerPostId =
+          contact.Conferences[0].ConferenceSpeaker.speakerPostId;
         return res;
       });
       return contactNames;
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
+  // console.log(speakers);
 
   const {
     data: conferenceRooms,
@@ -64,18 +70,18 @@ const AddSessionPageOne = ({ control }) => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
-  const {
-    data: topicsForAddingSession,
-    isLoading: isTopicsForAddingSessionLoading,
-    isFetching: isTopicsForAddingSessionFetching,
-  } = useQuery({
-    queryKey: ["topicsForAddingSession"],
-    queryFn: async () => {
-      const accessToken = await getAccessToken();
-      return getTopicsForAddingToSession(accessToken);
-    },
-    refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  });
+  // const {
+  //   data: topicsForAddingSession,
+  //   isLoading: isTopicsForAddingSessionLoading,
+  //   isFetching: isTopicsForAddingSessionFetching,
+  // } = useQuery({
+  //   queryKey: ["topicsForAddingSession"],
+  //   queryFn: async () => {
+  //     const accessToken = await getAccessToken();
+  //     return getTopicsForAddingToSession(accessToken, conferenceId);
+  //   },
+  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  // });
 
   // const {
   //   data: roles,

@@ -26,7 +26,10 @@ const {
   deletePost,
 } = require("../utils/wordpress");
 
+const { generateSchedule } = require("../utils/postMockup");
+
 // Function to get a specific contact
+// Includes all participated conference and sessions
 const getSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   try {
@@ -60,6 +63,81 @@ const getSpeaker = async (req, res) => {
     });
     return res.status(200).json(speaker);
   } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+const getSchedule = async (req, res) => {
+  const { speakerId, conferenceId } = req.params;
+  console.log("inside getSchedule");
+  try {
+    const speaker = await Speaker.findByPk(speakerId, {
+      include: [
+        {
+          model: Conference,
+          where: { id: conferenceId },
+          include: [
+            {
+              model: Session,
+              include: [
+                {
+                  model: Speaker,
+                  where: { id: speakerId },
+                  through: { attributes: ["role"] },
+                  required: true,
+                },
+                {
+                  model: Topic,
+                  include: [
+                    {
+                      model: Speaker,
+                      where: { id: speakerId },
+                    },
+                  ],
+                },
+                {
+                  model: Room,
+                },
+              ],
+              order: [["date", "ASC"]],
+            },
+          ],
+        },
+        {
+          model: Topic,
+          where: { conferenceId: conferenceId },
+          required: false,
+        },
+      ],
+    });
+    // const speaker = await Speaker.findByPk(speakerId, {
+    //   include: [
+    //     {
+    //       model: Topic,
+    //       through: { where: { speakerId: speakerId }, attributes: [] },
+    //       include: [{ model: Session, where: { conferenceId: conferenceId } }],
+    //     },
+    //     {
+    //       model: Session,
+    //       where: { conferenceId: conferenceId },
+    //       through: { where: { speakerId: speakerId }, attributes: ["role"] },
+    //     },
+    //   ],
+    // });
+    console.log(speaker);
+    const schedule = generateSchedule(speaker.toJSON());
+    generateSchedule(speaker.dataValues);
+
+    const response = {
+      schedule: schedule,
+      speaker: speaker,
+    };
+
+    // console.log(response);
+
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json(err);
   }
 };
@@ -222,7 +300,7 @@ const addSpeakersToConference = async (req, res) => {
         speakerItems[i]["name"]["country"]
       );
 
-      console.log("category id: ", postCategoryId);
+      // console.log("category id: ", postCategoryId);
 
       const speakersInfo = {
         biography: speakerItems[i]["name"]["biography"],
@@ -239,7 +317,7 @@ const addSpeakersToConference = async (req, res) => {
         speakerName,
         postCategoryId
       );
-      console.log(wordPressPostLink, wordPressPostId);
+      // console.log(wordPressPostLink, wordPressPostId);
 
       // Generate speakers object to add into conferenceSpeaker table
       speakersId.push({
@@ -404,6 +482,7 @@ module.exports = {
   getSpeakersForConference,
   getTotalSpeakers,
   getContactsForAdding,
+  getSchedule,
   addSpeaker,
   addSpeakersToConference,
   deleteSpeaker,
