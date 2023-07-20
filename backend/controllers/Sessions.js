@@ -27,7 +27,24 @@ const getSession = async (req, res) => {
   try {
     const session = await Session.findByPk(sessionId, {
       include: [
-        { model: Topic, include: [{ model: Speaker }] },
+        {
+          model: Topic,
+          include: [
+            {
+              model: Speaker,
+              attributes: {
+                include: ["fullName", "lastName", "firstName", "country"],
+              },
+            },
+          ],
+        },
+        {
+          model: Speaker,
+          through: {
+            model: SessionSpeaker,
+            attributes: ["role"],
+          },
+        },
         { model: Room },
       ],
     });

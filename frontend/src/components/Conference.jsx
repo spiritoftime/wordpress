@@ -133,7 +133,7 @@ const Conference = () => {
       });
 
       const rooms = conference.Rooms.map((room) => {
-        console.log("room", room);
+        // console.log("room", room);
         room.roomId = room.id;
         return room;
       });

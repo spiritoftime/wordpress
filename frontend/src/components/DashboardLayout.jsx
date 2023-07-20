@@ -62,9 +62,9 @@ const DashboardLayout = () => {
     if (!isAuthenticated) return;
     if (conferenceId !== undefined) {
       if (!isConferencesFetching) {
-        console.log("conferenceid", conferenceId, "conferences", conferences);
+        // console.log("conferenceid", conferenceId, "conferences", conferences);
         const conference = conferences.find((c) => {
-          console.log(c, conferenceId, "jesus");
+          // console.log(c, conferenceId, "jesus");
           return c.id === +conferenceId;
         });
         // console.log(comboBoxValue, conference.name, "wtf");

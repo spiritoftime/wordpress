@@ -26,7 +26,7 @@ import { getConferenceRooms } from "../services/rooms";
 import { useParams } from "react-router-dom";
 // TO ADD SESSION TYPE & MODERATORS!!
 
-const AddSessionPageOne = ({ control }) => {
+const AddSessionPageOne = ({ control, moderators, append, remove }) => {
   const { conferenceId } = useParams();
   const getAccessToken = useGetAccessToken();
   const {
@@ -86,14 +86,7 @@ const AddSessionPageOne = ({ control }) => {
   //     label: "React.js",
   //   },
   // ];
-  const {
-    fields: moderators,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: "speakers",
-  });
+
   // console.log("moderators", moderators);
   return (
     <div className="flex flex-col gap-6 mt-6">

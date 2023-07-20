@@ -22,7 +22,7 @@ const Session = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   const navigate = useNavigate();
-  console.log(session, "session");
+  // console.log(session, "session");
   if (isSessionFetching) return <Loading />;
   return (
     <div className="w-full flex flex-col gap-4 p-10">
@@ -30,7 +30,11 @@ const Session = () => {
         <h1 className="text-2xl font-bold">{session.title}</h1>
         <Button
           className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
-          onClick={() => navigate("/edit-session")}
+          onClick={() =>
+            navigate(
+              `/conferences/sessions/edit-session/${conferenceId}/${sessionId}`
+            )
+          }
         >
           Edit Session
         </Button>
