@@ -23,7 +23,7 @@ const AddSessionPageThree = ({
     name: "topics",
   });
   const { selectedTopics } = useAppContext();
-  // console.log("selectedTopics", selectedTopics);
+  console.log("selectedTopics", selectedTopics);
   const [isAllocated, setIsAllocated] = useState(false);
   const [topicsToAppend, setTopicsToAppend] = useState([]);
 
@@ -41,30 +41,21 @@ const AddSessionPageThree = ({
             let appendTopics = [];
             if (!isAllocated) {
               selectedTopics.forEach((topic, index) => {
-                // console.log("topicaaaaa", topic);
+                console.log("topicaaaaa", topic);
                 const appendTopic = {};
                 appendTopic[`topic`] = topic.title;
                 // if only one speaker in the row selected
-                if (typeof topic.speaker === "string") {
-                  appendTopic[`speakers`] = [
-                    {
-                      value: topic.speaker,
-                      label: topic.speaker,
-                      topicId: topic.id,
-                    },
-                  ];
-                } else if (Array.isArray(topic.speaker)) {
-                  const speakers = [];
-                  topic.speaker.forEach((speaker) => {
-                    speakers.push({
-                      value: speaker,
-                      label: speaker,
-                      topicId: topic.id,
-                    });
+                const speakers = [];
+                topic.speaker.forEach((speaker) => {
+                  speakers.push({
+                    value: speaker,
+                    label: speaker,
+                    topicId: topic.id,
                   });
-                  appendTopic[`speakers`] = [...speakers];
-                  appendTopic[`id`] = [...topic.speakersId];
-                }
+                });
+                appendTopic[`speakers`] = [...speakers];
+                appendTopic[`id`] = [...topic.speakersId];
+
                 appendTopic[`topicId`] = topic.topicId;
 
                 appendTopics.push(appendTopic);
@@ -80,7 +71,6 @@ const AddSessionPageThree = ({
               );
               setIsAllocated(true);
               setTopicsToAppend(appendTopics);
-              remove(0);
               append(appendTopics);
             } else {
               const presentationDuration = +getValues("presentationDuration");

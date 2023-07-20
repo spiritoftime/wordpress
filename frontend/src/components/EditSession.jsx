@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { formSchemas } from "../utils/multiPageFormZod";
@@ -11,9 +11,12 @@ import TopicFieldArray from "./TopicFieldArray";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getSession } from "../services/sessions";
+import { allocateTime } from "../utils/allocateTime";
 
 const EditSession = () => {
   const { conferenceId, sessionId } = useParams();
+  const [isAllocated, setIsAllocated] = useState(false);
+  const [topicsToAppend, setTopicsToAppend] = useState([]);
   const getAccessToken = useGetAccessToken();
   const {
     data: session,
@@ -91,7 +94,7 @@ const EditSession = () => {
       });
       const moderators = session.Speakers;
       const combinedSpeakers = combineSpeakersByRole(moderators);
-      replace(combinedSpeakers);
+      replaceSpeakers(combinedSpeakers);
       // const rooms = conference.Rooms.map((room) => {
       //   console.log("room", room);
       //   room.roomId = room.id;
@@ -112,10 +115,20 @@ const EditSession = () => {
     fields: moderators,
     append: appendModerators,
     remove: removeModerators,
-    replace,
+    replace: replaceSpeakers,
   } = useFieldArray({
     control,
     name: "speakers",
+  });
+  const {
+    fields: topicDetails,
+    append: appendTopics,
+    remove: removeTopics,
+    update: updateTopics,
+    replace: replaceTopics,
+  } = useFieldArray({
+    control,
+    name: "topics",
   });
   // console.log("control", control);
   // const onSubmit = (data) => {
@@ -143,7 +156,65 @@ const EditSession = () => {
         />
         <div>
           <Button
-            onClick={() => {}}
+            onClick={() => {
+              let appendTopics = [];
+              if (!isAllocated) {
+                selectedTopics.forEach((topic, index) => {
+                  // console.log("topicaaaaa", topic);
+                  const appendTopic = {};
+                  appendTopic[`topic`] = topic.title;
+                  // if only one speaker in the row selected
+                  if (typeof topic.speaker === "string") {
+                    appendTopic[`speakers`] = [
+                      {
+                        value: topic.speaker,
+                        label: topic.speaker,
+                        topicId: topic.id,
+                      },
+                    ];
+                  } else if (Array.isArray(topic.speaker)) {
+                    const speakers = [];
+                    topic.speaker.forEach((speaker) => {
+                      speakers.push({
+                        value: speaker,
+                        label: speaker,
+                        topicId: topic.id,
+                      });
+                    });
+                    appendTopic[`speakers`] = [...speakers];
+                    appendTopic[`id`] = [...topic.speakersId];
+                  }
+                  appendTopic[`topicId`] = topic.topicId;
+
+                  appendTopics.push(appendTopic);
+                });
+                const presentationDuration = +getValues("presentationDuration");
+                const discussionDuration = +getValues("discussionDuration");
+                const startTime = getValues("startTime");
+                appendTopics = allocateTime(
+                  appendTopics,
+                  startTime,
+                  presentationDuration,
+                  discussionDuration
+                );
+                setIsAllocated(true);
+                setTopicsToAppend(appendTopics);
+                replaceTopics(appendTopics);
+              } else {
+                const presentationDuration = +getValues("presentationDuration");
+                const discussionDuration = +getValues("discussionDuration");
+                const startTime = getValues("startTime");
+                appendTopics = allocateTime(
+                  topicsToAppend,
+                  startTime,
+                  presentationDuration,
+                  discussionDuration
+                );
+                // console.log("append topics", appendTopics);
+                for (const [i, topic] of appendTopics.entries())
+                  updateTopics(i, topic);
+              }
+            }}
             type="button"
             className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
           >
