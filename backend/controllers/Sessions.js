@@ -72,90 +72,101 @@ const addSession = async (req, res) => {
   // console.log("location", location);
   // console.log("discussionDuration", discussionDuration, presentationDuration);
 
-  console.log("speakers", speakers[0].speaker);
+  console.log("At addSession");
+  console.log("speakers", speakers);
   // speakers [ { speakerRole: 'Chair', speaker: [ [Object] ] } ]
   console.log(
     "topics",
     topics.map((topic) => topic.speakers)
   );
 
-  try {
-    const room = await Room.findOne({
-      where: { room: location, conferenceId: conferenceId },
-    });
-    const roomId = room.id;
-    // console.log("roomid", room.id);
-    const session = await Session.create(
-      {
-        title,
-        synopsis,
-        isPublish,
-        sessionType,
-        date,
-        discussionDuration,
-        presentationDuration,
-        startTime,
-        endTime,
-        conferenceId,
-        roomId: room.id,
-        sessionCode,
-        // sessionSpeaker: addSessionSpeakers,
-      }
-      // {
-      //   include: [
-      //     {
-      //       association: SessionSpeaker,
-      //     },
-      //   ],
-      // }
-    );
-    // for the moderators who are not presenting a topic
-    // speaker is an array containing {id,value,label}
-    // tried to create together but got EagerLoadingError [SequelizeEagerLoadingError]: SessionSpeaker is not associated to Session! Im assuming you cant eager create rows in a join table.
-    let addSessionSpeakers = [];
-    speakers.map(({ speakerRole, speaker: speakers }) => {
-      for (const speaker of speakers) {
-        const sessionSpeaker = {};
-        sessionSpeaker.speakerId = speaker.id;
-        sessionSpeaker.role = speakerRole;
-        sessionSpeaker.sessionId = session.id;
-        addSessionSpeakers.push(sessionSpeaker);
-      }
-    });
-    // console.log(addSessionSpeakers, "addSessionSpeakers");
-    await SessionSpeaker.bulkCreate(addSessionSpeakers);
-    // to update the session id in the topics table
-    const addTopics = topics.map((t) => {
-      const addTopic = {};
-      addTopic.title = t.topic;
-      addTopic.startTime = t.startTime;
-      addTopic.endTime = t.endTime;
-      addTopic.conferenceId = conferenceId;
-      addTopic.sessionId = session.id;
-      addTopic.id = t.topicId;
-      return addTopic;
-    });
-    // console.log("addtopics", addTopics);
-    const updatedTopics = await Topic.bulkCreate(addTopics, {
-      updateOnDuplicate: ["startTime", "endTime", "sessionId"],
-    });
-    // console.log("updatedTopics", updatedTopics);
-    if (isPublish) {
-      const postContent = generateHTML(data);
-      const minifiedContent = await minifyHtml(postContent);
-      // console.log("postContent", postContent);
-      const wordpressLink = await createPage(
-        minifiedContent,
-        title,
-        sessionCode
-      );
-      // console.log("link", wordpressLink);
-    }
-    return res.status(200).json(updatedTopics);
-  } catch (err) {
-    console.log(err, "err");
-    return res.status(500).json(err);
-  }
+  const speakersToUpdate = [];
+
+  // for(let i = 0; i < speakers.length; i ++){
+  //   const speakersForARole = speakers[i].speaker;
+  //   for(let j = 0; j < speakersForARole.length; j ++){
+  //     const speaker = speakersForARole[j];
+
+  //   }
+  // }
+
+  // try {
+  //   const room = await Room.findOne({
+  //     where: { room: location, conferenceId: conferenceId },
+  //   });
+  //   const roomId = room.id;
+  //   // console.log("roomid", room.id);
+  //   const session = await Session.create(
+  //     {
+  //       title,
+  //       synopsis,
+  //       isPublish,
+  //       sessionType,
+  //       date,
+  //       discussionDuration,
+  //       presentationDuration,
+  //       startTime,
+  //       endTime,
+  //       conferenceId,
+  //       roomId: room.id,
+  //       sessionCode,
+  //       // sessionSpeaker: addSessionSpeakers,
+  //     }
+  //     // {
+  //     //   include: [
+  //     //     {
+  //     //       association: SessionSpeaker,
+  //     //     },
+  //     //   ],
+  //     // }
+  //   );
+  //   // for the moderators who are not presenting a topic
+  //   // speaker is an array containing {id,value,label}
+  //   // tried to create together but got EagerLoadingError [SequelizeEagerLoadingError]: SessionSpeaker is not associated to Session! Im assuming you cant eager create rows in a join table.
+  //   let addSessionSpeakers = [];
+  //   speakers.map(({ speakerRole, speaker: speakers }) => {
+  //     for (const speaker of speakers) {
+  //       const sessionSpeaker = {};
+  //       sessionSpeaker.speakerId = speaker.id;
+  //       sessionSpeaker.role = speakerRole;
+  //       sessionSpeaker.sessionId = session.id;
+  //       addSessionSpeakers.push(sessionSpeaker);
+  //     }
+  //   });
+  //   // console.log(addSessionSpeakers, "addSessionSpeakers");
+  //   await SessionSpeaker.bulkCreate(addSessionSpeakers);
+  //   // to update the session id in the topics table
+  //   const addTopics = topics.map((t) => {
+  //     const addTopic = {};
+  //     addTopic.title = t.topic;
+  //     addTopic.startTime = t.startTime;
+  //     addTopic.endTime = t.endTime;
+  //     addTopic.conferenceId = conferenceId;
+  //     addTopic.sessionId = session.id;
+  //     addTopic.id = t.topicId;
+  //     return addTopic;
+  //   });
+  //   // console.log("addtopics", addTopics);
+  //   const updatedTopics = await Topic.bulkCreate(addTopics, {
+  //     updateOnDuplicate: ["startTime", "endTime", "sessionId"],
+  //   });
+  //   // console.log("updatedTopics", updatedTopics);
+  //   if (isPublish) {
+  //     const postContent = generateHTML(data);
+  //     const minifiedContent = await minifyHtml(postContent);
+  //     // console.log("postContent", postContent);
+  //     const wordpressLink = await createPage(
+  //       minifiedContent,
+  //       title,
+  //       sessionCode
+  //     );
+  //     // console.log("link", wordpressLink);
+  //   }
+  //   return res.status(200).json(updatedTopics);
+  // } catch (err) {
+  //   console.log(err, "err");
+  //   return res.status(500).json(err);
+  // }
 };
 
 const EditSession = async (req, res) => {

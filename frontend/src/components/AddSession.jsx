@@ -76,7 +76,7 @@ const AddSession = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
-  // console.log("AddSession - Topics", topicsForAddingSession);
+  console.log("AddSession - Topics", topicsForAddingSession);
 
   const FormSchema = formSchemas[formStep];
   const form = useForm({

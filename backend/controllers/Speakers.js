@@ -88,6 +88,8 @@ const getSpeaker = async (req, res) => {
   }
 };
 
+// Function to get a speaker's presentation schedule for a specific conference
+// Require speakerId and conferenceId as params
 const getSchedule = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
   console.log("at getSchedule");

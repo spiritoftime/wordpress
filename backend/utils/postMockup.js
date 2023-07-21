@@ -208,10 +208,12 @@ const concatSpeakers = (speakers) => {
 const generateSpeakersPost = (data) => {
   let { biography, photoUrl } = data;
 
-  if (photoUrl === " " || photoUrl === undefined || photoUrl === null) {
+  if (photoUrl === "" || photoUrl === undefined || photoUrl === null) {
     photoUrl =
       "https://firebasestorage.googleapis.com/v0/b/speakers-management.appspot.com/o/photos%2Fdummy.jpg?alt=media&token=eaf19312-a2e3-4fdd-a9db-704bcfbe3eb1";
   }
+
+  console.log("generateSpeakerPost photoURL: ", photoUrl);
 
   const html = `<p style="text-align: left;"><img class="wp-image-34468 size-full alignleft" src="${photoUrl}" id="speakerPhoto" alt="" width="100" />${biography}</p><div style="margin-top: 110px;"><p style="font-weight:700">Summary of Presentation(s)</p><hr /><p>Please click session title(s) for more details<br />All timings are according to Singapore Time (UTC+8)</p></div>`;
 

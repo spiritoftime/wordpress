@@ -48,7 +48,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
                     speakers.push({
                       value: speaker,
                       label: speaker,
-                      topicId: topic.id,
+                      id: topic.speakersId[0],
                       speakerPostId: topic.speakerPostId[0],
                       speakerLink: topic.speakerLink[0],
                     });
