@@ -172,16 +172,21 @@ async function updateOnePost(postId, data) {
   try {
     const token = await getWordPressToken();
     console.log("At updateOnePost utils");
+    // console.log(data);
+    // const data = `<p>This is the updated post</p>`;
     const wordPressPost = await axios.post(
-      `https://hweitian.com/wp-json/wp/v2/posts/${pagpostIdeId}`,
-      data,
+      `https://hweitian.com/wp-json/wp/v2/posts/${postId}`,
+      {
+        content: data,
+        status: "publish",
+      },
       {
         headers: {
           Authorization: `Bearer ${token["data"]["jwt_token"]}`,
         },
       }
     );
-    // console.log(wordPressPost);
+    console.log(wordPressPost);
     return wordPressPost;
   } catch (err) {
     console.log(err);
@@ -204,7 +209,7 @@ async function createPage(html, title, sessionCode) {
         },
       }
     );
-    console.log(wordPressPost, "wordpresspost");
+    // console.log(wordPressPost, "wordpresspost");
     return wordPressPost.data.link;
   } catch (err) {
     console.log(err);

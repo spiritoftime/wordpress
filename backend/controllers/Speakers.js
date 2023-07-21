@@ -94,6 +94,98 @@ const getSchedule = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
   console.log("at getSchedule");
   try {
+    const schedule = await generateSpeakerSchedule(speakerId, conferenceId);
+    return res.status(200).json(schedule);
+  } catch {
+    return res.status(500).json(err);
+  }
+  // try {
+  //   const speaker = await Speaker.findByPk(speakerId, {
+  //     include: [
+  //       {
+  //         model: Conference,
+  //         where: { id: conferenceId },
+  //         include: [
+  //           {
+  //             model: Session,
+  //             include: [
+  //               {
+  //                 model: Speaker,
+  //                 where: { id: speakerId },
+  //                 through: {
+  //                   // model: SessionSpeaker,
+  //                   attributes: ["role"],
+  //                   // where: { speakerId: speakerId },
+  //                 },
+  //                 required: false,
+  //               },
+  //               {
+  //                 model: Topic,
+  //                 include: [
+  //                   {
+  //                     model: Speaker,
+  //                     where: { id: speakerId },
+  //                   },
+  //                 ],
+  //               },
+  //               {
+  //                 model: Room,
+  //               },
+  //             ],
+  //             order: [["startTime", "ASC"]],
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         model: Topic,
+  //         where: { conferenceId: conferenceId },
+  //         required: false,
+  //       },
+  //     ],
+  //     order: [[db.Topic, "id", "ASC"]],
+  //   });
+
+  //   if (speaker !== null || speaker !== undefined) {
+  //     // Convert data into json for easy manipulation
+  //     const finalSpeaker = speaker.toJSON();
+
+  //     // Remove sessions not related to speaker
+  //     finalSpeaker.Conferences.map((conference) => {
+  //       for (let i = 0; i < conference.Sessions.length; i++) {
+  //         if (
+  //           conference.Sessions[i].Speakers.length <= 0 &&
+  //           conference.Sessions[i].Topics.length <= 0
+  //         ) {
+  //           if (conference.Sessions.length === 1) {
+  //             conference.Sessions = [];
+  //           } else {
+  //             conference.Sessions.splice(i, 1);
+  //             i--;
+  //           }
+  //         }
+  //       }
+  //     });
+
+  //     const schedule = generateSchedule(finalSpeaker);
+
+  //     const response = {
+  //       schedule: schedule,
+  //       speaker: finalSpeaker,
+  //     };
+
+  //     return res.status(200).json(response);
+  //   } else {
+  //     return res.status(200).json(speaker);
+  //   }
+  // } catch (err) {
+  //   console.log("error: ", err);
+  //   return res.status(500).json(err);
+  // }
+};
+
+// Helper function to generate speaker schedule
+const generateSpeakerSchedule = async (speakerId, conferenceId) => {
+  try {
     const speaker = await Speaker.findByPk(speakerId, {
       include: [
         {
@@ -109,7 +201,7 @@ const getSchedule = async (req, res) => {
                   through: {
                     // model: SessionSpeaker,
                     attributes: ["role"],
-                    // where: { speakerId: speakerId },
+                    where: { speakerId: speakerId },
                   },
                   required: false,
                 },
@@ -167,13 +259,12 @@ const getSchedule = async (req, res) => {
         speaker: finalSpeaker,
       };
 
-      return res.status(200).json(response);
+      return response;
     } else {
-      return res.status(200).json(speaker);
+      return speaker;
     }
   } catch (err) {
     console.log("error: ", err);
-    return res.status(500).json(err);
   }
 };
 
@@ -550,4 +641,5 @@ module.exports = {
   deleteSpeaker,
   updateSpeaker,
   removeSpeakerFromConference,
+  generateSpeakerSchedule,
 };
