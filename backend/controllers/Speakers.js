@@ -61,7 +61,28 @@ const getSpeaker = async (req, res) => {
         },
       ],
     });
-    return res.status(200).json(speaker);
+
+    // Convert data into json for easy manipulation
+    const finalSpeaker = speaker.toJSON();
+
+    // Remove sessions not related to speaker
+    finalSpeaker.Conferences.map((conference) => {
+      for (let i = 0; i < conference.Sessions.length; i++) {
+        if (
+          conference.Sessions[i].Speakers.length <= 0 &&
+          conference.Sessions[i].Topics.length <= 0
+        ) {
+          if (conference.Sessions.length === 1) {
+            conference.Sessions = [];
+          } else {
+            conference.Sessions.splice(i, 1);
+            i--;
+          }
+        }
+      }
+    });
+
+    return res.status(200).json(finalSpeaker);
   } catch (err) {
     return res.status(500).json(err);
   }
