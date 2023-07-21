@@ -11,6 +11,7 @@ const {
   Room,
 } = db;
 const { Op } = require("sequelize");
+const { getSchedule } = require("../controllers/Speakers");
 
 const {
   getAllWordPressPost,

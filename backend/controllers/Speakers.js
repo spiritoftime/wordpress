@@ -131,40 +131,44 @@ const getSchedule = async (req, res) => {
         {
           model: Topic,
           where: { conferenceId: conferenceId },
-          // required: false,
+          required: false,
         },
       ],
       order: [[db.Topic, "id", "ASC"]],
     });
 
-    // Convert data into json for easy manipulation
-    const finalSpeaker = speaker.toJSON();
+    if (speaker !== null || speaker !== undefined) {
+      // Convert data into json for easy manipulation
+      const finalSpeaker = speaker.toJSON();
 
-    // Remove sessions not related to speaker
-    finalSpeaker.Conferences.map((conference) => {
-      for (let i = 0; i < conference.Sessions.length; i++) {
-        if (
-          conference.Sessions[i].Speakers.length <= 0 &&
-          conference.Sessions[i].Topics.length <= 0
-        ) {
-          if (conference.Sessions.length === 1) {
-            conference.Sessions = [];
-          } else {
-            conference.Sessions.splice(i, 1);
-            i--;
+      // Remove sessions not related to speaker
+      finalSpeaker.Conferences.map((conference) => {
+        for (let i = 0; i < conference.Sessions.length; i++) {
+          if (
+            conference.Sessions[i].Speakers.length <= 0 &&
+            conference.Sessions[i].Topics.length <= 0
+          ) {
+            if (conference.Sessions.length === 1) {
+              conference.Sessions = [];
+            } else {
+              conference.Sessions.splice(i, 1);
+              i--;
+            }
           }
         }
-      }
-    });
+      });
 
-    const schedule = generateSchedule(finalSpeaker);
+      const schedule = generateSchedule(finalSpeaker);
 
-    const response = {
-      schedule: schedule,
-      speaker: finalSpeaker,
-    };
+      const response = {
+        schedule: schedule,
+        speaker: finalSpeaker,
+      };
 
-    return res.status(200).json(response);
+      return res.status(200).json(response);
+    } else {
+      return res.status(200).json(speaker);
+    }
   } catch (err) {
     console.log("error: ", err);
     return res.status(500).json(err);
@@ -409,9 +413,11 @@ const deleteSpeaker = async (req, res) => {
 
 const removeSpeakerFromConference = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
+  console.log("At removeSpeakerFromConference");
   // console.log("speakerId: ", speakerId);
   // console.log("conferenceId: ", conferenceId);
   try {
+    // Get speaker's wordPress post ID
     const speakerDetails = await ConferenceSpeaker.findAll({
       where: {
         [Op.and]: [{ speakerId: speakerId }, { conferenceId: conferenceId }],
@@ -419,8 +425,6 @@ const removeSpeakerFromConference = async (req, res) => {
     });
 
     const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
-
-    // console.log(speakerPostId);
 
     // Remove speaker from WordPress
     await deletePost(speakerPostId);
@@ -447,6 +451,33 @@ const removeSpeakerFromConference = async (req, res) => {
     // Delete all topics related to the speaker for that specific conference
     await TopicSpeaker.destroy({ where: { id: topicIds } });
     await Topic.destroy({ where: { id: topicIds } });
+
+    // Find if the speaker has a moderator role in any of the sessions
+    const speakersInSession = await Session.findAll({
+      where: { conferenceId: conferenceId },
+      include: {
+        model: Speaker,
+        through: { model: SessionSpeaker, where: { speakerId: speakerId } },
+      },
+    });
+
+    // Convert data into json for easy manipulation
+    const speakersInSessionJson = JSON.parse(JSON.stringify(speakersInSession));
+
+    const sessionSpeakerId = [];
+
+    // Get the session ID for the sessions where the speaker is a moderator.
+    for (let i = 0; i < speakersInSessionJson.length; i++) {
+      const session = speakersInSessionJson[i];
+      if (session.Speakers.length > 0) {
+        for (let j = 0; j < session.Speakers.length; j++) {
+          const speaker = session.Speakers[j];
+          sessionSpeakerId.push(speaker.SessionSpeaker.id);
+        }
+      }
+    }
+
+    await SessionSpeaker.destroy({ where: { id: sessionSpeakerId } });
 
     return res.status(200).json("Speaker removed from conference");
   } catch (err) {
