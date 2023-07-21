@@ -226,27 +226,30 @@ const generateSchedule = (presentations) => {
   const sessions = presentations.Conferences[0].Sessions;
   const conference = presentations.Conferences[0];
   const dates = createDateArray(startDate, endDate, sessions);
+  let finalSchedule = ``;
 
   // console.log("conference: ", conference);
   // console.log("sessions: ", sessions);
   // console.log("dates: ", dates);
   // console.log("at generateSchedule");
 
-  const schedule = dates
-    .map(
-      (date) =>
-        `<table style="border: 1px solid black; margin-bottom: 20px; width: 100%; border-collapse: collapse;">
+  if (sessions.length <= 0) {
+    finalSchedule = `<div style="font-size: 14px;">No presentations allocation.</div>`;
+  } else {
+    const schedule = dates
+      .map(
+        (date) =>
+          `<table style="border: 1px solid black; margin-bottom: 20px; width: 100%; border-collapse: collapse;">
       <tbody>
         <tr>
           <th style="text-align: left; height: 40px; background-color: #39869B; color: #FFFFFF; padding: 5px;">
             ${date}
           </th>
         </tr>` +
-        conference.Sessions.map((session, sessionIndex) => {
-          console.log(convertDateFormat(session.date) === date);
-          if (convertDateFormat(session.date) === date) {
-            return (
-              `<tr key=${sessionIndex}>
+          conference.Sessions.map((session, sessionIndex) => {
+            if (convertDateFormat(session.date) === date) {
+              return (
+                `<tr key=${sessionIndex}>
                 <td style="padding: 0;">
                   <table style="width: 100%;">
                     <tbody>
@@ -256,15 +259,15 @@ const generateSchedule = (presentations) => {
                         </td>
                         <td style="width: 75%;">
                           <strong>(${session.sessionCode}) ${
-                session.title
-              } (${removeSecondsFromTime(
-                session.startTime
-              )} - ${removeSecondsFromTime(session.endTime)}hrs)</strong>
+                  session.title
+                } (${removeSecondsFromTime(
+                  session.startTime
+                )} - ${removeSecondsFromTime(session.endTime)}hrs)</strong>
                         </td>
                       </tr>` +
-              (session.Speakers.length > 0
-                ? session.Speakers.map((speaker, speakerIndex) => {
-                    return `<tr key=${speakerIndex}>
+                (session.Speakers.length > 0
+                  ? session.Speakers.map((speaker, speakerIndex) => {
+                      return `<tr key=${speakerIndex}>
                             <td>
                               <p></p>
                             </td>
@@ -272,37 +275,38 @@ const generateSchedule = (presentations) => {
                               <p>- ${speaker.SessionSpeaker.role}</p>
                             </td>
                           </tr>`;
-                  }).join("")
-                : ``) +
-              (session.Topics.length > 0
-                ? session.Topics.map((topic, topicIndex) => {
-                    return ` <tr key=${topicIndex}>
+                    }).join("")
+                  : ``) +
+                (session.Topics.length > 0
+                  ? session.Topics.map((topic, topicIndex) => {
+                      return ` <tr key=${topicIndex}>
                             <td style="padding: 2px 5px;">
                               <p>${removeSecondsFromTime(
                                 topic.startTime
                               )} - ${removeSecondsFromTime(
-                      topic.endTime
-                    )}hrs</p>
+                        topic.endTime
+                      )}hrs</p>
                             </td>
                             <td>
                               <p>- ${topic.title}</p>
                             </td>
                           </tr>`;
-                  }).join("")
-                : "") +
-              `</tbody>
+                    }).join("")
+                  : "") +
+                `</tbody>
                   </table>
                 </td>
               </tr>`
-            );
-          }
-        }).join("") +
-        `</tbody>
+              );
+            }
+          }).join("") +
+          `</tbody>
     </table>`
-    )
-    .join("");
+      )
+      .join("");
 
-  const finalSchedule = `<div style="font-size: 14px;">${schedule}</div>`;
+    finalSchedule = `<div style="font-size: 14px;">${schedule}</div>`;
+  }
 
   return finalSchedule;
 };

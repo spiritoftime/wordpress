@@ -69,7 +69,7 @@ const getSpeaker = async (req, res) => {
 
 const getSchedule = async (req, res) => {
   const { speakerId, conferenceId } = req.params;
-  console.log("inside getSchedule");
+  console.log("at getSchedule");
   try {
     const speaker = await Speaker.findByPk(speakerId, {
       include: [
@@ -83,8 +83,12 @@ const getSchedule = async (req, res) => {
                 {
                   model: Speaker,
                   where: { id: speakerId },
-                  through: { attributes: ["role"] },
-                  required: true,
+                  through: {
+                    // model: SessionSpeaker,
+                    attributes: ["role"],
+                    // where: { speakerId: speakerId },
+                  },
+                  required: false,
                 },
                 {
                   model: Topic,
@@ -99,45 +103,49 @@ const getSchedule = async (req, res) => {
                   model: Room,
                 },
               ],
-              order: [["date", "ASC"]],
+              order: [["startTime", "ASC"]],
             },
           ],
         },
         {
           model: Topic,
           where: { conferenceId: conferenceId },
-          required: false,
+          // required: false,
         },
       ],
+      order: [[db.Topic, "id", "ASC"]],
     });
-    // const speaker = await Speaker.findByPk(speakerId, {
-    //   include: [
-    //     {
-    //       model: Topic,
-    //       through: { where: { speakerId: speakerId }, attributes: [] },
-    //       include: [{ model: Session, where: { conferenceId: conferenceId } }],
-    //     },
-    //     {
-    //       model: Session,
-    //       where: { conferenceId: conferenceId },
-    //       through: { where: { speakerId: speakerId }, attributes: ["role"] },
-    //     },
-    //   ],
-    // });
-    console.log(speaker);
-    const schedule = generateSchedule(speaker.toJSON());
-    generateSchedule(speaker.dataValues);
+
+    // Convert data into json for easy manipulation
+    const finalSpeaker = speaker.toJSON();
+
+    // Remove sessions not related to speaker
+    finalSpeaker.Conferences.map((conference) => {
+      for (let i = 0; i < conference.Sessions.length; i++) {
+        if (
+          conference.Sessions[i].Speakers.length <= 0 &&
+          conference.Sessions[i].Topics.length <= 0
+        ) {
+          if (conference.Sessions.length === 1) {
+            conference.Sessions = [];
+          } else {
+            conference.Sessions.splice(i, 1);
+            i--;
+          }
+        }
+      }
+    });
+
+    const schedule = generateSchedule(finalSpeaker);
 
     const response = {
       schedule: schedule,
-      speaker: speaker,
+      speaker: finalSpeaker,
     };
-
-    // console.log(response);
 
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
+    console.log("error: ", err);
     return res.status(500).json(err);
   }
 };
