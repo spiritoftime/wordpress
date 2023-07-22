@@ -254,9 +254,9 @@ const Conference = () => {
                   name="api"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>WordPress API Key:</FormLabel>
+                      <FormLabel>WordPress URL:</FormLabel>
                       <FormControl>
-                        <Input placeholder="WordPress API Key" {...field} />
+                        <Input placeholder="WordPress URL" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

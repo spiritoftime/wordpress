@@ -27,6 +27,7 @@ const {
 } = require("../utils/wordpress");
 
 const { generateSchedule } = require("../utils/postMockup");
+const { getConferenceUrl } = require("../controllers/Conferences");
 
 // Function to get a specific contact
 // Includes all participated conference and sessions
@@ -332,17 +333,17 @@ const addSpeakersToConference = async (req, res) => {
   const { conferenceId } = req.params;
 
   try {
+    // Get the base url from database to determin which wordpress website to update
+    const wordPressUrl = await getConferenceUrl(conferenceId);
+
     for (let i = 0; i < speakerItems.length; i++) {
       const topicsArr = [];
       const topicSpeakersData = [];
 
-      // Add to wordpress here
-      // Get the wordpress speaker link and post id then add to conferenceSpeaker table
-
-      //Generate html data for speaker's post
-
+      // Get wordpress post category id which will be used to create post
       const postCategoryId = await getPostCategoriesId(
-        speakerItems[i]["name"]["country"]
+        speakerItems[i]["name"]["country"],
+        wordPressUrl
       );
 
       // console.log("category id: ", postCategoryId);
@@ -353,14 +354,17 @@ const addSpeakersToConference = async (req, res) => {
       };
       const speakerName = `${speakerItems[i]["name"]["firstName"]} ${speakerItems[i]["name"]["lastName"]}`;
 
-      console.log(speakersInfo);
+      // console.log(speakersInfo);
 
       const html = generateSpeakersPost(speakersInfo);
-      console.log("html: ", html);
+      // console.log("html: ", html);
+
+      // Create post on wordpress website
       const { wordPressPostLink, wordPressPostId } = await createPost(
         html,
         speakerName,
-        postCategoryId
+        postCategoryId,
+        wordPressUrl
       );
       // console.log(wordPressPostLink, wordPressPostId);
 
@@ -381,7 +385,7 @@ const addSpeakersToConference = async (req, res) => {
           });
         }
       }
-      // If topics were provided
+      // If topics are provided
       if (topicsArr.length > 0) {
         // Add proposed topics to Topics
         const topicsId = await Topic.bulkCreate(topicsArr);

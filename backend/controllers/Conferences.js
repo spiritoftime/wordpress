@@ -90,10 +90,25 @@ const DeleteConference = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
+const getConferenceUrl = async (conferenceId) => {
+  try {
+    const url = await Conference.findByPk(conferenceId, {
+      attributes: ["wordpressApi"],
+    });
+    const urlJson = url.toJSON();
+    const wordPressUrl = urlJson.wordpressApi;
+    return wordPressUrl;
+  } catch (e) {
+    console.log("error", e);
+  }
+};
+
 module.exports = {
   addConference,
   EditConference,
   DeleteConference,
   getConference,
   getConferences,
+  getConferenceUrl,
 };

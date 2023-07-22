@@ -31,18 +31,17 @@ async function getAllWordPressPost() {
     // return res.status(400).json({ error: true, msg: err });
   }
 }
-async function createPost(html, title, postCategoryId, featuredImageId) {
+async function createPost(html, title, postCategoryId, wordPressUrl) {
   try {
-    console.log("inside create post");
+    console.log("inside create post", wordPressUrl);
     const token = await getWordPressToken();
     // console.log(token, "token");
     const wordPressPost = await axios.post(
-      "https://hweitian.com/wp-json/wp/v2/posts",
+      `${wordPressUrl}/wp-json/wp/v2/posts`,
       {
         content: html,
         title: title,
         categories: [postCategoryId],
-        featured_media: featuredImageId,
         status: "publish",
       },
       {
@@ -63,32 +62,13 @@ async function createPost(html, title, postCategoryId, featuredImageId) {
   }
 }
 
-// async function addMedia() {
-//   try {
-//     const token = await getWordPressToken();
-//     console.log("At add media");
-//     const wordPressPost = await axios.post(
-//       `https://hweitian.com/wp-json/wp/v2/media`,
-//       data,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token["data"]["jwt_token"]}`,
-//         },
-//       }
-//     );
-//     // console.log(wordPressPost);
-//     return wordPressPost;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// }
-
-async function getPostCategoriesId(speakerCountry) {
+async function getPostCategoriesId(speakerCountry, wordPressUrl) {
+  console.log("inside getPostCategories", wordPressUrl);
   const slug = speakerCountry.toLowerCase();
   try {
     const token = await getWordPressToken();
     const { data } = await axios.get(
-      `https://hweitian.com/wp-json/wp/v2/categories/?per_page=100`,
+      `${wordPressUrl}/wp-json/wp/v2/categories/?per_page=100`,
       {
         headers: {
           Authorization: `Bearer ${token["data"]["jwt_token"]}`,
@@ -99,20 +79,14 @@ async function getPostCategoriesId(speakerCountry) {
     // If a category is found, return the category ID
     for (let i = 0; i < data.length; i++) {
       if (data[i].name === speakerCountry) {
-        console.log("Country existed");
+        // console.log("Country existed");
         return data[i].id;
       }
     }
-    // data.forEach((country) => {
-    //   if (country.name === speakerCountry) {
-    //     console.log("Country existed");
-    //     return country.id;
-    //   }
-    // });
 
     // If no category matches, create a new category and return the category ID
     const catergory = await axios.post(
-      "https://hweitian.com/wp-json/wp/v2/categories",
+      `${wordPressUrl}/wp-json/wp/v2/categories`,
       {
         name: speakerCountry,
         slug: slug,
