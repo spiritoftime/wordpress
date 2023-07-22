@@ -22,3 +22,12 @@ export function formatDateToLocale(dateString) {
   const formattedDate = dateObj.toLocaleDateString(undefined, options);
   return formattedDate;
 }
+// convert "09:00:00" + "2021-07-08T00:00:00.000Z" to a date object
+export function convertTimeToDateObj(date, timeString) {
+  // Combine the date and time strings
+  const combinedDateTimeStr = date.slice(0, 10) + "T" + timeString; // '2021-07-08T09:00:00'
+
+  // Create a Date object from the combined date and time string
+  const dateObj = new Date(combinedDateTimeStr);
+  return dateObj;
+}
