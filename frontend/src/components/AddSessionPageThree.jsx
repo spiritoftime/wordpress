@@ -45,17 +45,26 @@ const AddSessionPageThree = ({
                 const appendTopic = {};
                 appendTopic[`topic`] = topic.title;
                 // if only one speaker in the row selected
-                const speakers = [];
-                topic.speaker.forEach((speaker) => {
-                  speakers.push({
-                    value: speaker,
-                    label: speaker,
-                    topicId: topic.id,
+                if (typeof topic.speaker === "string") {
+                  appendTopic[`speakers`] = [
+                    {
+                      value: topic.speaker,
+                      label: topic.speaker,
+                      topicId: topic.id,
+                    },
+                  ];
+                } else if (Array.isArray(topic.speaker)) {
+                  const speakers = [];
+                  topic.speaker.forEach((speaker) => {
+                    speakers.push({
+                      value: speaker,
+                      label: speaker,
+                      topicId: topic.id,
+                    });
                   });
-                });
-                appendTopic[`speakers`] = [...speakers];
-                appendTopic[`id`] = [...topic.speakersId];
-
+                  appendTopic[`speakers`] = [...speakers];
+                  appendTopic[`id`] = [...topic.speakersId];
+                }
                 appendTopic[`topicId`] = topic.topicId;
 
                 appendTopics.push(appendTopic);

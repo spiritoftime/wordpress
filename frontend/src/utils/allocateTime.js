@@ -8,7 +8,7 @@ export function allocateTime(
 ) {
   for (const [i, topic] of appendTopics.entries()) {
     if (i === 0) {
-      topic[`startTime`] = startTime;
+      topic[`startTime`] = startTime.substring(0, 5);
       topic[`endTime`] = addTime(startTime, presentationDuration);
     } else {
       console.log("second start time", appendTopics[i - 1]);

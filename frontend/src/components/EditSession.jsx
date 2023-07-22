@@ -68,23 +68,25 @@ const EditSession = () => {
       startTime: "",
       endTime: "",
       sessionCode: "",
-      location: "",
       isPublish: false,
       presentationDuration: 0,
       discussionDuration: 0,
-      // sessionType: "Symposia",
+
       speakers: [{}],
       // topics: [{}],
     },
     mode: "onChange",
   });
   useEffect(() => {
-    if (session) {
+    if (session && Object.keys(session).length > 0) {
+      console.log("session", session);
+      console.log("sessiontype", session.sessionType);
       form.reset({
         title: session.title,
         synopsis: session.synopsis,
-        startTime: session.startTime,
-        endTime: session.endTime,
+        startTime: session.startTime.substring(0, 5),
+        endTime: session.endTime.substring(0, 5),
+        sessionType: session.sessionType,
         sessionCode: session.sessionCode,
         location: session.Room.room,
         presentationDuration: session.presentationDuration,
@@ -103,7 +105,6 @@ const EditSession = () => {
       // replace([...rooms]);
     }
   }, [session]);
-
   const {
     control,
     watch,
@@ -131,98 +132,111 @@ const EditSession = () => {
     name: "topics",
   });
   // console.log("control", control);
-  // const onSubmit = (data) => {
-  //   console.log("data", data);
-  //   addToDatabase(data);
-  // };
-  // const {
-  //   fields: moderators,
-  //   append,
-  //   replace: replaceModerators,
-  //   remove,
-  // } = useFieldArray({
-  //   control,
-  //   name: "speakers",
-  // });
+  const onSubmit = (data) => {
+    console.log("data", data);
+    // addToDatabase(data);
+  };
+  // console.log(errors, "errors");
+  // console.log(isValid, "valid");
   return (
     <div className="flex flex-col w-full p-8">
       <PageHeader rowType="Edit Session" hasButton={false} />
       <Form {...form}>
-        <AddSessionPageOne
-          moderators={moderators}
-          append={appendModerators}
-          remove={removeModerators}
-          control={control}
-        />
-        <div>
-          <Button
-            onClick={() => {
-              let appendTopics = [];
-              if (!isAllocated) {
-                selectedTopics.forEach((topic, index) => {
-                  // console.log("topicaaaaa", topic);
-                  const appendTopic = {};
-                  appendTopic[`topic`] = topic.title;
-                  // if only one speaker in the row selected
-                  if (typeof topic.speaker === "string") {
-                    appendTopic[`speakers`] = [
-                      {
-                        value: topic.speaker,
-                        label: topic.speaker,
-                        topicId: topic.id,
-                      },
-                    ];
-                  } else if (Array.isArray(topic.speaker)) {
-                    const speakers = [];
-                    topic.speaker.forEach((speaker) => {
-                      speakers.push({
-                        value: speaker,
-                        label: speaker,
-                        topicId: topic.id,
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <AddSessionPageOne
+            moderators={moderators}
+            append={appendModerators}
+            remove={removeModerators}
+            control={control}
+          />
+          <div>
+            <Button
+              onClick={() => {
+                let appendTopics = [];
+                if (!isAllocated) {
+                  session.Topics.forEach((topic, index) => {
+                    console.log("topicaaaaa", topic);
+                    const appendTopic = {};
+                    appendTopic[`topic`] = topic.title;
+                    // if only one speaker in the row selected
+                    if (typeof topic.Speakers === "string") {
+                      appendTopic[`speakers`] = [
+                        {
+                          value: topic.Speakers.fullName,
+                          label: topic.Speakers.fullName,
+                        },
+                      ];
+                    } else if (Array.isArray(topic.Speakers)) {
+                      const speakers = [];
+                      const speakersId = [];
+                      topic.Speakers.forEach((speaker) => {
+                        speakers.push({
+                          value: speaker.fullName,
+                          label: speaker.fullName,
+                        });
+                        speakersId.push(speaker.id);
                       });
-                    });
-                    appendTopic[`speakers`] = [...speakers];
-                    appendTopic[`id`] = [...topic.speakersId];
-                  }
-                  appendTopic[`topicId`] = topic.topicId;
+                      appendTopic[`speakers`] = [...speakers];
+                      appendTopic[`id`] = [...speakersId];
+                    }
+                    appendTopic[`topicId`] = topic.id;
 
-                  appendTopics.push(appendTopic);
-                });
-                const presentationDuration = +getValues("presentationDuration");
-                const discussionDuration = +getValues("discussionDuration");
-                const startTime = getValues("startTime");
-                appendTopics = allocateTime(
-                  appendTopics,
-                  startTime,
-                  presentationDuration,
-                  discussionDuration
-                );
-                setIsAllocated(true);
-                setTopicsToAppend(appendTopics);
-                replaceTopics(appendTopics);
-              } else {
-                const presentationDuration = +getValues("presentationDuration");
-                const discussionDuration = +getValues("discussionDuration");
-                const startTime = getValues("startTime");
-                appendTopics = allocateTime(
-                  topicsToAppend,
-                  startTime,
-                  presentationDuration,
-                  discussionDuration
-                );
-                // console.log("append topics", appendTopics);
-                for (const [i, topic] of appendTopics.entries())
-                  updateTopics(i, topic);
-              }
-            }}
-            type="button"
-            className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
-          >
-            Allocate Time
-          </Button>
-          <TopicFieldArray fields={[]} control={control} />
-        </div>
+                    appendTopics.push(appendTopic);
+                  });
+                  const presentationDuration = +getValues(
+                    "presentationDuration"
+                  );
+                  const discussionDuration = +getValues("discussionDuration");
+                  const startTime = getValues("startTime");
+                  appendTopics = allocateTime(
+                    appendTopics,
+                    startTime,
+                    presentationDuration,
+                    discussionDuration
+                  );
+                  setIsAllocated(true);
+                  setTopicsToAppend(appendTopics);
+                  replaceTopics(appendTopics);
+                } else {
+                  const presentationDuration = +getValues(
+                    "presentationDuration"
+                  );
+                  const discussionDuration = +getValues("discussionDuration");
+                  const startTime = getValues("startTime");
+                  appendTopics = allocateTime(
+                    topicsToAppend,
+                    startTime,
+                    presentationDuration,
+                    discussionDuration
+                  );
+                  // console.log("append topics", appendTopics);
+                  for (const [i, topic] of appendTopics.entries())
+                    updateTopics(i, topic);
+                }
+              }}
+              type="button"
+              className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
+            >
+              Allocate Time
+            </Button>
+            <TopicFieldArray fields={topicDetails} control={control} />
+          </div>
+          <div className="flex gap-2 mx-auto w-fit">
+            <Button
+              disabled={!isValid}
+              type="submit"
+              className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
+            >
+              Save
+            </Button>
+
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+          </div>
+        </form>
       </Form>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </div>
   );
 };
