@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formSchemas } from "../utils/multiPageFormZod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AddSessionPageOne from "./AddSessionPageOne";
@@ -12,10 +12,14 @@ import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { getSession, updateSession } from "../services/sessions";
 import { allocateTime } from "../utils/allocateTime";
+import { useAppContext } from "../context/appContext";
 
 const EditSession = () => {
   const { conferenceId, sessionId } = useParams();
   const [isAllocated, setIsAllocated] = useState(false);
+
+  const { showToaster } = useAppContext();
+  const navigate = useNavigate();
   const [topicsToAppend, setTopicsToAppend] = useState([]);
   const getAccessToken = useGetAccessToken();
   const {
@@ -137,8 +141,9 @@ const EditSession = () => {
   });
   // console.log("control", control);
   const onSubmit = (data) => {
-    console.log("data", data);
     editSessionMutation({ data, conferenceId, sessionId });
+    navigate(`/conferences/sessions/${conferenceId}`);
+    showToaster("Session Updated");
   };
   // console.log(errors, "errors");
   // console.log(isValid, "valid");
@@ -227,7 +232,7 @@ const EditSession = () => {
           </div>
           <div className="flex gap-2 mx-auto w-fit">
             <Button
-              disabled={!isValid}
+              disabled={!isValid && !isAllocated}
               type="submit"
               className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
             >
