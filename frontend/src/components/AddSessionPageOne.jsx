@@ -23,16 +23,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
+
 import { useMatch, useParams } from "react-router-dom";
+
+// import { getRoles } from "../services/roles";
+
 // TO ADD SESSION TYPE & MODERATORS!!
 
 const AddSessionPageOne = ({ control, moderators, append, remove }) => {
   const { conferenceId } = useParams();
   const getAccessToken = useGetAccessToken();
+
   const matchedEditSessionPath = useMatch(
     "conferences/sessions/edit-session/:conferenceId/:sessionId"
   );
   console.log("match", matchedEditSessionPath);
+
   const {
     data: speakers,
     isLoading: isSpeakersLoading,
@@ -52,6 +58,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
   const {
     data: conferenceRooms,
     isLoading: isConferenceRoomsLoading,
@@ -64,6 +71,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
   const {
     data: topicsForAddingSession,
     isLoading: isTopicsForAddingSessionLoading,
@@ -76,6 +84,45 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
+
+  // const {
+  //   data: roles,
+  //   isLoading: isRolesLoading,
+  //   isFetching: isRolesFetching,
+  // } = useQuery({
+  //   queryKey: ["roles"],
+  //   queryFn: async () => {
+  //     const accessToken = await getAccessToken();
+  //     return getRoles(accessToken);
+  //   },
+  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  // });
+
+  // console.log(conferenceRooms, "conferencerooms");
+  // console.log(topicsForAddingSession, "topicsForAddingSession");
+  // console.log("speakers", speakers);
+  //  to query
+  // const speakers = [
+  //   {
+  //     value: "next.js",
+  //     label: "Next.js",
+  //   },
+  //   {
+  //     value: "react.js",
+  //     label: "React.js",
+  //   },
+  // ];
+  const {
+    fields: moderators,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "speakers",
+  });
+  // console.log("moderators", moderators);
+
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex items-center gap-6">
@@ -297,6 +344,12 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
+                      {/* <SelectOption
+                        field={field}
+                        placeholder="Select a role"
+                        options={roles ?? []}
+                        validateProperty="name"
+                      /> */}
                       <SelectOption
                         field={field}
                         placeholder="Select a role"
