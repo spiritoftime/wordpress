@@ -1,6 +1,7 @@
 const db = require("../db/models");
 const {
   Conference,
+  Speaker,
   ConferenceSpeaker,
   Session,
   SessionSpeaker,
@@ -35,9 +36,32 @@ const { minifyHtml } = require("../utils/minifyHTML");
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
   try {
-    const session = await Session.findByPk(sessionId);
+    const session = await Session.findByPk(sessionId, {
+      include: [
+        {
+          model: Topic,
+          include: [
+            {
+              model: Speaker,
+              attributes: {
+                include: ["fullName", "lastName", "firstName", "country"],
+              },
+            },
+          ],
+        },
+        {
+          model: Speaker,
+          through: {
+            model: SessionSpeaker,
+            attributes: ["role"],
+          },
+        },
+        { model: Room },
+      ],
+    });
     return res.status(200).json(session);
   } catch (err) {
+    console.log(err, "err");
     return res.status(500).json(err);
   }
 };
@@ -79,8 +103,8 @@ const addSession = async (req, res) => {
     title,
     topics,
   } = data;
-  // console.log("location", location);
-  // console.log("discussionDuration", discussionDuration, presentationDuration);
+  // // console.log("location", location);
+  // // console.log("discussionDuration", discussionDuration, presentationDuration);
 
   try {
     const room = await Room.findOne({
@@ -147,10 +171,14 @@ const addSession = async (req, res) => {
       const postContent = generateHTML(data);
       const minifiedContent = await minifyHtml(postContent);
       // console.log("postContent", postContent);
-      const wordpressLink = await createPage(
+      const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
         sessionCode
+      );
+      await Session.update(
+        { wordpressUrl: wordpressLink, wordpressId: wordpressId },
+        { where: { id: session.id } }
       );
       // console.log("link", wordpressLink);
       await updateWordPressSpeakers(speakers, topics, conferenceId);
@@ -158,28 +186,125 @@ const addSession = async (req, res) => {
 
     return res.status(200).json(updatedTopics);
   } catch (err) {
-    console.log(err, "err");
+    console.log(err, "err with add");
     return res.status(500).json(err);
   }
 };
 
 const EditSession = async (req, res) => {
-  const { sessionId } = req.params;
-  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
-    req.body;
-
+  const { conferenceId, sessionId } = req.params;
+  const data = req.body;
+  const {
+    date,
+    startTime,
+    endTime,
+    isPublish,
+    location,
+    discussionDuration,
+    presentationDuration,
+    sessionCode,
+    sessionType,
+    speakers,
+    synopsis,
+    title,
+    topics,
+  } = data;
+  // console.log("location", location);
+  // console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
-    await Room.destroy({ where: { sessionId } });
-    roomItems.forEach((room) => {
-      room.sessionId = sessionId;
+    const room = await Room.findOne({
+      where: { room: location, conferenceId: conferenceId },
     });
-    await Room.bulkCreate(roomItems);
-    const conference = await Conference.update(
-      { startDate, endDate, name, country, venue, wordpressApi },
+    const roomId = room.id;
+    // console.log("roomid", room.id);
+    const session = await Session.update(
+      {
+        title,
+        synopsis,
+        isPublish,
+        sessionType,
+        date,
+        discussionDuration,
+        presentationDuration,
+        startTime,
+        endTime,
+        conferenceId,
+        roomId: room.id,
+        sessionCode,
+      },
       { where: { id: sessionId } }
     );
-    return res.status(200).json(conference);
+    const currSession = await Session.findByPk(sessionId);
+    // Get all associated speakers for the session
+    const speakersToRemove = await currSession.getSpeakers();
+
+    // Remove all speakers from the session
+    await currSession.removeSpeakers(speakersToRemove);
+    let addSessionSpeakers = [];
+    speakers.map(({ speakerRole, speaker: speakers }) => {
+      for (const speaker of speakers) {
+        const sessionSpeaker = {};
+        sessionSpeaker.speakerId = speaker.id;
+        sessionSpeaker.role = speakerRole;
+        sessionSpeaker.sessionId = sessionId;
+        addSessionSpeakers.push(sessionSpeaker);
+      }
+    });
+    // console.log(addSessionSpeakers, "addSessionSpeakers");
+    await SessionSpeaker.bulkCreate(addSessionSpeakers);
+    // to update the session id in the topics table
+    const addTopics = topics.map((t) => {
+      const addTopic = {};
+      addTopic.title = t.topic;
+      addTopic.startTime = t.startTime;
+      addTopic.endTime = t.endTime;
+      addTopic.conferenceId = conferenceId;
+      addTopic.sessionId = session.id;
+      addTopic.id = t.topicId;
+      return addTopic;
+    });
+    // console.log("addtopics", addTopics);
+    const updatedTopics = await Topic.bulkCreate(addTopics, {
+      updateOnDuplicate: ["startTime", "endTime", "sessionId"],
+    });
+    // console.log("updatedTopics", updatedTopics);
+    if (isPublish) {
+      let { wordpressId: currWordpressId } = await Session.findOne({
+        where: { id: sessionId },
+        attributes: ["wordpressId"],
+      });
+      if (currWordpressId) {
+        const postContent = generateHTML(data);
+        const minifiedContent = await minifyHtml(postContent);
+        const wordpressPage = await updateOnePage(currWordpressId, {
+          content: minifiedContent,
+          status: "publish",
+        });
+        await Session.update(
+          {
+            wordpressUrl: wordpressPage.data.link,
+            wordpressId: wordpressPage.data.id,
+          },
+          { where: { id: sessionId } }
+        );
+      } else {
+        const postContent = generateHTML(data);
+        const minifiedContent = await minifyHtml(postContent);
+
+        const { wordpressLink, wordpressId } = await createPage(
+          minifiedContent,
+          title,
+          sessionCode
+        );
+        await Session.update(
+          { wordpressUrl: wordpressLink, wordpressId: wordpressId },
+          { where: { id: session.id } }
+        );
+      }
+    }
+    return res.status(200).json(updatedTopics);
   } catch (err) {
+    console.log(err, "err with edit");
     return res.status(500).json(err);
   }
 };

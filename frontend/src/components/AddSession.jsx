@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "./PageHeader";
 import { FormProgress } from "./FormProgress";
 import { useAppContext } from "../context/appContext";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import MultiPageForm from "./MultiPageForm";
@@ -104,16 +104,26 @@ const AddSession = () => {
     unregister,
     formState: { errors, isValid },
   } = form;
+  const {
+    fields: moderators,
+    append,
+    remove,
+    replace,
+  } = useFieldArray({
+    control,
+    name: "speakers",
+  });
+  console.log(moderators, "moderators");
   const onSubmit = (data) => {
-    console.log("data", data);
+    // console.log("data", data);
     addToDatabase(data);
   };
   useEffect(() => {
     if (formStep !== 2 && getValues("topics")) unregister("topics");
   }, [formStep, unregister, getValues]);
 
-  // console.log(errors, "errors");
-  // console.log("form validity", isValid);
+  // // console.log(errors, "errors");
+  // // console.log("form validity", isValid);
   return (
     <div className="flex flex-col w-full p-12">
       <div className="w-full">
@@ -132,7 +142,14 @@ const AddSession = () => {
               currentStep={formStep}
               prevFormStep={prevFormStep}
             >
-              {formStep === 0 && <AddSessionPageOne control={control} />}
+              {formStep === 0 && (
+                <AddSessionPageOne
+                  moderators={moderators}
+                  append={append}
+                  remove={remove}
+                  control={control}
+                />
+              )}
               {formStep === 1 && (
                 <AddSessionPageTwo
                   control={control}
@@ -140,7 +157,13 @@ const AddSession = () => {
                 />
               )}
               {formStep === 2 && (
-                <AddSessionPageThree getValues={getValues} control={control} />
+                <AddSessionPageThree
+                  moderators={moderators}
+                  append={append}
+                  remove={remove}
+                  getValues={getValues}
+                  control={control}
+                />
               )}
             </MultiPageForm>
           </form>

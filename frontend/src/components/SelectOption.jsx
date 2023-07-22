@@ -12,6 +12,7 @@ import {
 import { FormControl } from "./ui/form";
 
 export function SelectOption({ options, placeholder, field }) {
+  // console.log(field.value, "wtf?");
   return (
     <Select onValueChange={field.onChange} defaultValue={field?.value}>
       <FormControl>

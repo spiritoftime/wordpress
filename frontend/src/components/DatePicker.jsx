@@ -9,6 +9,7 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "../lib/utils";
 
 const DatePicker = ({ field }) => {
+  // console.log("date", field.value);
   return (
     <Popover>
       <PopoverTrigger asChild>

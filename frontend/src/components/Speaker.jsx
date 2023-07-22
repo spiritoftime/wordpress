@@ -46,7 +46,7 @@ const Speaker = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
     cacheTime: 0, // Disable data cache
   });
-
+  console.log("speakerFromFetch", speakerFromFetch);
   const FormSchema = z.object({
     topicOne: z.object({ id: z.any(), title: z.string() }),
     topicTwo: z.object({ id: z.any(), title: z.string() }),

@@ -43,7 +43,6 @@ export const RowActions = (rowType, deleteMutation) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
               <DropdownMenuItem
                 onClick={(e) => {
                   e.stopPropagation();
@@ -68,13 +67,17 @@ export const RowActions = (rowType, deleteMutation) => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                <AlertDialogCancel
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteMutation({ rowData });
+                    // deleteMutation({ rowData });
                   }}
                   className="bg-red-600 focus:ring-red-600"
                 >

@@ -55,6 +55,10 @@ module.exports = {
         allowNull: false,
         defaultValue: "Symposia",
       },
+      wordpress_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       wordpress_url: {
         type: Sequelize.STRING,
         allowNull: true,

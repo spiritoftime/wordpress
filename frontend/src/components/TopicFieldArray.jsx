@@ -16,7 +16,7 @@ import { useAppContext } from "../context/appContext";
 
 const TopicFieldArray = ({ control, fields: topicDetails }) => {
   const noOptions = [{ value: "", label: "" }];
-  console.log("topicdetails", topicDetails);
+  // console.log("topicdetails", topicDetails);
 
   return (
     <div className="flex flex-col gap-4">

@@ -38,6 +38,7 @@ const Speakers = () => {
 
   const { mutate: deleteContactMutation, isLoading: isDeleting } = useMutation({
     mutationFn: async ({ rowData }) => {
+      console.log(rowData, "rowdata");
       const accessToken = await getAccessToken();
       return removeSpeaker(accessToken, rowData.id, conferenceId);
     },
