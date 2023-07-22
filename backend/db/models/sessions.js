@@ -58,6 +58,10 @@ function initSession(sequelize) {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      wordpressId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
 
       roomId: {
         type: DataTypes.INTEGER,

@@ -31,7 +31,7 @@ async function getAllWordPressPost() {
     // return res.status(400).json({ error: true, msg: err });
   }
 }
-async function createPost(html, title, sessionCode) {
+async function createPost(html) {
   try {
     const token = await getWordPressToken();
     // console.log(token, "token");
@@ -73,10 +73,35 @@ async function updateOnePage(pageId, data) {
     console.log(err);
   }
 }
-
+async function createPage(html) {
+  try {
+    const token = await getWordPressToken();
+    // console.log(token, "token");
+    const wordPressPost = await axios.post(
+      "https://hweitian.com/wp-json/wp/v2/pages",
+      {
+        content: html,
+        status: "publish",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token["data"]["jwt_token"]}`,
+        },
+      }
+    );
+    return {
+      wordpressLink: wordPressPost.data.link,
+      wordpressId: wordPressPost.data.id,
+    };
+  } catch (err) {
+    console.log(err);
+    // return res.status(400).json({ error: true, msg: err });
+  }
+}
 module.exports = {
   getWordPressToken,
   getAllWordPressPost,
+  createPage,
   updateOnePage,
   createPost,
 };

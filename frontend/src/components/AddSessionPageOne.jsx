@@ -23,13 +23,21 @@ import { useQuery } from "@tanstack/react-query";
 import { getContacts } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
+
+import { useMatch, useParams } from "react-router-dom";
+
 // import { getRoles } from "../services/roles";
-import { useParams } from "react-router-dom";
+
 // TO ADD SESSION TYPE & MODERATORS!!
 
-const AddSessionPageOne = ({ control }) => {
+const AddSessionPageOne = ({ control, moderators, append, remove }) => {
   const { conferenceId } = useParams();
   const getAccessToken = useGetAccessToken();
+
+  const matchedEditSessionPath = useMatch(
+    "conferences/sessions/edit-session/:conferenceId/:sessionId"
+  );
+  console.log("match", matchedEditSessionPath);
 
   const {
     data: speakers,
@@ -77,6 +85,7 @@ const AddSessionPageOne = ({ control }) => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
+
   // const {
   //   data: roles,
   //   isLoading: isRolesLoading,
@@ -113,6 +122,7 @@ const AddSessionPageOne = ({ control }) => {
     name: "speakers",
   });
   // console.log("moderators", moderators);
+
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex items-center gap-6">
@@ -135,19 +145,38 @@ const AddSessionPageOne = ({ control }) => {
           <FormField
             control={control}
             name="sessionType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Session Type:</FormLabel>
-                <FormControl>
-                  <SelectOption
-                    field={field}
-                    placeholder="Session Type"
-                    options={["Symposia", "Masterclass"]}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              if (matchedEditSessionPath)
+                return (
+                  field.value && (
+                    <FormItem>
+                      <FormLabel>Session Type:</FormLabel>
+                      <FormControl>
+                        <SelectOption
+                          field={field}
+                          placeholder="Session Type"
+                          options={["Symposia", "Masterclass"]}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                );
+              else
+                return (
+                  <FormItem>
+                    <FormLabel>Session Type:</FormLabel>
+                    <FormControl>
+                      <SelectOption
+                        field={field}
+                        placeholder="Session Type"
+                        options={["Symposia", "Masterclass"]}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+            }}
           />
         </div>
         <div className="w-[20%]">
@@ -247,21 +276,41 @@ const AddSessionPageOne = ({ control }) => {
             control={control}
             name="location"
             render={({ field }) => {
-              return (
-                !isConferenceRoomsFetching && (
-                  <FormItem>
-                    <FormLabel>Location:</FormLabel>
-                    <FormControl>
-                      <SelectOption
-                        field={field}
-                        placeholder="Select a location"
-                        options={conferenceRooms.map((room) => room.room)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )
-              );
+              console.log(field.value, "location");
+              console.log(field, "field location");
+              if (matchedEditSessionPath)
+                return (
+                  !isConferenceRoomsFetching &&
+                  field.value && (
+                    <FormItem>
+                      <FormLabel>Location:</FormLabel>
+                      <FormControl>
+                        <SelectOption
+                          field={field}
+                          placeholder="Select a location"
+                          options={conferenceRooms.map((room) => room.room)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                );
+              else
+                return (
+                  !isConferenceRoomsFetching && (
+                    <FormItem>
+                      <FormLabel>Location:</FormLabel>
+                      <FormControl>
+                        <SelectOption
+                          field={field}
+                          placeholder="Select a location"
+                          options={conferenceRooms.map((room) => room.room)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                );
             }}
           />
         </div>

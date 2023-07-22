@@ -18,6 +18,7 @@ import NotFound from "./components/NotFound";
 import AddSession from "./components/AddSession";
 import Session from "./components/Session";
 import ProgramOverview from "./components/ProgramOverview";
+import EditSession from "./components/EditSession";
 // import Post from "./components/Post";
 
 function App() {
@@ -57,6 +58,10 @@ function App() {
           <Route
             path="sessions/add-session/:conferenceId"
             element={<AddSession />}
+          />
+          <Route
+            path="sessions/edit-session/:conferenceId/:sessionId"
+            element={<EditSession />}
           />
         </Route>
 

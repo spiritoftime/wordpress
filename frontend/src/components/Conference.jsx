@@ -84,7 +84,7 @@ const Conference = () => {
       api: "",
     },
   });
-
+  const watch = form.watch;
   const getAccessToken = useGetAccessToken();
   const control = form.control;
 
@@ -133,7 +133,7 @@ const Conference = () => {
       });
 
       const rooms = conference.Rooms.map((room) => {
-        console.log("room", room);
+        // console.log("room", room);
         room.roomId = room.id;
         return room;
       });
@@ -323,6 +323,7 @@ const Conference = () => {
         </Form>
         <Toaster />
       </div>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </div>
   );
 };

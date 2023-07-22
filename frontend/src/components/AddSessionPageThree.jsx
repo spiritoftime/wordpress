@@ -6,7 +6,13 @@ import { useFieldArray } from "react-hook-form";
 import { useAppContext } from "../context/appContext";
 import { allocateTime } from "../utils/allocateTime";
 
-const AddSessionPageThree = ({ control, getValues }) => {
+const AddSessionPageThree = ({
+  control,
+  getValues,
+  moderators,
+  append: appendMods,
+  remove: removeMods,
+}) => {
   const {
     fields: topicDetails,
     append,
@@ -23,7 +29,12 @@ const AddSessionPageThree = ({ control, getValues }) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <AddSessionPageOne control={control} />
+      <AddSessionPageOne
+        moderators={moderators}
+        append={appendMods}
+        remove={removeMods}
+        control={control}
+      />
       <div>
         <Button
           onClick={() => {
@@ -69,7 +80,6 @@ const AddSessionPageThree = ({ control, getValues }) => {
               );
               setIsAllocated(true);
               setTopicsToAppend(appendTopics);
-              remove(0);
               append(appendTopics);
             } else {
               const presentationDuration = +getValues("presentationDuration");
@@ -81,7 +91,7 @@ const AddSessionPageThree = ({ control, getValues }) => {
                 presentationDuration,
                 discussionDuration
               );
-              console.log("append topics", appendTopics);
+              // console.log("append topics", appendTopics);
               for (const [i, topic] of appendTopics.entries()) update(i, topic);
             }
           }}
