@@ -307,7 +307,7 @@ const generateSchedule = (presentations) => {
       )
       .join("");
 
-    finalSchedule = `<div style="font-size: 14px;">${schedule}</div>`;
+    finalSchedule = `<div style="font-size: 14px; margin-top: 20px;">${schedule}</div>`;
   }
 
   return finalSchedule;
