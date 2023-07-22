@@ -79,8 +79,7 @@ const EditSession = () => {
   });
   useEffect(() => {
     if (session && Object.keys(session).length > 0) {
-      console.log("session", session);
-      console.log("sessiontype", session.sessionType);
+
       form.reset({
         title: session.title,
         synopsis: session.synopsis,

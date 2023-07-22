@@ -89,7 +89,10 @@ async function createPage(html) {
         },
       }
     );
-    return wordPressPost.data.link;
+    return {
+      wordpressLink: wordPressPost.data.link,
+      wordpressId: wordPressPost.data.id,
+    };
   } catch (err) {
     console.log(err);
     // return res.status(400).json({ error: true, msg: err });

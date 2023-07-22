@@ -159,14 +159,13 @@ const addSession = async (req, res) => {
       const postContent = generateHTML(data);
       const minifiedContent = await minifyHtml(postContent);
       // console.log("postContent", postContent);
-      const wordpressLink = await createPage(
+      const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
         sessionCode
       );
-      console.log(wordpressLink, "wordpressLink");
       await Session.update(
-        { wordpressUrl: wordpressLink },
+        { wordpressUrl: wordpressLink, wordpressId: wordpressId },
         { where: { id: session.id } }
       );
     }
