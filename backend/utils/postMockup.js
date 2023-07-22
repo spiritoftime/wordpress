@@ -210,7 +210,7 @@ const generateSpeakersPost = (data) => {
 
   if (photoUrl === "" || photoUrl === undefined || photoUrl === null) {
     photoUrl =
-      "https://firebasestorage.googleapis.com/v0/b/speakers-management.appspot.com/o/photos%2Fdummy.jpg?alt=media&token=eaf19312-a2e3-4fdd-a9db-704bcfbe3eb1";
+      "https://firebasestorage.googleapis.com/v0/b/speakers-management.appspot.com/o/photos%2Fdummy.jpg?alt=media&token=c3228433-91c3-4888-a8b1-94edac2b01e7";
   }
 
   // console.log("generateSpeakerPost photoURL: ", photoUrl);
