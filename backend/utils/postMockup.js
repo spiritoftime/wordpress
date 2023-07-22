@@ -215,7 +215,7 @@ const generateSpeakersPost = (data) => {
 
   // console.log("generateSpeakerPost photoURL: ", photoUrl);
 
-  const html = `<p style="text-align: left;"><img class="wp-image-34468 size-full alignleft" src="${photoUrl}" id="speakerPhoto" alt="" width="100" />${biography}</p><div style="margin-top: 110px;"><p style="font-weight:700">Summary of Presentation(s)</p><hr /><p>Please click session title(s) for more details<br />All timings are according to Singapore Time (UTC+8)</p></div>`;
+  const html = `<p style="text-align: left;"><img class="wp-image-34468 size-full alignleft" src="${photoUrl}" id="speakerPhoto" alt="" width="100" />${biography}</p><div style="margin-top: 110px;"><p style="font-weight:700">Summary of Presentation(s)</p><hr /><p>All timings are according to Singapore Time (UTC+8)</p></div>`;
 
   return html;
 };

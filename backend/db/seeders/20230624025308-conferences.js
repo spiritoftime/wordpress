@@ -8,7 +8,7 @@ module.exports = {
         end_date: "2023-07-24",
         name: "APARCS 2023",
         country: "Bhutan",
-        venue: "New York",
+        venue: "Bhutan Convention Centre",
         wordpress_api: "https://hweitian.com",
       },
       {
