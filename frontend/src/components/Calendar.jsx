@@ -3,31 +3,32 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
 const Calendar = ({ sessionEvents }) => {
+  let eventGuid = 0;
+  let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
+
+  const createEventId = () => {
+    return String(eventGuid++);
+  };
+  const INITIAL_EVENTS = [
+    {
+      id: createEventId(),
+      title: "All-day event",
+      start: todayStr,
+      date: "2023-07-22T10:00:00",
+      description: "hola",
+    },
+    {
+      id: createEventId(),
+      title: "Timed event",
+      start: "2023-07-24T10:00:00",
+      description: "poop",
+    },
+  ];
+  const [currentEvents, setCurrentEvents] = useState(INITIAL_EVENTS);
   const [weekendsVisible, setWeekendsVisible] = useState(false);
-  const [currentEvents, setCurrentEvents] = useState(sessionEvents);
+
   console.log(currentEvents);
-  // let eventGuid = 0;
-  // let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
-
-  // const createEventId = () => {
-  //   return String(eventGuid++);
-  // };
-
-  // const INITIAL_EVENTS = [
-  //   {
-  //     id: createEventId(),
-  //     title: "All-day event",
-  //     start: todayStr,
-  //     date: "2023-07-10",
-  //   },
-  //   {
-  //     id: createEventId(),
-  //     title: "Timed event",
-  //     start: todayStr + "T12:00:00",
-  //   },
-  // ];
 
   // const handleWeekendsToggle = () => {
   //   setWeekendsVisible(!weekendsVisible);
@@ -50,31 +51,45 @@ const Calendar = ({ sessionEvents }) => {
   //   }
   // };
 
-  const handleEventClick = (clickInfo) => {
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`
-      )
-    ) {
-      clickInfo.event.remove();
-    }
-  };
+  // const handleEventClick = (clickInfo) => {
+  //   if (
+  //     confirm(
+  //       `Are you sure you want to delete the event '${clickInfo.event.title}'`
+  //     )
+  //   ) {
+  //     clickInfo.event.remove();
+  //   }
+  // };
 
   const handleEvents = (events) => {
     setCurrentEvents({
       currentEvents: events,
     });
   };
-
-  // const renderEventContent = (eventInfo) => {
-  //   return (
-  //     <>
-  //       {/* <b>{eventInfo.timeText}</b>
-  //       <i>{eventInfo.event.title}</i> */}
-  //       <p>New Event</p>
-  //     </>
-  //   );
+  // const handleMouseHover = (mouseEnterInfo) => {
+  //   if (mouseEnterInfo.jsEvent.isTrusted)
+  //     var tooltip = new Tooltip(mouseEnterInfo.el, {
+  //       title: mouseEnterInfo.event.extendedProps.description,
+  //       placement: "top",
+  //       trigger: "hover",
+  //       container: "body",
+  //     });
+  //   console.log(tooltip, "tooltip");
   // };
+  const renderTooltip = function (info) {
+    tippy(info.el, { content: info.event.extendedProps.description });
+  };
+  const renderEventContent = (eventInfo) => {
+    console.log(eventInfo, "eventinfo");
+
+    return (
+      <>
+        {/* <b>{eventInfo.timeText}</b>
+        <i>{eventInfo.event.title}</i> */}
+        <p>{eventInfo.event._def.title}</p>
+      </>
+    );
+  };
 
   return (
     <div className="demo-app" id="calendar">
@@ -93,10 +108,12 @@ const Calendar = ({ sessionEvents }) => {
           dayMaxEvents={true}
           weekends={weekendsVisible}
           events={currentEvents}
-          //initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+          // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
           // select={handleDateSelect}
           // eventContent={renderEventContent} // custom render function
-          eventClick={handleEventClick}
+          // eventMouseEnter={handleMouseHover}
+          eventDidMount={renderTooltip}
+          // eventClick={handleEventClick}
           // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
           /* you can update a remote database when these fire:
             eventAdd={function(){}}
