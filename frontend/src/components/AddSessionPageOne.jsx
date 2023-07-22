@@ -99,7 +99,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
             control={control}
             name="sessionType"
             render={({ field }) => {
-              if (matchedEditSessionPath.pattern.end)
+              if (matchedEditSessionPath)
                 return (
                   field.value && (
                     <FormItem>
@@ -231,7 +231,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
             render={({ field }) => {
               console.log(field.value, "location");
               console.log(field, "field location");
-              if (matchedEditSessionPath.pattern.end)
+              if (matchedEditSessionPath)
                 return (
                   !isConferenceRoomsFetching &&
                   field.value && (

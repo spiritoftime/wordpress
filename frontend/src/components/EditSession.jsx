@@ -9,8 +9,8 @@ import PageHeader from "./PageHeader";
 import { Button } from "./ui/button";
 import TopicFieldArray from "./TopicFieldArray";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { useQuery } from "@tanstack/react-query";
-import { getSession } from "../services/sessions";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { getSession, updateSession } from "../services/sessions";
 import { allocateTime } from "../utils/allocateTime";
 
 const EditSession = () => {
@@ -30,7 +30,13 @@ const EditSession = () => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  console.log("session", session);
+  const { mutate: editSessionMutation } = useMutation({
+    mutationFn: async ({ data, conferenceId, sessionId }) => {
+      const accessToken = await getAccessToken();
+      return updateSession(accessToken, conferenceId, sessionId, data);
+    },
+  });
+
   const FormSchema = formSchemas[2];
   function combineSpeakersByRole(moderators) {
     const speakerMap = {};
@@ -79,7 +85,6 @@ const EditSession = () => {
   });
   useEffect(() => {
     if (session && Object.keys(session).length > 0) {
-
       form.reset({
         title: session.title,
         synopsis: session.synopsis,
@@ -133,7 +138,7 @@ const EditSession = () => {
   // console.log("control", control);
   const onSubmit = (data) => {
     console.log("data", data);
-    // addToDatabase(data);
+    editSessionMutation({ data, conferenceId, sessionId });
   };
   // console.log(errors, "errors");
   // console.log(isValid, "valid");
