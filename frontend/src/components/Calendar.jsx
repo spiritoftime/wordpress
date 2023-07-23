@@ -68,8 +68,8 @@ const Calendar = ({ sessionEvents, startDate }) => {
   };
 
   return (
-    <div className="demo-app w-full m-6 max-h-[500px]" id="calendar">
-      <div className="demo-app-main w-[50%] ">
+    <div className="demo-app w-full max-h-[500px]" id="calendar">
+      <div className="demo-app-main w-[80%] mx-auto ">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{

@@ -6,12 +6,15 @@ import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import Loading from "./Loading";
 
 import Calendar from "./Calendar";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { convertTimeToDateObj } from "../utils/convertDate";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
 
 const ProgramOverview = () => {
   const getAccessToken = useGetAccessToken();
+  const [isChecked, setIsChecked] = useState(false);
   const { conferenceId } = useParams();
   const html = renderToStaticMarkup(<Calendar />);
   const {
@@ -26,7 +29,6 @@ const ProgramOverview = () => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-  console.log(sessions, "sessions");
   const { mutate: updateProgramOverview, isLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
@@ -40,7 +42,7 @@ const ProgramOverview = () => {
     //   },
     // }
   );
-
+  const toggleIsPublish = () => setIsChecked(!isChecked);
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
     const events = [];
@@ -80,10 +82,26 @@ const ProgramOverview = () => {
   //     updateProgramOverview(data);
   //   }
   // }, [isSessionsFetching]);
+  const { events: sessionEvents, startDate } = useMemo(
+    () => createEvents(sessions),
+    [sessions]
+  );
   if (isSessionsFetching) return <Loading />;
+  console.log(isChecked, "ischecked");
+  return (
+    <div className="w-full flex flex-col gap-4 m-6">
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold">Overview</h1>
 
-  const { events: sessionEvents, startDate } = createEvents(sessions);
-  return <Calendar sessionEvents={sessionEvents} startDate={startDate} />;
+        <div className="flex gap-2  ">
+          <label>Publish To Wordpress</label>
+
+          <Switch checked={isChecked} onCheckedChange={toggleIsPublish} />
+        </div>
+      </div>
+      <Calendar sessionEvents={sessionEvents} startDate={startDate} />;
+    </div>
+  );
 };
 
 export default ProgramOverview;
