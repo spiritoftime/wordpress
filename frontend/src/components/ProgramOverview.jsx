@@ -44,7 +44,11 @@ const ProgramOverview = () => {
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
     const events = [];
+    const utcStart = new Date(sessions[0].date);
+    const startDate = utcStart.setDate(utcStart.getDate() - 1);
+
     for (const session of sessions) {
+      console.log(session, "session");
       const sessionObj = {};
       sessionObj.title = session.title;
       sessionObj.start = convertTimeToDateObj(session.date, session.startTime);
@@ -53,7 +57,7 @@ const ProgramOverview = () => {
       sessionObj.id = session.id;
       events.push(sessionObj);
     }
-    return events;
+    return { events, startDate };
   };
 
   // useEffect(() => {
@@ -78,8 +82,8 @@ const ProgramOverview = () => {
   // }, [isSessionsFetching]);
   if (isSessionsFetching) return <Loading />;
 
-  const sessionEvents = createEvents(sessions);
-  return <Calendar sessionEvents={sessionEvents} />;
+  const { events: sessionEvents, startDate } = createEvents(sessions);
+  return <Calendar sessionEvents={sessionEvents} startDate={startDate} />;
 };
 
 export default ProgramOverview;

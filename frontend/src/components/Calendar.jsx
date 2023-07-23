@@ -3,32 +3,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-const Calendar = ({ sessionEvents }) => {
-  let eventGuid = 0;
-  let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
-
-  const createEventId = () => {
-    return String(eventGuid++);
-  };
-  const INITIAL_EVENTS = [
-    {
-      id: createEventId(),
-      title: "All-day event",
-      start: todayStr,
-      date: "2023-07-22T10:00:00",
-      description: "hola",
-    },
-    {
-      id: createEventId(),
-      title: "Timed event",
-      start: "2023-07-24T10:00:00",
-      description: "poop",
-    },
-  ];
-  const [currentEvents, setCurrentEvents] = useState(INITIAL_EVENTS);
+const Calendar = ({ sessionEvents, startDate }) => {
+  const [currentEvents, setCurrentEvents] = useState(sessionEvents);
   const [weekendsVisible, setWeekendsVisible] = useState(false);
-
-  console.log(currentEvents);
 
   // const handleWeekendsToggle = () => {
   //   setWeekendsVisible(!weekendsVisible);
@@ -51,15 +28,16 @@ const Calendar = ({ sessionEvents }) => {
   //   }
   // };
 
-  // const handleEventClick = (clickInfo) => {
-  //   if (
-  //     confirm(
-  //       `Are you sure you want to delete the event '${clickInfo.event.title}'`
-  //     )
-  //   ) {
-  //     clickInfo.event.remove();
-  //   }
-  // };
+  const handleEventClick = (clickInfo) => {
+    console.log(clickInfo, "clickInfo");
+    if (
+      confirm(
+        `Are you sure you want to delete the event '${clickInfo.event.title}'`
+      )
+    ) {
+      clickInfo.event.remove();
+    }
+  };
 
   const handleEvents = (events) => {
     setCurrentEvents({
@@ -86,24 +64,25 @@ const Calendar = ({ sessionEvents }) => {
       <>
         {/* <b>{eventInfo.timeText}</b>
         <i>{eventInfo.event.title}</i> */}
-        <p>{eventInfo.event._def.title}</p>
+        <p className="bg-[#3788d8]">{eventInfo.event._def.title}</p>
       </>
     );
   };
 
   return (
-    <div className="demo-app" id="calendar">
-      <div className="demo-app-main">
+    <div className="demo-app w-full m-6 max-h-[500px]" id="calendar">
+      <div className="demo-app-main w-[50%] ">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            right: "timeGridDay",
           }}
-          initialView="dayGridMonth"
+          initialView="timeGridDay"
           editable={true}
           selectable={true}
+          initialDate={startDate}
           selectMirror={true}
           dayMaxEvents={true}
           weekends={weekendsVisible}
@@ -113,7 +92,7 @@ const Calendar = ({ sessionEvents }) => {
           // eventContent={renderEventContent} // custom render function
           // eventMouseEnter={handleMouseHover}
           eventDidMount={renderTooltip}
-          // eventClick={handleEventClick}
+          eventClick={handleEventClick}
           // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
           /* you can update a remote database when these fire:
             eventAdd={function(){}}

@@ -65,6 +65,7 @@ const getSessions = async (req, res) => {
         { model: Conference, attributes: { include: ["country"] } },
       ],
       where: { conferenceId },
+      order: [["date", "ASC"]],
     });
     // console.log("sessions", sessions);
     return res.status(200).json(sessions);
