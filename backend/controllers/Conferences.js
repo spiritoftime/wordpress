@@ -105,6 +105,19 @@ const getConferenceUrl = async (conferenceId) => {
   }
 };
 
+const getLatestConference = async () => {
+  try {
+    const latestConferenceData = await Conference.findAll({
+      limit: 1,
+      order: [["startDate", "DESC"]],
+    });
+    const latestConference = JSON.parse(JSON.stringify(latestConferenceData));
+    return latestConference;
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
 module.exports = {
   addConference,
   EditConference,
@@ -112,4 +125,5 @@ module.exports = {
   getConference,
   getConferences,
   getConferenceUrl,
+  getLatestConference,
 };

@@ -19,15 +19,26 @@ const {
   deleteUserFromAuth,
 } = require("../utils/auth");
 
-const { generateSpeakersPost } = require("../utils/postMockup");
 const {
   createPost,
   getPostCategoriesId,
   deletePost,
+  updateOnePost,
 } = require("../utils/wordpress");
 
-const { generateSchedule } = require("../utils/postMockup");
-const { getConferenceUrl } = require("../controllers/Conferences");
+const {
+  generateSchedule,
+  generateSpeakersPost,
+} = require("../utils/postMockup");
+
+const {
+  getConferenceUrl,
+  getLatestConference,
+} = require("../controllers/Conferences");
+
+const { getSpeakersToUpdate } = require("../utils/speakers");
+
+const { minifyHtml } = require("../utils/minifyHTML");
 
 // Function to get a specific contact
 // Includes all participated conference and sessions
@@ -105,6 +116,7 @@ const getSchedule = async (req, res) => {
 
 // Helper function to generate speaker schedule
 const generateSpeakerSchedule = async (speakerId, conferenceId) => {
+  console.log("at generateSpeakerSchedule");
   try {
     const speaker = await Speaker.findByPk(speakerId, {
       include: [
@@ -505,6 +517,62 @@ const removeSpeakerFromConference = async (req, res) => {
   }
 };
 
+const updateWordPressSpeakers = async (
+  speakers,
+  topics,
+  conferenceId,
+  wordPressUrl,
+  oneSpeaker
+) => {
+  let speakersToUpdate = [];
+
+  console.log("At updateWordPressSpeakers");
+  console.log("speakers from params", speakers);
+  console.log("topics from params", topics);
+
+  if (oneSpeaker) {
+    speakersToUpdate = oneSpeaker;
+  } else {
+    speakersToUpdate = getSpeakersToUpdate(speakers, topics);
+  }
+
+  console.log("speakersToUpdate", speakersToUpdate);
+
+  for (let i = 0; i < speakersToUpdate.length; i++) {
+    const speaker = speakersToUpdate[i];
+
+    // Get speakers photo url and biography to generate wordpress base html
+    const details = await Speaker.findByPk(speaker.speakerId, {
+      attributes: { include: ["photoUrl", "biography", "fullName"] },
+    });
+
+    console.log("details", details);
+
+    // Generate wordpress speaker post base html
+    const speakerDetails = details.toJSON();
+    const speakerPostBaseHtml = generateSpeakersPost(speakerDetails);
+
+    // Get speakers presentation from database
+    const speakerPresentation = await generateSpeakerSchedule(
+      speaker.speakerId,
+      conferenceId
+    );
+
+    const speakerScheduleHtml = await minifyHtml(speakerPresentation.schedule);
+
+    // Merge base html and speaker's schedule html
+    const finalHtml = [speakerPostBaseHtml, speakerScheduleHtml].join("");
+
+    // Update the content onto WordPress based on speakersPostId
+    await updateOnePost(
+      speaker.speakerPostId,
+      speakerDetails.fullName,
+      finalHtml,
+      wordPressUrl
+    );
+  }
+};
+
 async function updateSpeaker(req, res) {
   const { speakerId } = req.params;
   const {
@@ -520,6 +588,10 @@ async function updateSpeaker(req, res) {
     adminChanged,
   } = req.body;
   try {
+    const latestConference = await getLatestConference();
+    const conferenceId = latestConference[0].id;
+    const wordPressUrl = latestConference[0].wordpressApi;
+
     const updatedSpeaker = await Speaker.update(
       {
         firstName,
@@ -537,6 +609,19 @@ async function updateSpeaker(req, res) {
       }
     );
 
+    // Get the latest conference id and url
+    // Update wordpress speakers
+    const speakerToUpdate = await ConferenceSpeaker.findOne({
+      where: {
+        conferenceId: conferenceId,
+        speakerId: speakerId,
+      },
+      attributes: ["speakerId", "speakerPostId", "speakerLink"],
+    });
+
+    const wordPressSpeakerToUpdate = speakerToUpdate.toJSON();
+
+    // Check if there is a change in admin status and update the database accordingly
     if (adminChanged) {
       if (isAdmin) {
         await addUserToAuth(firstName, email);
@@ -548,6 +633,11 @@ async function updateSpeaker(req, res) {
       const userId = await getUserFromAuth(email);
       const response = await updateUserInAuth(userId, firstName);
     }
+
+    // Update speaker info on wordpress. Only update to the latest conference.
+    await updateWordPressSpeakers([], [], conferenceId, wordPressUrl, [
+      wordPressSpeakerToUpdate,
+    ]);
 
     return res.json(updatedSpeaker);
   } catch (err) {
@@ -569,4 +659,5 @@ module.exports = {
   updateSpeaker,
   removeSpeakerFromConference,
   generateSpeakerSchedule,
+  updateWordPressSpeakers,
 };

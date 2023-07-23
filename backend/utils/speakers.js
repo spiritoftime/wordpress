@@ -7,6 +7,8 @@
 function getSpeakersToUpdate(speakers, topics) {
   const speakersToUpdate = [];
 
+  console.log("At getSpeakersToUpdate");
+
   // Used to check if speaker already exist in speakersToUpdate array
   const checkForDuplicates = {};
 

@@ -164,7 +164,7 @@ async function deletePost(id, wordPressUrl) {
   }
 }
 
-async function updateOnePost(postId, data, wordPressUrl) {
+async function updateOnePost(postId, title, data, wordPressUrl) {
   try {
     const token = await getWordPressToken(wordPressUrl);
     console.log("At updateOnePost utils");
@@ -172,6 +172,7 @@ async function updateOnePost(postId, data, wordPressUrl) {
     const wordPressPost = await axios.post(
       `${wordPressUrl}/wp-json/wp/v2/posts/${postId}`,
       {
+        title: title,
         content: data,
         status: "publish",
       },

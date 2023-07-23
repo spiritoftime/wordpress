@@ -12,19 +12,10 @@ const {
   Room,
 } = db;
 const { Op } = require("sequelize");
-const {
-  getSchedule,
-  generateSpeakerSchedule,
-} = require("../controllers/Speakers");
 
-const {
-  getAllWordPressPost,
-  updateOnePage,
-  updateOnePost,
-  createPost,
-  createPage,
-} = require("../utils/wordpress");
-const { getSpeakersToUpdate } = require("../utils/speakers");
+const { updateWordPressSpeakers } = require("../controllers/Speakers");
+
+const { updateOnePage, createPage } = require("../utils/wordpress");
 const { getConferenceUrl } = require("../controllers/Conferences");
 const {
   generateHTML,
@@ -108,7 +99,7 @@ const addSession = async (req, res) => {
 
   try {
     // Get the base url from database to determin which wordpress website to update
-    const wordPressUrl = await getConferenceUrl(conferenceId);
+    const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
 
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
@@ -178,18 +169,20 @@ const addSession = async (req, res) => {
         minifiedContent,
         title,
         sessionCode,
-        wordPressUrl
+        conferenceWordPressUrl
       );
       await Session.update(
         { wordpressUrl: wordpressLink, wordpressId: wordpressId },
         { where: { id: session.id } }
       );
       // console.log("link", wordpressLink);
+
+      // Update speaker's schedule on wordpress
       await updateWordPressSpeakers(
         speakers,
         topics,
         conferenceId,
-        wordPressUrl
+        conferenceWordPressUrl
       );
     }
 
@@ -222,7 +215,7 @@ const EditSession = async (req, res) => {
   // console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
     // Get the base url from database to determin which wordpress website to update
-    const wordPressUrl = await getConferenceUrl(conferenceId);
+    const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
 
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
@@ -294,7 +287,7 @@ const EditSession = async (req, res) => {
             content: minifiedContent,
             status: "publish",
           },
-          wordPressUrl
+          conferenceWordPressUrl
         );
         await Session.update(
           {
@@ -311,7 +304,7 @@ const EditSession = async (req, res) => {
           minifiedContent,
           title,
           sessionCode,
-          wordPressUrl
+          conferenceWordPressUrl
         );
         await Session.update(
           { wordpressUrl: wordpressLink, wordpressId: wordpressId },
@@ -319,6 +312,15 @@ const EditSession = async (req, res) => {
         );
       }
     }
+
+    // Update speaker's schedule on wordpress
+    await updateWordPressSpeakers(
+      speakers,
+      topics,
+      conferenceId,
+      conferenceWordPressUrl
+    );
+
     return res.status(200).json(updatedTopics);
   } catch (err) {
     console.log(err, "err with edit");
@@ -352,43 +354,6 @@ const updateProgramOverview = async (req, res) => {
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);
-  }
-};
-
-const updateWordPressSpeakers = async (
-  speakers,
-  topics,
-  conferenceId,
-  wordPressUrl
-) => {
-  const speakersToUpdate = getSpeakersToUpdate(speakers, topics);
-
-  console.log("speakersToUpdate", speakersToUpdate);
-
-  for (let i = 0; i < speakersToUpdate.length; i++) {
-    const speaker = speakersToUpdate[i];
-
-    // Get speakers photo url and biography to generate wordpress base html
-    const details = await Speaker.findByPk(speaker.speakerId, {
-      attributes: ["photoUrl", "biography"],
-    });
-    // Generate wordpress speaker post base html
-    const speakerDetails = details.toJSON();
-    const speakerPostBaseHtml = generateSpeakersPost(speakerDetails);
-
-    // Get speakers presentation from database
-    const speakerPresentation = await generateSpeakerSchedule(
-      speaker.speakerId,
-      conferenceId
-    );
-    const speakerScheduleHtml = await minifyHtml(speakerPresentation.schedule);
-
-    // Merge base html and speaker's schedule html
-    const finalHtml = [speakerPostBaseHtml, speakerScheduleHtml].join("");
-    // console.log(finalHtml);
-
-    // Update the content onto WordPress based on speakersPostId
-    await updateOnePost(speaker.speakerPostId, finalHtml, wordPressUrl);
   }
 };
 
