@@ -432,6 +432,10 @@ const removeSpeakerFromConference = async (req, res) => {
   console.log("At removeSpeakerFromConference");
   // console.log("speakerId: ", speakerId);
   // console.log("conferenceId: ", conferenceId);
+
+  // Get the base url from database to determin which wordpress website to update
+  const wordPressUrl = await getConferenceUrl(conferenceId);
+
   try {
     // Get speaker's wordPress post ID
     const speakerDetails = await ConferenceSpeaker.findAll({
@@ -443,7 +447,7 @@ const removeSpeakerFromConference = async (req, res) => {
     const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
 
     // Remove speaker from WordPress
-    await deletePost(speakerPostId);
+    await deletePost(speakerPostId, wordPressUrl);
 
     // Remove speaker from the specific conference
     await ConferenceSpeaker.destroy({

@@ -8,7 +8,6 @@ const {
   SessionSpeakerRole,
   Role,
   Topic,
-  Speaker,
   TopicSpeaker,
   Room,
 } = db;
@@ -26,6 +25,7 @@ const {
   createPage,
 } = require("../utils/wordpress");
 const { getSpeakersToUpdate } = require("../utils/speakers");
+const { getConferenceUrl } = require("../controllers/Conferences");
 const {
   generateHTML,
   generateSpeakersPost,
@@ -107,6 +107,9 @@ const addSession = async (req, res) => {
   // // console.log("discussionDuration", discussionDuration, presentationDuration);
 
   try {
+    // Get the base url from database to determin which wordpress website to update
+    const wordPressUrl = await getConferenceUrl(conferenceId);
+
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
     });
@@ -174,14 +177,20 @@ const addSession = async (req, res) => {
       const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
-        sessionCode
+        sessionCode,
+        wordPressUrl
       );
       await Session.update(
         { wordpressUrl: wordpressLink, wordpressId: wordpressId },
         { where: { id: session.id } }
       );
       // console.log("link", wordpressLink);
-      await updateWordPressSpeakers(speakers, topics, conferenceId);
+      await updateWordPressSpeakers(
+        speakers,
+        topics,
+        conferenceId,
+        wordPressUrl
+      );
     }
 
     return res.status(200).json(updatedTopics);
@@ -212,6 +221,9 @@ const EditSession = async (req, res) => {
   // console.log("location", location);
   // console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
+    // Get the base url from database to determin which wordpress website to update
+    const wordPressUrl = await getConferenceUrl(conferenceId);
+
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
     });
@@ -276,10 +288,14 @@ const EditSession = async (req, res) => {
       if (currWordpressId) {
         const postContent = generateHTML(data);
         const minifiedContent = await minifyHtml(postContent);
-        const wordpressPage = await updateOnePage(currWordpressId, {
-          content: minifiedContent,
-          status: "publish",
-        });
+        const wordpressPage = await updateOnePage(
+          currWordpressId,
+          {
+            content: minifiedContent,
+            status: "publish",
+          },
+          wordPressUrl
+        );
         await Session.update(
           {
             wordpressUrl: wordpressPage.data.link,
@@ -294,7 +310,8 @@ const EditSession = async (req, res) => {
         const { wordpressLink, wordpressId } = await createPage(
           minifiedContent,
           title,
-          sessionCode
+          sessionCode,
+          wordPressUrl
         );
         await Session.update(
           { wordpressUrl: wordpressLink, wordpressId: wordpressId },
@@ -324,23 +341,26 @@ const DeleteSession = async (req, res) => {
 const updateProgramOverview = async (req, res) => {
   // console.log("hello");
   const newContent = req.body;
+  const { conferenceId } = req.params;
   console.log(newContent);
   console.log("At updateProgram controller");
   try {
-    await updateOnePage(33323, newContent);
+    // Get the base url from database to determin which wordpress website to update
+    const wordPressUrl = await getConferenceUrl(conferenceId);
+
+    await updateOnePage(33323, newContent, wordPressUrl);
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);
   }
 };
 
-const updateWordPressSpeakers = async (speakers, topics, conferenceId) => {
-  // Get the speakers information and generateSpeakersPost to get the photo base html
-  // Get the speakers schedule and use generateSchedule to get the schedule html
-  // Merge the base html and schedule html
-  // Update post based on the post id
-  // Run this function in addSession controller at the bottom after all topics have been added
-
+const updateWordPressSpeakers = async (
+  speakers,
+  topics,
+  conferenceId,
+  wordPressUrl
+) => {
   const speakersToUpdate = getSpeakersToUpdate(speakers, topics);
 
   console.log("speakersToUpdate", speakersToUpdate);
@@ -368,7 +388,7 @@ const updateWordPressSpeakers = async (speakers, topics, conferenceId) => {
     // console.log(finalHtml);
 
     // Update the content onto WordPress based on speakersPostId
-    await updateOnePost(speaker.speakerPostId, finalHtml);
+    await updateOnePost(speaker.speakerPostId, finalHtml, wordPressUrl);
   }
 };
 
