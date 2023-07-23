@@ -3,7 +3,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { useNavigate, useParams } from "react-router-dom";
 const Calendar = ({ sessionEvents, startDate }) => {
+  const { conferenceId } = useParams();
+  const navigate = useNavigate();
   const [currentEvents, setCurrentEvents] = useState(sessionEvents);
   const [weekendsVisible, setWeekendsVisible] = useState(false);
 
@@ -29,13 +32,11 @@ const Calendar = ({ sessionEvents, startDate }) => {
   // };
 
   const handleEventClick = (clickInfo) => {
-    console.log(clickInfo, "clickInfo");
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`
-      )
-    ) {
-      clickInfo.event.remove();
+    // console.log(clickInfo, "clickInfo");
+    if (confirm(`Do you wish to view the session in more detail?'`)) {
+      navigate(
+        `/conferences/sessions/${conferenceId}/${clickInfo.event._def.publicId}`
+      );
     }
   };
 
