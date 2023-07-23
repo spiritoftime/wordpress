@@ -29,7 +29,7 @@ const AddSession = () => {
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
-  const { mutate: addToDatabase, isLoading } = useMutation(
+  const { mutate: addToDatabase, isLoading: isAddingLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
       return addSession(accessToken, conferenceId, data);
@@ -141,6 +141,7 @@ const AddSession = () => {
               nextFormStep={nextFormStep}
               currentStep={formStep}
               prevFormStep={prevFormStep}
+              isAddingLoading={isAddingLoading}
             >
               {formStep === 0 && (
                 <AddSessionPageOne
