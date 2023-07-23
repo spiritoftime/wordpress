@@ -3,10 +3,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 const Calendar = ({ sessionEvents, startDate }) => {
   const { conferenceId } = useParams();
-  const navigate = useNavigate();
+
   const [currentEvents, setCurrentEvents] = useState(sessionEvents);
   const [weekendsVisible, setWeekendsVisible] = useState(false);
 
@@ -33,18 +33,17 @@ const Calendar = ({ sessionEvents, startDate }) => {
 
   const handleEventClick = (clickInfo) => {
     // console.log(clickInfo, "clickInfo");
-    if (confirm(`Do you wish to view the session in more detail?'`)) {
-      navigate(
-        `/conferences/sessions/${conferenceId}/${clickInfo.event._def.publicId}`
-      );
+    if (confirm(`Do you wish to view the session in more detail?`)) {
+      window.location.href = `/conferences/sessions/${conferenceId}/${clickInfo.event._def.publicId}`;
     }
   };
 
-  const handleEvents = (events) => {
-    setCurrentEvents({
-      currentEvents: events,
-    });
-  };
+  // const handleEvents = (events) => {
+  //   console.log(events, "events");
+  //   setCurrentEvents({
+  //     currentEvents: events,
+  //   });
+  // };
   // const handleMouseHover = (mouseEnterInfo) => {
   //   if (mouseEnterInfo.jsEvent.isTrusted)
   //     var tooltip = new Tooltip(mouseEnterInfo.el, {
@@ -59,8 +58,6 @@ const Calendar = ({ sessionEvents, startDate }) => {
     tippy(info.el, { content: info.event.extendedProps.description });
   };
   const renderEventContent = (eventInfo) => {
-    console.log(eventInfo, "eventinfo");
-
     return (
       <>
         {/* <b>{eventInfo.timeText}</b>

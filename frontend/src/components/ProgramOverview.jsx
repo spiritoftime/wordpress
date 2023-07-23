@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { ReactDOM } from "react";
+
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { getSessions, updateProgram } from "../services/sessions";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
@@ -44,8 +44,8 @@ const ProgramOverview = () => {
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
     const events = [];
-    const utcStart = new Date(sessions[0].date);
-    const startDate = utcStart.setDate(utcStart.getDate() - 1);
+    const startDate = new Date(sessions[0].date);
+    // const startDate = utcStart.setDate(utcStart.getDate() - 1);
 
     for (const session of sessions) {
       console.log(session, "session");
