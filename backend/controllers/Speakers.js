@@ -36,7 +36,7 @@ const {
   getLatestConference,
 } = require("../controllers/Conferences");
 
-const { getSpeakersToUpdate } = require("../utils/speakers");
+const { getSpeakersToUpdate, removeDuplicates } = require("../utils/speakers");
 
 const { minifyHtml } = require("../utils/minifyHTML");
 
@@ -517,26 +517,46 @@ const removeSpeakerFromConference = async (req, res) => {
   }
 };
 
+/**
+ * Function to update speakers in wordpress
+ * @param {Array} speakers Array of moderators, provided via add session form
+ * @param {Array} topics Array of topics, provided via add session form
+ * @param {number} conferenceId  Conference ID
+ * @param {string} wordPressUrl Wordpress ULR of the specific conference
+ * @param {array} oneSpeaker An array which only include one speaker object. Provided from updateSpeaker function. Define as empty array if not required.
+ * @param {*} previousSpeakers An array of morderators and topic speakers who are in a specific session before session was updated. Define as empty array if not required.
+ */
 const updateWordPressSpeakers = async (
   speakers,
   topics,
   conferenceId,
   wordPressUrl,
-  oneSpeaker
+  oneSpeaker,
+  previousSpeakers
 ) => {
   let speakersToUpdate = [];
+  let speakersFromForm = [];
 
-  console.log("At updateWordPressSpeakers");
-  console.log("speakers from params", speakers);
-  console.log("topics from params", topics);
-
-  if (oneSpeaker) {
-    speakersToUpdate = oneSpeaker;
+  if (
+    oneSpeaker &&
+    (oneSpeaker.length > 0 || Object.keys(oneSpeaker).length > 0)
+  ) {
+    speakersFromForm = oneSpeaker;
   } else {
-    speakersToUpdate = getSpeakersToUpdate(speakers, topics);
+    speakersFromForm = getSpeakersToUpdate(speakers, topics);
   }
 
-  console.log("speakersToUpdate", speakersToUpdate);
+  if (previousSpeakers && previousSpeakers.length > 0) {
+    speakersToUpdate = removeDuplicates([
+      ...speakersToUpdate,
+      ...previousSpeakers,
+    ]);
+  } else {
+    speakersToUpdate = speakersFromForm;
+  }
+
+  console.log("At updateWordPressSpeakers");
+  console.log("final speakers to update", speakersToUpdate);
 
   for (let i = 0; i < speakersToUpdate.length; i++) {
     const speaker = speakersToUpdate[i];
@@ -546,9 +566,7 @@ const updateWordPressSpeakers = async (
       attributes: { include: ["photoUrl", "biography", "fullName"] },
     });
 
-    console.log("details", details);
-
-    // Generate wordpress speaker post base html
+    // // Generate wordpress speaker post base html
     const speakerDetails = details.toJSON();
     const speakerPostBaseHtml = generateSpeakersPost(speakerDetails);
 

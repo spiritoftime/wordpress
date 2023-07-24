@@ -14,9 +14,13 @@ const {
 const { Op } = require("sequelize");
 
 const { updateWordPressSpeakers } = require("../controllers/Speakers");
-
-const { updateOnePage, createPage } = require("../utils/wordpress");
 const { getConferenceUrl } = require("../controllers/Conferences");
+
+const {
+  generateSpeakersForSession,
+  removeDuplicates,
+} = require("../utils/speakers");
+const { updateOnePage, createPage } = require("../utils/wordpress");
 const {
   generateHTML,
   generateSpeakersPost,
@@ -37,6 +41,7 @@ const getSession = async (req, res) => {
               attributes: {
                 include: ["fullName", "lastName", "firstName", "country"],
               },
+              include: [{ model: Conference }],
             },
           ],
         },
@@ -46,6 +51,7 @@ const getSession = async (req, res) => {
             model: SessionSpeaker,
             attributes: ["role"],
           },
+          include: [{ model: Conference }],
         },
         { model: Room },
       ],
@@ -217,6 +223,12 @@ const EditSession = async (req, res) => {
     // Get the base url from database to determin which wordpress website to update
     const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
 
+    // Get all speakers that are previously in the session
+    const previousSessionSpeakers = await getSessionSpeaker(
+      sessionId,
+      conferenceId
+    );
+
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
     });
@@ -264,7 +276,7 @@ const EditSession = async (req, res) => {
       addTopic.startTime = t.startTime;
       addTopic.endTime = t.endTime;
       addTopic.conferenceId = conferenceId;
-      addTopic.sessionId = session.id;
+      addTopic.sessionId = sessionId;
       addTopic.id = t.topicId;
       return addTopic;
     });
@@ -318,7 +330,9 @@ const EditSession = async (req, res) => {
       speakers,
       topics,
       conferenceId,
-      conferenceWordPressUrl
+      conferenceWordPressUrl,
+      [],
+      previousSessionSpeakers
     );
 
     return res.status(200).json(updatedTopics);
@@ -357,6 +371,38 @@ const updateProgramOverview = async (req, res) => {
   }
 };
 
+const getSessionSpeaker = async (sessionId, conferenceId) => {
+  try {
+    const sessionSpeakers = await Session.findOne({
+      where: { id: sessionId, conferenceId: conferenceId },
+      include: [
+        {
+          model: Speaker,
+          include: [
+            {
+              model: Conference,
+            },
+          ],
+        },
+        {
+          model: Topic,
+          include: [{ model: Speaker, include: [{ model: Conference }] }],
+        },
+      ],
+    });
+    const finalData = sessionSpeakers.toJSON();
+
+    const finalSpeakers = generateSpeakersForSession(
+      finalData.Speakers,
+      finalData.Topics
+    );
+
+    return finalSpeakers;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 module.exports = {
   addSession,
   getSessions,
@@ -364,4 +410,5 @@ module.exports = {
   DeleteSession,
   getSession,
   updateProgramOverview,
+  getSessionSpeaker,
 };

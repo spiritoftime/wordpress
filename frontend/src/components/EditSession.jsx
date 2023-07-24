@@ -13,6 +13,7 @@ import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { getSession, updateSession } from "../services/sessions";
 import { allocateTime } from "../utils/allocateTime";
 import { useAppContext } from "../context/appContext";
+import { CopySlash } from "lucide-react";
 
 const EditSession = () => {
   const { conferenceId, sessionId } = useParams();
@@ -56,6 +57,10 @@ const EditSession = () => {
               id: moderator.id,
               value: moderator.fullName,
               label: moderator.fullName,
+              speakerLink:
+                moderator.Conferences[0].ConferenceSpeaker.speakerLink,
+              speakerPostId:
+                moderator.Conferences[0].ConferenceSpeaker.speakerPostId,
             },
           ],
         };
@@ -64,6 +69,9 @@ const EditSession = () => {
           id: moderator.id,
           value: moderator.fullName,
           label: moderator.fullName,
+          speakerLink: moderator.Conferences[0].ConferenceSpeaker.speakerLink,
+          speakerPostId:
+            moderator.Conferences[0].ConferenceSpeaker.speakerPostId,
         });
       }
     });
@@ -102,6 +110,8 @@ const EditSession = () => {
         isPublish: session.wordpressUrl ? true : false,
         date: new Date(session.date),
       });
+      console.log("Session", session);
+      console.log("Session Speakers", session.Speakers);
       const moderators = session.Speakers;
       const combinedSpeakers = combineSpeakersByRole(moderators);
       replaceSpeakers(combinedSpeakers);
@@ -141,6 +151,7 @@ const EditSession = () => {
   });
   // console.log("control", control);
   const onSubmit = (data) => {
+    console.log(data);
     editSessionMutation({ data, conferenceId, sessionId });
     navigate(`/conferences/sessions/${conferenceId}`);
     showToaster("Session Updated");
@@ -173,6 +184,13 @@ const EditSession = () => {
                         {
                           value: topic.Speakers.fullName,
                           label: topic.Speakers.fullName,
+                          id: topic.Speakers.id,
+                          speakerLink:
+                            topic.Speakers.Conferences[0].ConferenceSpeaker
+                              .speakerLink,
+                          speakerPostId:
+                            topic.Speakers.Conferences[0].ConferenceSpeaker
+                              .speakerPostId,
                         },
                       ];
                     } else if (Array.isArray(topic.Speakers)) {
@@ -182,6 +200,13 @@ const EditSession = () => {
                         speakers.push({
                           value: speaker.fullName,
                           label: speaker.fullName,
+                          id: speaker.id,
+                          speakerLink:
+                            speaker.Conferences[0].ConferenceSpeaker
+                              .speakerLink,
+                          speakerPostId:
+                            speaker.Conferences[0].ConferenceSpeaker
+                              .speakerPostId,
                         });
                         speakersId.push(speaker.id);
                       });
