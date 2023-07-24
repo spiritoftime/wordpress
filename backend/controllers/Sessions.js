@@ -403,6 +403,32 @@ const getSessionSpeaker = async (sessionId, conferenceId) => {
   }
 };
 
+// Function to count all Symposium for a conference
+const getTotalSymposia = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const symposiaCount = await Session.findAndCountAll({
+      where: { conferenceId: conferenceId, sessionType: "Symposia" },
+    });
+    return res.status(200).json(symposiaCount);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+// Function to count all Symposium for a conference
+const getTotalMasterclass = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const masterclassCount = await Session.findAndCountAll({
+      where: { conferenceId: conferenceId, sessionType: "Masterclass" },
+    });
+    return res.status(200).json(masterclassCount);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
 module.exports = {
   addSession,
   getSessions,
@@ -411,4 +437,6 @@ module.exports = {
   getSession,
   updateProgramOverview,
   getSessionSpeaker,
+  getTotalSymposia,
+  getTotalMasterclass,
 };
