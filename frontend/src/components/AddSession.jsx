@@ -20,7 +20,7 @@ import { getTopicsForAddingToSession } from "../services/topics";
 const AddSession = () => {
   const [formStep, setFormStep] = useState(0);
   const { conferenceId } = useParams();
-
+  console.log(conferenceId, "conferenceId");
   const getAccessToken = useGetAccessToken();
   const { showToaster } = useAppContext();
   const navigate = useNavigate();
@@ -52,6 +52,7 @@ const AddSession = () => {
     queryKey: ["topicsForAddingSession"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
+      console.log("conferenceId in queryFn", conferenceId);
       const data = await getTopicsForAddingToSession(accessToken, conferenceId);
       const res = data.map((topic) => {
         const obj = {};
@@ -73,6 +74,7 @@ const AddSession = () => {
       });
       return res;
     },
+    enabled: conferenceId !== undefined,
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
@@ -151,7 +153,7 @@ const AddSession = () => {
                   control={control}
                 />
               )}
-              {formStep === 1 && (
+              {formStep === 1 && topicsForAddingSession && (
                 <AddSessionPageTwo
                   control={control}
                   topicsForAddingSession={topicsForAddingSession}

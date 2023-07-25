@@ -22,7 +22,7 @@ const Session = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   const navigate = useNavigate();
-  // console.log(session, "session");
+  console.log(session, "session");
   if (isSessionFetching) return <Loading />;
   return (
     <div className="w-full flex flex-col gap-4 p-10">

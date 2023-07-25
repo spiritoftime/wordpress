@@ -35,6 +35,10 @@ function App() {
         element={isAuthenticated ? <DashboardLayout /> : <Login />}
       >
         <Route path="conferences">
+          <Route
+            path="program-overview/:conferenceId"
+            element={<ProgramOverview />}
+          />
           <Route path=":conferenceId" element={<Conference />} />
           <Route path="speakers/:conferenceId" element={<Speakers />} />
           <Route
@@ -47,10 +51,7 @@ function App() {
           />
 
           <Route path="sessions/:conferenceId" element={<Sessions />} />
-          <Route
-            path="program-overview/:conferenceId"
-            element={<ProgramOverview />}
-          />
+
           <Route
             path="sessions/:conferenceId/:sessionId"
             element={<Session />}

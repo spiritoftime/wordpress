@@ -1,17 +1,34 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { ReactDOM } from "react";
+
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { updateProgram } from "../services/sessions";
+import { getSessions, updateProgram } from "../services/sessions";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
+import Loading from "./Loading";
 
 import Calendar from "./Calendar";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { convertTimeToDateObj } from "../utils/convertDate";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
 
 const ProgramOverview = () => {
   const getAccessToken = useGetAccessToken();
-
+  const [isChecked, setIsChecked] = useState(false);
+  const { conferenceId } = useParams();
   const html = renderToStaticMarkup(<Calendar />);
-
+  const {
+    data: sessions,
+    isLoading: isSessionsLoading,
+    isFetching: isSessionsFetching,
+  } = useQuery({
+    queryKey: ["sessions"],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getSessions(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
   const { mutate: updateProgramOverview, isLoading } = useMutation(
     async (data) => {
       const accessToken = await getAccessToken();
@@ -27,20 +44,49 @@ const ProgramOverview = () => {
   );
 
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
-
-  const calendarHtml = `<code><html lang='en'><head><meta charset='utf-8' /><script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script><script>document.addEventListener('DOMContentLoaded', function() {var calendarEl = document.getElementById('calendar');var calendar = new FullCalendar.Calendar(calendarEl, {initialView: 'dayGridMonth'});calendar.render();});</script></head><body><div id='calendar'></div></body></html></code>`;
-
-  useEffect(() => {
-    console.log("At useEffect");
-    console.log(html);
+  const createEvents = (sessions) => {
+    if (sessions.length === 0) return { events: [], startDate: new Date() };
+    const events = [];
+    const startDate = new Date(sessions[0].date);
+    for (const session of sessions) {
+      const sessionObj = {};
+      sessionObj.title = session.title;
+      sessionObj.start = convertTimeToDateObj(session.date, session.startTime);
+      sessionObj.end = convertTimeToDateObj(session.date, session.endTime);
+      sessionObj.description = session.synopsis;
+      sessionObj.id = session.id;
+      sessionObj.wordpressUrl = session.wordpressUrl;
+      events.push(sessionObj);
+    }
+    return { events, startDate };
+  };
+  console.log(sessions, "sessions");
+  if (isSessionsFetching) return <Loading />;
+  const { events: sessionEvents, startDate } = createEvents(sessions);
+  const toggleIsPublish = () => {
+    setIsChecked((prevIsChecked) => !prevIsChecked);
     const data = {
-      content: calendarHtml,
+      content: sessionEvents,
       type: "page",
+      conferenceId: conferenceId,
+      startDate: startDate,
+      isChecked: !isChecked,
     };
     updateProgramOverview(data);
-  }, []);
+  };
+  return (
+    <div className="w-full flex flex-col gap-4 m-6">
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold">Overview</h1>
 
-  return <Calendar />;
+        <div className="flex gap-2 ">
+          <label>Publish To Wordpress</label>
+          <Switch checked={isChecked} onCheckedChange={toggleIsPublish} />
+        </div>
+      </div>
+      <Calendar sessionEvents={sessionEvents} startDate={startDate} />
+    </div>
+  );
 };
 
 export default ProgramOverview;

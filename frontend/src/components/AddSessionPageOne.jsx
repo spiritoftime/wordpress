@@ -21,7 +21,6 @@ import useGetContacts from "../custom_hooks/useQueries";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getContacts, getSpeakers } from "../services/contacts";
-import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
 
 import { useMatch, useParams } from "react-router-dom";
@@ -77,48 +76,6 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-
-  // const {
-  //   data: topicsForAddingSession,
-  //   isLoading: isTopicsForAddingSessionLoading,
-  //   isFetching: isTopicsForAddingSessionFetching,
-  // } = useQuery({
-  //   queryKey: ["topicsForAddingSession"],
-  //   queryFn: async () => {
-  //     const accessToken = await getAccessToken();
-  //     return getTopicsForAddingToSession(accessToken, conferenceId);
-  //   },
-  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  // });
-
-  // const {
-  //   data: roles,
-  //   isLoading: isRolesLoading,
-  //   isFetching: isRolesFetching,
-  // } = useQuery({
-  //   queryKey: ["roles"],
-  //   queryFn: async () => {
-  //     const accessToken = await getAccessToken();
-  //     return getRoles(accessToken);
-  //   },
-  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  // });
-
-  // console.log(conferenceRooms, "conferencerooms");
-  // console.log(topicsForAddingSession, "topicsForAddingSession");
-  // console.log("speakers", speakers);
-  //  to query
-  // const speakers = [
-  //   {
-  //     value: "next.js",
-  //     label: "Next.js",
-  //   },
-  //   {
-  //     value: "react.js",
-  //     label: "React.js",
-  //   },
-  // ];
-  // console.log("moderators", moderators);
 
   return (
     <div className="flex flex-col gap-6 mt-6">

@@ -13,6 +13,7 @@ const { Op } = require("sequelize");
 
 const getTopicsForAddingToSession = async (req, res) => {
   const { conferenceId } = req.params;
+  console.log(conferenceId, "conferenceId");
   try {
     const speakers = await Topic.findAll({
       attributes: ["title", "id"],

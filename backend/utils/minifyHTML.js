@@ -13,6 +13,7 @@ const minifyHtml = async (html) => {
     removeEmptyAttributes: true,
     removeOptionalTags: true,
     removeRedundantAttributes: true,
+    minifyJS: true,
   });
   return result;
 };

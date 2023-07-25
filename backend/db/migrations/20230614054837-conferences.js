@@ -33,6 +33,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      wordpress_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      wordpress_url: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
     });
   },
 
