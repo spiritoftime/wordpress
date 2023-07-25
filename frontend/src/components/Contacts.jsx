@@ -25,7 +25,7 @@ const Contacts = () => {
     isLoading: isContactsLoading,
     isFetching: isContactsFetching,
   } = useGetContacts();
-  console.log(contacts, "contacts");
+  // console.log(contacts, "contacts");
   const { mutate: deleteContactMutation, isLoading: isDeleting } = useMutation({
     mutationFn: async ({ rowData }) => {
       const accessToken = await getAccessToken();

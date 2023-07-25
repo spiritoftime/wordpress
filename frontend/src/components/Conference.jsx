@@ -26,6 +26,7 @@ import { formatDate } from "../utils/convertDate";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { editConference, getSpeakersCount } from "../services/conferences";
+import { getSymposiaCount, getMasterclassCount } from "../services/sessions";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Conference = () => {
@@ -38,6 +39,24 @@ const Conference = () => {
     queryFn: async () => {
       const accessToken = await getAccessToken();
       return getSpeakersCount(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+
+  const { data: sympoisaCount } = useQuery({
+    queryKey: ["conferenceSymposiaCount", conferenceId],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getSymposiaCount(accessToken, conferenceId);
+    },
+    refetchOnWindowFocus: false, // it is not necessary to keep refetching
+  });
+
+  const { data: masterclassCount } = useQuery({
+    queryKey: ["conferenceMasterclassCount", conferenceId],
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      return getMasterclassCount(accessToken, conferenceId);
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
@@ -153,11 +172,15 @@ const Conference = () => {
         </div>
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total Symposia</h2>
-          <h3 className="text-4xl font-semibold">120</h3>
+          <h3 className="text-4xl font-semibold">
+            {sympoisaCount ? sympoisaCount.count : 0}
+          </h3>
         </div>
         <div className="w-full flex p-6 border-[#EAECF0] flex-col gap-6  shadow-md">
           <h2 className="text-2xl font-medium">Total Masterclasses</h2>
-          <h3 className="text-4xl font-semibold">120</h3>
+          <h3 className="text-4xl font-semibold">
+            {masterclassCount ? masterclassCount.count : 0}
+          </h3>
         </div>
       </div>
       <div className="w-full mt-10">
@@ -254,9 +277,9 @@ const Conference = () => {
                   name="api"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>WordPress API Key:</FormLabel>
+                      <FormLabel>WordPress URL:</FormLabel>
                       <FormControl>
-                        <Input placeholder="WordPress API Key" {...field} />
+                        <Input placeholder="WordPress URL" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

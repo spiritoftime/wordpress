@@ -6,6 +6,8 @@ const {
   DeleteSession,
   getSession,
   updateProgramOverview,
+  getTotalSymposia,
+  getTotalMasterclass,
 } = require("../controllers/Sessions");
 const router = express.Router();
 
@@ -18,5 +20,8 @@ router
   .delete(DeleteSession);
 
 router.route("/program-overview").post(updateProgramOverview);
+
+router.route("/symposia-count/:conferenceId").get(getTotalSymposia);
+router.route("/masterclass-count/:conferenceId").get(getTotalMasterclass);
 
 module.exports = router;

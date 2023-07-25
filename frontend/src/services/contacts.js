@@ -19,6 +19,13 @@ export function getSpeaker(accessToken, speakerId, conferenceId) {
   );
 }
 
+// export function getPresentationSchedule(accessToken, speakerId, conferenceId) {
+//   return makeRequest(
+//     `/speakers/schedule/${speakerId}/${conferenceId}`,
+//     accessToken
+//   );
+// }
+
 export function getContact(id, accessToken) {
   return makeRequest(`/speakers/${id}`, accessToken);
 }
@@ -53,4 +60,14 @@ export function updateContact(id, data, accessToken) {
     method: "PUT",
     data: data,
   });
+}
+
+export function removeSpeaker(accessToken, speakerId, conferenceId) {
+  return makeRequest(
+    `/speakers/conference/${speakerId}/${conferenceId}`,
+    accessToken,
+    {
+      method: "DELETE",
+    }
+  );
 }

@@ -20,7 +20,7 @@ import FormMultiSelect from "./FormMultiSelect";
 import useGetContacts from "../custom_hooks/useQueries";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
-import { getContacts } from "../services/contacts";
+import { getContacts, getSpeakers } from "../services/contacts";
 import { getTopicsForAddingToSession } from "../services/topics";
 import { getConferenceRooms } from "../services/rooms";
 
@@ -47,17 +47,23 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     queryKey: ["contactNames"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
-      const contacts = await getContacts(accessToken);
+      const contacts = await getSpeakers(accessToken, conferenceId);
+      // console.log(contacts);
       const contactNames = await contacts.map((contact) => {
         const res = { id: contact.id };
         res.value = contact.fullName;
         res.label = contact.fullName;
+        res.speakerLink = contact.Conferences[0].ConferenceSpeaker.speakerLink;
+        res.speakerPostId =
+          contact.Conferences[0].ConferenceSpeaker.speakerPostId;
         return res;
       });
       return contactNames;
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
+
+  // console.log(speakers);
 
   const {
     data: conferenceRooms,
@@ -71,7 +77,6 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     },
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
-
   const {
     data: topicsForAddingSession,
     isLoading: isTopicsForAddingSessionLoading,
@@ -85,35 +90,8 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
-  // const {
-  //   data: roles,
-  //   isLoading: isRolesLoading,
-  //   isFetching: isRolesFetching,
-  // } = useQuery({
-  //   queryKey: ["roles"],
-  //   queryFn: async () => {
-  //     const accessToken = await getAccessToken();
-  //     return getRoles(accessToken);
-  //   },
-  //   refetchOnWindowFocus: false, // it is not necessary to keep refetching
-  // });
 
-  // console.log(conferenceRooms, "conferencerooms");
-  // console.log(topicsForAddingSession, "topicsForAddingSession");
-  // console.log("speakers", speakers);
-  //  to query
-  // const speakers = [
-  //   {
-  //     value: "next.js",
-  //     label: "Next.js",
-  //   },
-  //   {
-  //     value: "react.js",
-  //     label: "React.js",
-  //   },
-  // ];
 
-  // console.log("moderators", moderators);
 
   return (
     <div className="flex flex-col gap-6 mt-6">

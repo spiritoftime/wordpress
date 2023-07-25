@@ -475,14 +475,18 @@ const Contact = () => {
                     {conference.name}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ScheduleTable
-                      conference={conference}
-                      dates={createDateArray(
-                        conference.startDate,
-                        conference.endDate,
-                        conference.Sessions
-                      )}
-                    />
+                    {conference.Sessions.length > 0 ? (
+                      <ScheduleTable
+                        conference={conference}
+                        dates={createDateArray(
+                          conference.startDate,
+                          conference.endDate,
+                          conference.Sessions
+                        )}
+                      />
+                    ) : (
+                      `${contactFromFetch.title} ${contactFromFetch.firstName} ${contactFromFetch.lastName} was invited to ${conference.name} but was not allocated with any presentation.`
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
