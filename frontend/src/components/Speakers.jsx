@@ -12,7 +12,7 @@ import { RowCheckBox } from "./RowCheckBox";
 import { SortableHeader } from "./SortableHeader";
 import PageHeader from "./PageHeader";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { deleteContact } from "../services/contacts";
+import { removeSpeaker } from "../services/contacts";
 import Loading from "./Loading";
 
 const Speakers = () => {
@@ -40,10 +40,12 @@ const Speakers = () => {
     mutationFn: async ({ rowData }) => {
       console.log(rowData, "rowdata");
       const accessToken = await getAccessToken();
-      return deleteContact(rowData, accessToken);
+      return removeSpeaker(accessToken, rowData.id, conferenceId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["contacts"], { exact: true });
+      queryClient.invalidateQueries(["speakers", conferenceId], {
+        exact: true,
+      });
     },
   });
 
@@ -75,7 +77,7 @@ const Speakers = () => {
       accessorKey: "organisation",
       header: "Organisation",
     },
-    RowActions("Contact", deleteContactMutation),
+    RowActions("Speaker", deleteContactMutation),
   ];
 
   // console.log(speakers);
@@ -105,7 +107,7 @@ const Speakers = () => {
         <DataTable
           columns={columns}
           data={speakers}
-          rowType={"Speakers"}
+          rowType={"speakers"}
           filterColumn={"lastName"}
           rowNavigate={rowNavigate}
           setData={setSpeaker}

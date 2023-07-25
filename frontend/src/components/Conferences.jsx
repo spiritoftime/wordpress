@@ -48,9 +48,10 @@ const Conferences = () => {
     // RowCheckBox,
     {
       accessorKey: "name",
-      header: ({ column }) => (
-        <SortableHeader column={column} title="Conference Name" />
-      ),
+      header: "Name",
+      // header: ({ column }) => (
+      //   <SortableHeader column={column} title="Conference Name" />
+      // ),
     },
     {
       accessorKey: "country",
@@ -58,7 +59,10 @@ const Conferences = () => {
     },
     {
       accessorKey: "startDate",
-      header: "Start Date",
+      // header: "Start Date",
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Start Date" />
+      ),
     },
     {
       accessorKey: "endDate",
@@ -88,7 +92,7 @@ const Conferences = () => {
           columns={columns}
           data={conferences}
           rowType={"conferences"}
-          filterColumn={"name"}
+          filterColumn={"startDate"}
           rowNavigate={rowNavigate}
           setData={setConference}
           clickable={true}

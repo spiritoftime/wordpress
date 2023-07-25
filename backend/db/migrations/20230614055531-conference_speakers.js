@@ -25,6 +25,10 @@ module.exports = {
           key: "id",
         },
       },
+      speaker_post_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       speaker_link: {
         type: Sequelize.STRING,
         allowNull: true,

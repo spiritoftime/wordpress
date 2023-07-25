@@ -75,6 +75,7 @@ const AddConference = () => {
   });
 
   const control = form.control;
+  const watch = form.watch;
 
   const {
     fields: rooms,
@@ -202,14 +203,14 @@ const AddConference = () => {
               />
             </div>
             <div className="w-[48%]">
-              <FormLabel>WordPress API Key:</FormLabel>
+              <FormLabel>WordPress URL:</FormLabel>
               <FormField
                 control={form.control}
                 name="wordpressApi"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="WordPress API Key" {...field} />
+                      <Input placeholder="WordPress URL" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -281,6 +282,7 @@ const AddConference = () => {
           </Button>
         </form>
       </Form>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </div>
   );
 };

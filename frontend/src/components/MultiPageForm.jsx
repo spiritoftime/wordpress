@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAppContext } from "../context/appContext";
 import { FormProgress } from "./FormProgress";
@@ -11,6 +11,7 @@ const MultiPageForm = ({
   currentStep,
   prevFormStep,
   nextFormStep,
+  isAddingLoading,
 }) => {
   const { progress, setProgress, selectedTopics } = useAppContext();
   // console.log(selectedTopics);
@@ -59,11 +60,18 @@ const MultiPageForm = ({
         )}
         {currentStep === 2 && (
           <Button
-            disabled={!isValid}
+            disabled={!isValid || isAddingLoading}
             type="submit"
             className="bg-[#0D05F2] text-white font-semibold hover:bg-[#3D35FF]"
           >
-            Save
+            {isAddingLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Save"
+            )}
           </Button>
         )}
         {/* on cancel pop out the dialog, then navigate */}

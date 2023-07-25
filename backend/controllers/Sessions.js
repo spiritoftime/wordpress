@@ -13,13 +13,19 @@ const {
 } = db;
 const { Op } = require("sequelize");
 
+const { updateWordPressSpeakers } = require("../controllers/Speakers");
+const { getConferenceUrl } = require("../controllers/Conferences");
+
 const {
-  getAllWordPressPost,
-  updateOnePage,
-  createPost,
-  createPage,
-} = require("../utils/wordpress");
-const { generateHTML } = require("../utils/postMockup");
+  generateSpeakersForSession,
+  removeDuplicates,
+} = require("../utils/speakers");
+const { updateOnePage, createPage } = require("../utils/wordpress");
+const {
+  generateHTML,
+  generateSpeakersPost,
+  generateSchedule,
+} = require("../utils/postMockup");
 const { minifyHtml } = require("../utils/minifyHTML");
 
 const getSession = async (req, res) => {
@@ -35,6 +41,7 @@ const getSession = async (req, res) => {
               attributes: {
                 include: ["fullName", "lastName", "firstName", "country"],
               },
+              include: [{ model: Conference }],
             },
           ],
         },
@@ -44,6 +51,7 @@ const getSession = async (req, res) => {
             model: SessionSpeaker,
             attributes: ["role"],
           },
+          include: [{ model: Conference }],
         },
         { model: Room },
       ],
@@ -92,9 +100,13 @@ const addSession = async (req, res) => {
     title,
     topics,
   } = data;
-  // console.log("location", location);
-  // console.log("discussionDuration", discussionDuration, presentationDuration);
+  // // console.log("location", location);
+  // // console.log("discussionDuration", discussionDuration, presentationDuration);
+
   try {
+    // Get the base url from database to determin which wordpress website to update
+    const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
+
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
     });
@@ -162,13 +174,24 @@ const addSession = async (req, res) => {
       const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
-        sessionCode
+        sessionCode,
+        conferenceWordPressUrl
       );
       await Session.update(
         { wordpressUrl: wordpressLink, wordpressId: wordpressId },
         { where: { id: session.id } }
       );
+      // console.log("link", wordpressLink);
+
+      // Update speaker's schedule on wordpress
+      await updateWordPressSpeakers(
+        speakers,
+        topics,
+        conferenceId,
+        conferenceWordPressUrl
+      );
     }
+
     return res.status(200).json(updatedTopics);
   } catch (err) {
     console.log(err, "err with add");
@@ -197,6 +220,15 @@ const EditSession = async (req, res) => {
   // console.log("location", location);
   // console.log("discussionDuration", discussionDuration, presentationDuration);
   try {
+    // Get the base url from database to determin which wordpress website to update
+    const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
+
+    // Get all speakers that are previously in the session
+    const previousSessionSpeakers = await getSessionSpeaker(
+      sessionId,
+      conferenceId
+    );
+
     const room = await Room.findOne({
       where: { room: location, conferenceId: conferenceId },
     });
@@ -244,7 +276,7 @@ const EditSession = async (req, res) => {
       addTopic.startTime = t.startTime;
       addTopic.endTime = t.endTime;
       addTopic.conferenceId = conferenceId;
-      addTopic.sessionId = session.id;
+      addTopic.sessionId = sessionId;
       addTopic.id = t.topicId;
       return addTopic;
     });
@@ -261,10 +293,14 @@ const EditSession = async (req, res) => {
       if (currWordpressId) {
         const postContent = generateHTML(data);
         const minifiedContent = await minifyHtml(postContent);
-        const wordpressPage = await updateOnePage(currWordpressId, {
-          content: minifiedContent,
-          status: "publish",
-        });
+        const wordpressPage = await updateOnePage(
+          currWordpressId,
+          {
+            content: minifiedContent,
+            status: "publish",
+          },
+          conferenceWordPressUrl
+        );
         await Session.update(
           {
             wordpressUrl: wordpressPage.data.link,
@@ -279,7 +315,8 @@ const EditSession = async (req, res) => {
         const { wordpressLink, wordpressId } = await createPage(
           minifiedContent,
           title,
-          sessionCode
+          sessionCode,
+          conferenceWordPressUrl
         );
         await Session.update(
           { wordpressUrl: wordpressLink, wordpressId: wordpressId },
@@ -287,6 +324,17 @@ const EditSession = async (req, res) => {
         );
       }
     }
+
+    // Update speaker's schedule on wordpress
+    await updateWordPressSpeakers(
+      speakers,
+      topics,
+      conferenceId,
+      conferenceWordPressUrl,
+      [],
+      previousSessionSpeakers
+    );
+
     return res.status(200).json(updatedTopics);
   } catch (err) {
     console.log(err, "err with edit");
@@ -309,11 +357,73 @@ const DeleteSession = async (req, res) => {
 const updateProgramOverview = async (req, res) => {
   // console.log("hello");
   const newContent = req.body;
+  const { conferenceId } = req.params;
   console.log(newContent);
   console.log("At updateProgram controller");
   try {
-    await updateOnePage(33323, newContent);
+    // Get the base url from database to determin which wordpress website to update
+    const wordPressUrl = await getConferenceUrl(conferenceId);
+
+    await updateOnePage(33323, newContent, wordPressUrl);
     return res.status(200).json("Program Overview Updated");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+const getSessionSpeaker = async (sessionId, conferenceId) => {
+  try {
+    const sessionSpeakers = await Session.findOne({
+      where: { id: sessionId, conferenceId: conferenceId },
+      include: [
+        {
+          model: Speaker,
+          include: [
+            {
+              model: Conference,
+            },
+          ],
+        },
+        {
+          model: Topic,
+          include: [{ model: Speaker, include: [{ model: Conference }] }],
+        },
+      ],
+    });
+    const finalData = sessionSpeakers.toJSON();
+
+    const finalSpeakers = generateSpeakersForSession(
+      finalData.Speakers,
+      finalData.Topics
+    );
+
+    return finalSpeakers;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+// Function to count all Symposium for a conference
+const getTotalSymposia = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const symposiaCount = await Session.findAndCountAll({
+      where: { conferenceId: conferenceId, sessionType: "Symposia" },
+    });
+    return res.status(200).json(symposiaCount);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+// Function to count all Symposium for a conference
+const getTotalMasterclass = async (req, res) => {
+  const { conferenceId } = req.params;
+  try {
+    const masterclassCount = await Session.findAndCountAll({
+      where: { conferenceId: conferenceId, sessionType: "Masterclass" },
+    });
+    return res.status(200).json(masterclassCount);
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -326,4 +436,7 @@ module.exports = {
   DeleteSession,
   getSession,
   updateProgramOverview,
+  getSessionSpeaker,
+  getTotalSymposia,
+  getTotalMasterclass,
 };

@@ -1,5 +1,11 @@
 const { formatDateToLocale, addTime } = require("./timeDateFunctions");
 const { minifyHtml } = require("./minifyHTML");
+const {
+  createDateArray,
+  convertDateFormat,
+  removeTimeFromDate,
+  removeSecondsFromTime,
+} = require("./generateDates");
 // const data = {
 //   title: "TRENDING TECHNOLOGIES – Highway to the Future",
 //   synopsis:
@@ -198,4 +204,113 @@ const concatSpeakers = (speakers) => {
 //   return minifiedContent;
 // };
 // test();
-module.exports = { generateHTML };
+
+const generateSpeakersPost = (data) => {
+  let { biography, photoUrl } = data;
+
+  if (photoUrl === "" || photoUrl === undefined || photoUrl === null) {
+    photoUrl =
+      "https://firebasestorage.googleapis.com/v0/b/speakers-management.appspot.com/o/photos%2Fdummy.jpg?alt=media&token=c3228433-91c3-4888-a8b1-94edac2b01e7";
+  }
+
+  // console.log("generateSpeakerPost photoURL: ", photoUrl);
+
+  const html = `<p style="text-align: left;"><img class="wp-image-34468 size-full alignleft" src="${photoUrl}" id="speakerPhoto" alt="" width="100" />${biography}</p><div style="margin-top: 110px;"><p style="font-weight:700">Summary of Presentation(s)</p><hr /><p>All timings are according to Singapore Time (UTC+8)</p></div>`;
+
+  return html;
+};
+
+const generateSchedule = (presentations) => {
+  // console.log(presentations);
+  // console.log(presentations.Conferences[0]);
+  const startDate = presentations.Conferences[0].startDate;
+  const endDate = presentations.Conferences[0].endDate;
+  const sessions = presentations.Conferences[0].Sessions;
+  const conference = presentations.Conferences[0];
+  const dates = createDateArray(startDate, endDate, sessions);
+  let finalSchedule = ``;
+
+  // console.log("conference: ", conference);
+  // console.log("sessions: ", sessions);
+  // console.log("dates: ", dates);
+  // console.log("at generateSchedule");
+
+  if (sessions.length <= 0) {
+    finalSchedule = `<div style="font-size: 14px;">No presentations allocation.</div>`;
+  } else {
+    const schedule = dates
+      .map(
+        (date) =>
+          `<table style="border: 1px solid black; margin-bottom: 20px; width: 100%; border-collapse: collapse;">
+      <tbody>
+        <tr>
+          <th style="text-align: left; height: 40px; background-color: #39869B; color: #FFFFFF; padding: 5px;">
+            ${date}
+          </th>
+        </tr>` +
+          conference.Sessions.map((session, sessionIndex) => {
+            if (convertDateFormat(session.date) === date) {
+              return (
+                `<tr key=${sessionIndex}>
+                <td style="padding: 0;">
+                  <table style="width: 100%;">
+                    <tbody>
+                      <tr style="border-top: 1px solid black;">
+                        <td style="padding: 5px; font-weight: 700; width: 25%;">
+                          ${session.Room.room}
+                        </td>
+                        <td style="width: 75%;">
+                          <strong>(${session.sessionCode}) ${
+                  session.title
+                } (${removeSecondsFromTime(
+                  session.startTime
+                )} - ${removeSecondsFromTime(session.endTime)}hrs)</strong>
+                        </td>
+                      </tr>` +
+                (session.Speakers.length > 0
+                  ? session.Speakers.map((speaker, speakerIndex) => {
+                      return `<tr key=${speakerIndex}>
+                            <td>
+                              <p></p>
+                            </td>
+                            <td>
+                              <p>- ${speaker.SessionSpeaker.role}</p>
+                            </td>
+                          </tr>`;
+                    }).join("")
+                  : ``) +
+                (session.Topics.length > 0
+                  ? session.Topics.map((topic, topicIndex) => {
+                      return ` <tr key=${topicIndex}>
+                            <td style="padding: 2px 5px;">
+                              <p>${removeSecondsFromTime(
+                                topic.startTime
+                              )} - ${removeSecondsFromTime(
+                        topic.endTime
+                      )}hrs</p>
+                            </td>
+                            <td>
+                              <p>- ${topic.title}</p>
+                            </td>
+                          </tr>`;
+                    }).join("")
+                  : "") +
+                `</tbody>
+                  </table>
+                </td>
+              </tr>`
+              );
+            }
+          }).join("") +
+          `</tbody>
+    </table>`
+      )
+      .join("");
+
+    finalSchedule = `<div style="font-size: 14px; margin-top: 20px;">${schedule}</div>`;
+  }
+
+  return finalSchedule;
+};
+
+module.exports = { generateHTML, generateSpeakersPost, generateSchedule };

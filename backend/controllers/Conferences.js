@@ -91,10 +91,39 @@ const DeleteConference = async (req, res) => {
     return res.status(500).json(err);
   }
 };
+
+const getConferenceUrl = async (conferenceId) => {
+  try {
+    const url = await Conference.findByPk(conferenceId, {
+      attributes: ["wordpressApi"],
+    });
+    const urlJson = url.toJSON();
+    const wordPressUrl = urlJson.wordpressApi;
+    return wordPressUrl;
+  } catch (e) {
+    console.log("error", e);
+  }
+};
+
+const getLatestConference = async () => {
+  try {
+    const latestConferenceData = await Conference.findAll({
+      limit: 1,
+      order: [["startDate", "DESC"]],
+    });
+    const latestConference = JSON.parse(JSON.stringify(latestConferenceData));
+    return latestConference;
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
 module.exports = {
   addConference,
   EditConference,
   DeleteConference,
   getConference,
   getConferences,
+  getConferenceUrl,
+  getLatestConference,
 };
