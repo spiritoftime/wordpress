@@ -1,5 +1,4 @@
 import { renderToStaticMarkup } from "react-dom/server";
-
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { getSessions, updateProgram } from "../services/sessions";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
@@ -9,7 +8,6 @@ import Calendar from "./Calendar";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { convertTimeToDateObj } from "../utils/convertDate";
-import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 
 const ProgramOverview = () => {
@@ -34,16 +32,8 @@ const ProgramOverview = () => {
       const accessToken = await getAccessToken();
       return updateProgram(accessToken, data);
     }
-    // {
-    //   onSuccess: () => {
-
-    //     navigate(`/conferences/speakers/${conferenceId}`);
-    //     showToaster("Speakers Added");
-    //   },
-    // }
   );
 
-  // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
     if (sessions.length === 0) return { events: [], startDate: new Date() };
     const events = [];
@@ -60,7 +50,6 @@ const ProgramOverview = () => {
     }
     return { events, startDate };
   };
-  console.log(sessions, "sessions");
   if (isSessionsFetching) return <Loading />;
   const { events: sessionEvents, startDate } = createEvents(sessions);
   const toggleIsPublish = () => {
@@ -76,9 +65,11 @@ const ProgramOverview = () => {
   };
   return (
     <div className="w-full flex flex-col gap-4 m-6">
+      <h2 className="text-xl font-bold text-center">
+        Conference page: {sessions[0].Conference.wordpressUrl}
+      </h2>
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold">Overview</h1>
-
         <div className="flex gap-2 ">
           <label>Publish To Wordpress</label>
           <Switch checked={isChecked} onCheckedChange={toggleIsPublish} />

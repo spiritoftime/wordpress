@@ -71,7 +71,10 @@ const getSessions = async (req, res) => {
       include: [
         { model: Topic },
         { model: Room },
-        { model: Conference, attributes: { include: ["country"] } },
+        {
+          model: Conference,
+          attributes: { include: ["country", "wordpressUrl"] },
+        },
       ],
       where: { conferenceId },
       order: [["date", "ASC"]],
