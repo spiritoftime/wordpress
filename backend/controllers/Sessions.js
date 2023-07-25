@@ -21,6 +21,7 @@ const {
 } = require("../utils/wordpress");
 const { generateHTML } = require("../utils/postMockup");
 const { minifyHtml } = require("../utils/minifyHTML");
+const { overviewMockup } = require("../utils/overviewMockup");
 
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
@@ -223,7 +224,7 @@ const EditSession = async (req, res) => {
     const currSession = await Session.findByPk(sessionId);
     // Get all associated speakers for the session
     const speakersToRemove = await currSession.getSpeakers();
-
+    console.log(speakersToRemove, "speakerstoremove");
     // Remove all speakers from the session
     await currSession.removeSpeakers(speakersToRemove);
     let addSessionSpeakers = [];
@@ -236,6 +237,7 @@ const EditSession = async (req, res) => {
         addSessionSpeakers.push(sessionSpeaker);
       }
     });
+    console.log(addSessionSpeakers, "addSessionSpeakers");
     // console.log(addSessionSpeakers, "addSessionSpeakers");
     await SessionSpeaker.bulkCreate(addSessionSpeakers);
     // to update the session id in the topics table
@@ -245,7 +247,7 @@ const EditSession = async (req, res) => {
       addTopic.startTime = t.startTime;
       addTopic.endTime = t.endTime;
       addTopic.conferenceId = conferenceId;
-      addTopic.sessionId = session.id;
+      addTopic.sessionId = sessionId;
       addTopic.id = t.topicId;
       return addTopic;
     });
@@ -253,7 +255,7 @@ const EditSession = async (req, res) => {
     const updatedTopics = await Topic.bulkCreate(addTopics, {
       updateOnDuplicate: ["startTime", "endTime", "sessionId"],
     });
-    // console.log("updatedTopics", updatedTopics);
+    console.log("updatedTopics", updatedTopics);
     if (isPublish) {
       let { wordpressId: currWordpressId } = await Session.findOne({
         where: { id: sessionId },
@@ -309,11 +311,16 @@ const DeleteSession = async (req, res) => {
 
 const updateProgramOverview = async (req, res) => {
   // console.log("hello");
+  let overviewHtml;
   const newContent = req.body;
-  console.log(newContent);
-  console.log("At updateProgram controller");
+  if (newContent.isChecked)
+    overviewHtml = await overviewMockup(newContent.content);
   try {
-    await updateOnePage(33323, newContent);
+    const wordpressPost = await updateOnePage(33323, {
+      content: overviewHtml,
+      status: newContent.isChecked ? "publish" : "private",
+    });
+    console.log(wordpressPost, "wordpressPost");
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);
