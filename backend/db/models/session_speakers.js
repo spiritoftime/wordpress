@@ -15,7 +15,7 @@ function initSessionSpeaker(sequelize) {
         references: {
           model: "sessions",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       speakerId: {
         type: DataTypes.INTEGER,
@@ -23,7 +23,7 @@ function initSessionSpeaker(sequelize) {
         references: {
           model: "speakers",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       role: {
         type: DataTypes.ENUM,

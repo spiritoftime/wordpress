@@ -20,6 +20,7 @@ module.exports = {
           model: "sessions",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       conference_id: {
         type: Sequelize.INTEGER,
@@ -28,6 +29,7 @@ module.exports = {
           model: "conferences",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       start_time: {
         type: Sequelize.TIME,

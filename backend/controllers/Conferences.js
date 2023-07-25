@@ -43,7 +43,6 @@ const addConference = async (req, res) => {
       "draft",
       wordpressApi
     );
-    console.log(wordpressLink, wordpressId, "wallahi");
     const conference = await Conference.create({
       startDate,
       endDate,

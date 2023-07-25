@@ -6,8 +6,8 @@ async function overviewMockup({ sessionEvents, startDate }) {
     <meta charset='utf-8'>
     <link rel='stylesheet' href='https://unpkg.com/tippy.js@5/dist/backdrop.css'>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-    <script src='https://unpkg.com/popper.js@1'></script>
-    <script src='https://unpkg.com/tippy.js@5/dist/tippy-bundle.iife.js'></script>
+    <!-- <script src="https://unpkg.com/popper.js@1"></script>
+    <script src="https://unpkg.com/tippy.js@5"></script> -->
   </head>
   <body>
     <div id='calendar'></div>

@@ -20,6 +20,7 @@ function initRoom(sequelize) {
           model: "conferences",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
     },
     { underscored: true, timestamps: false }

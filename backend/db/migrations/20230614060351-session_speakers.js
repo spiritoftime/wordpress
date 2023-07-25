@@ -16,6 +16,7 @@ module.exports = {
           model: "sessions",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       speaker_id: {
         type: Sequelize.INTEGER,
@@ -24,6 +25,7 @@ module.exports = {
           model: "speakers",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       role: {
         type: Sequelize.ENUM,

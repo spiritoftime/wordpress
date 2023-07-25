@@ -1,6 +1,10 @@
 const { formatDateToLocale, addTime } = require("./timeDateFunctions");
 const { minifyHtml } = require("./minifyHTML");
-const { createDateArray } = require("./generateDates");
+const {
+  createDateArray,
+  convertDateFormat,
+  removeSecondsFromTime,
+} = require("./generateDates");
 const generateHTML = (data) => {
   const {
     synopsis,
@@ -154,7 +158,7 @@ const generateSpeakersPost = (data) => {
 };
 
 const generateSchedule = (presentations) => {
-  // console.log(presentations);
+  // console.log(presentations, "presentations");
   // console.log(presentations.Conferences[0]);
   const startDate = presentations.Conferences[0].startDate;
   const endDate = presentations.Conferences[0].endDate;
@@ -165,7 +169,7 @@ const generateSchedule = (presentations) => {
 
   // console.log("conference: ", conference);
   // console.log("sessions: ", sessions);
-  // console.log("dates: ", dates);
+  console.log("dates: ", dates);
   // console.log("at generateSchedule");
 
   if (sessions.length <= 0) {
@@ -242,7 +246,7 @@ const generateSchedule = (presentations) => {
 
     finalSchedule = `<div style="font-size: 14px; margin-top: 20px;">${schedule}</div>`;
   }
-
+  console.log(finalSchedule, "finalSchedule");
   return finalSchedule;
 };
 

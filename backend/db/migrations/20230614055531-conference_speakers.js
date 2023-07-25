@@ -15,7 +15,7 @@ module.exports = {
         references: {
           model: "conferences",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       speaker_id: {
         type: Sequelize.INTEGER,
@@ -23,7 +23,7 @@ module.exports = {
         references: {
           model: "speakers",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       speaker_post_id: {
         type: Sequelize.INTEGER,

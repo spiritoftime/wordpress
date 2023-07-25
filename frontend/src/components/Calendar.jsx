@@ -17,30 +17,12 @@ const Calendar = ({ sessionEvents, startDate }) => {
     }
   };
 
-  // const handleEvents = (events) => {
-  //   console.log(events, "events");
-  //   setCurrentEvents({
-  //     currentEvents: events,
-  //   });
-  // };
-  // const handleMouseHover = (mouseEnterInfo) => {
-  //   if (mouseEnterInfo.jsEvent.isTrusted)
-  //     var tooltip = new Tooltip(mouseEnterInfo.el, {
-  //       title: mouseEnterInfo.event.extendedProps.description,
-  //       placement: "top",
-  //       trigger: "hover",
-  //       container: "body",
-  //     });
-  //   console.log(tooltip, "tooltip");
-  // };
   const renderTooltip = function (info) {
     tippy(info.el, { content: info.event.extendedProps.description });
   };
   const renderEventContent = (eventInfo) => {
     return (
       <>
-        {/* <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i> */}
         <p className="bg-[#3788d8]">{eventInfo.event._def.title}</p>
       </>
     );
