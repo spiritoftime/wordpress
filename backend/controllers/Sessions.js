@@ -342,16 +342,19 @@ const EditSession = async (req, res) => {
   }
 };
 
-const DeleteSession = async (req, res) => {
-  const { conferenceId } = req.params;
-  try {
-    await Conference.destroy({
-      where: { id: conferenceId },
-    });
-    return res.status(200).json("Conference deleted");
-  } catch (err) {
-    return res.status(500).json(err);
-  }
+const deleteSession = async (req, res) => {
+  const { sessionId, conferenceId } = req.params;
+  console.log("At deleteSession");
+  console.log("sessionId", sessionId);
+  console.log("conferenceId", conferenceId);
+  // try {
+  //   await Conference.destroy({
+  //     where: { id: conferenceId },
+  //   });
+  //   return res.status(200).json("Conference deleted");
+  // } catch (err) {
+  //   return res.status(500).json(err);
+  // }
 };
 
 const updateProgramOverview = async (req, res) => {
@@ -433,7 +436,7 @@ module.exports = {
   addSession,
   getSessions,
   EditSession,
-  DeleteSession,
+  deleteSession,
   getSession,
   updateProgramOverview,
   getSessionSpeaker,

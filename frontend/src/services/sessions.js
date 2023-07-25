@@ -45,3 +45,15 @@ export function updateProgram(accessToken, data) {
     data: data,
   });
 }
+
+export function deleteSession(sessionId, conferenceId, accessToken) {
+  console.log("sessionId", sessionId);
+  console.log("conferenceId", conferenceId);
+  return makeRequest(
+    `/sessions/conference/${sessionId}/${conferenceId}`,
+    accessToken,
+    {
+      method: "DELETE",
+    }
+  );
+}

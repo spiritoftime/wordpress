@@ -126,6 +126,7 @@ const Conference = () => {
     control,
     name: "roomItems",
   });
+
   const onSubmit = (data) => {
     data.country = data.country["value"];
     console.log("data", data);
@@ -133,7 +134,7 @@ const Conference = () => {
     form.reset();
     navigate("/");
     toast({
-      description: "Form Submitted",
+      description: "Conference Updated",
     });
   };
   const { toast } = useToast();

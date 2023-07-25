@@ -3,7 +3,7 @@ const {
   addSession,
   getSessions,
   EditSession,
-  DeleteSession,
+  deleteSession,
   getSession,
   updateProgramOverview,
   getTotalSymposia,
@@ -17,7 +17,7 @@ router
   .route("/conference/:sessionId/:conferenceId")
   .get(getSession)
   .patch(EditSession)
-  .delete(DeleteSession);
+  .delete(deleteSession);
 
 router.route("/program-overview").post(updateProgramOverview);
 

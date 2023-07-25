@@ -58,9 +58,8 @@ const addConference = async (req, res) => {
 };
 const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
-  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
+  const { startDate, endDate, conferenceName, country, venue, api, roomItems } =
     req.body;
-  console.log("roomitems", roomItems);
 
   try {
     roomItems.forEach((room) => {
@@ -69,7 +68,14 @@ const EditConference = async (req, res) => {
     await Room.bulkCreate(roomItems, { updateOnDuplicate: ["room"] });
     console.log("work2");
     const conference = await Conference.update(
-      { startDate, endDate, name, country, venue, wordpressApi },
+      {
+        startDate,
+        endDate,
+        name: conferenceName,
+        country,
+        venue,
+        wordpressApi: api,
+      },
       { where: { id: conferenceId } }
     );
     console.log("last");
