@@ -42,23 +42,12 @@ const ProgramOverview = () => {
     //   },
     // }
   );
-  const toggleIsPublish = () => {
-    setIsChecked((prevIsChecked) => !prevIsChecked);
-    const data = {
-      content: sessionEvents,
-      type: "page",
-      isChecked: !isChecked,
-    };
-    updateProgramOverview(data);
-  };
+
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
     const events = [];
     const startDate = new Date(sessions[0].date);
-    // const startDate = utcStart.setDate(utcStart.getDate() - 1);
-
     for (const session of sessions) {
-      console.log(session, "session");
       const sessionObj = {};
       sessionObj.title = session.title;
       sessionObj.start = convertTimeToDateObj(session.date, session.startTime);
@@ -72,7 +61,16 @@ const ProgramOverview = () => {
 
   if (isSessionsFetching) return <Loading />;
   const { events: sessionEvents, startDate } = createEvents(sessions);
-  console.log(isChecked, "ischecked");
+  const toggleIsPublish = () => {
+    setIsChecked((prevIsChecked) => !prevIsChecked);
+    const data = {
+      content: sessionEvents,
+      type: "page",
+      startDate: startDate,
+      isChecked: !isChecked,
+    };
+    updateProgramOverview(data);
+  };
   return (
     <div className="w-full flex flex-col gap-4 m-6">
       <div className="flex justify-between">

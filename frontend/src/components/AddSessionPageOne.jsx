@@ -85,7 +85,6 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
 
-
   // const {
   //   data: roles,
   //   isLoading: isRolesLoading,
@@ -113,14 +112,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
   //     label: "React.js",
   //   },
   // ];
-  const {
-    fields: moderators,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: "speakers",
-  });
+
   // console.log("moderators", moderators);
 
   return (

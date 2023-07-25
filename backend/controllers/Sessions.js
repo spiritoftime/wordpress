@@ -314,13 +314,15 @@ const updateProgramOverview = async (req, res) => {
   let overviewHtml;
   const newContent = req.body;
   if (newContent.isChecked)
-    overviewHtml = await overviewMockup(newContent.content);
+    overviewHtml = await overviewMockup({
+      sessionEvents: newContent.content,
+      startDate: newContent.startDate,
+    });
   try {
     const wordpressPost = await updateOnePage(33323, {
       content: overviewHtml,
       status: newContent.isChecked ? "publish" : "private",
     });
-    console.log(wordpressPost, "wordpressPost");
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);

@@ -1,38 +1,36 @@
 const { minifyHtml } = require("./minifyHTML");
-async function overviewMockup(sessionEvents) {
+async function overviewMockup({ sessionEvents, startDate }) {
+  console.log(startDate.split("T")[0], "startDate");
   const calendarHtml = `
-  <code>
-  <html lang="en">
+  <html lang='en'>
   <head>
-    <meta charset="utf-8" />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-        <script src="https://unpkg.com/popper.js@1"></script>
-    <script src="https://unpkg.com/tippy.js@5/dist/tippy-bundle.iife.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/tippy.js@5/dist/backdrop.css"
-    />
+    <meta charset='utf-8'>
+    <link rel='stylesheet' href='https://unpkg.com/tippy.js@5/dist/backdrop.css'>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src='https://unpkg.com/popper.js@1'></script>
+    <script src='https://unpkg.com/tippy.js@5/dist/tippy-bundle.iife.js'></script>
+  </head>
+  <body>
+    <div id='calendar'></div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: 'timeGridDay',
-          events: ${sessionEvents}
+          events: ${JSON.stringify(sessionEvents)},
           eventRender: function(info) {
             tippy(info.el, { content: info.event.extendedProps.description });
-          }
+          },
+          initialDate: "${startDate.split("T")[0]}",
         });
         calendar.render();
       });
     </script>
-  </head>
-  <body>
-    <div id="calendar"></div>
   </body>
   </html>
-  </code>
   `;
   const minifiedContent = await minifyHtml(calendarHtml);
+  console.log("minifiedContent", minifiedContent);
   return minifiedContent;
 }
 module.exports = { overviewMockup };
