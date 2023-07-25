@@ -356,15 +356,25 @@ const DeleteSession = async (req, res) => {
 };
 
 const updateProgramOverview = async (req, res) => {
-  // console.log("hello");
-  let overviewHtml;
   const newContent = req.body;
+  console.log(newContent, "newContent");
   const conference = await Conference.findByPk(+newContent.conferenceId, {
     attributes: ["wordpressId"],
   });
+  const conferenceWordPressUrl = await getConferenceUrl(
+    +newContent.conferenceId
+  );
+  const overviewHtml = await overviewMockup({
+    sessionEvents: newContent.content,
+    startDate: newContent.startDate,
+  });
   console.log("At updateProgram controller");
   try {
-    await updateOnePage(conference.wordpressId, newContent);
+    await updateOnePage(
+      conference.wordpressId,
+      { content: overviewHtml, isPublish: newContent.isChecked ? true : false },
+      conferenceWordPressUrl
+    );
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);

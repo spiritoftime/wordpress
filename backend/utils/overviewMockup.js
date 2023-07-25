@@ -1,6 +1,5 @@
 const { minifyHtml } = require("./minifyHTML");
 async function overviewMockup({ sessionEvents, startDate }) {
-  console.log(startDate.split("T")[0], "startDate");
   const calendarHtml = `
   <html lang='en'>
   <head>
