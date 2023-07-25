@@ -55,53 +55,61 @@ db.Topic = initTopic(sequelize);
 
 // ONE TO MANY
 // one conference can have many sessions
-db.Conference.hasMany(db.Session);
-db.Session.belongsTo(db.Conference);
+db.Conference.hasMany(db.Session, { onDelete: "CASCADE" });
+db.Session.belongsTo(db.Conference, { onDelete: "CASCADE" });
 // one conference can have many topics
-db.Conference.hasMany(db.Topic);
-db.Topic.belongsTo(db.Conference);
+db.Conference.hasMany(db.Topic, { onDelete: "CASCADE" });
+db.Topic.belongsTo(db.Conference, { onDelete: "CASCADE" });
 // one conference can have many rooms
-db.Conference.hasMany(db.Room);
-db.Room.belongsTo(db.Conference);
+db.Conference.hasMany(db.Room, { onDelete: "CASCADE" });
+db.Room.belongsTo(db.Conference, { onDelete: "CASCADE" });
 // one room can have many sessions, but one session can only have one room
-db.Room.hasMany(db.Session);
-db.Session.belongsTo(db.Room);
+db.Room.hasMany(db.Session, { onDelete: "CASCADE" });
+db.Session.belongsTo(db.Room, { onDelete: "CASCADE" });
 // one session can have many topics, but one topic can only have one session
-db.Session.hasMany(db.Topic);
-db.Topic.belongsTo(db.Session);
+db.Session.hasMany(db.Topic, { onDelete: "CASCADE" });
+db.Topic.belongsTo(db.Session, { onDelete: "CASCADE" });
 
 // MANY TO MANY
 
 // one session can have many speakers, and one speaker can be in many sessions.
 db.Speaker.belongsToMany(db.Session, {
   through: db.SessionSpeaker,
+  onDelete: "CASCADE",
 });
 db.Session.belongsToMany(db.Speaker, {
   through: db.SessionSpeaker,
+  onDelete: "CASCADE",
 });
 
 // one session speaker can have many roles, and one role can have many session speakers
 db.SessionSpeaker.belongsToMany(db.SessionSpeakerRole, {
   through: db.SessionSpeakerRole,
+  onDelete: "CASCADE",
 });
 db.SessionSpeakerRole.belongsToMany(db.SessionSpeaker, {
   through: db.SessionSpeakerRole,
+  onDelete: "CASCADE",
 });
 
 // one speaker can have many topics, and one topic can have many speakers
 db.Speaker.belongsToMany(db.Topic, {
   through: db.TopicSpeaker,
+  onDelete: "CASCADE",
 });
 db.Topic.belongsToMany(db.Speaker, {
   through: db.TopicSpeaker,
+  onDelete: "CASCADE",
 });
 
 // one conference can have many speakers, one speaker can have many conferences
 db.Speaker.belongsToMany(db.Conference, {
   through: db.ConferenceSpeaker,
+  onDelete: "CASCADE",
 });
 db.Conference.belongsToMany(db.Speaker, {
   through: db.ConferenceSpeaker,
+  onDelete: "CASCADE",
 });
 // fs.readdirSync(__dirname)
 //   .filter((file) => {

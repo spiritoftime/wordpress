@@ -16,6 +16,7 @@ module.exports = {
           model: "speakers",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       topic_id: {
         type: Sequelize.INTEGER,
@@ -24,6 +25,7 @@ module.exports = {
           model: "topics",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
     });
   },

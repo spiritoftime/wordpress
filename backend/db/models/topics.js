@@ -20,6 +20,7 @@ function initTopic(sequelize) {
           model: "sessions",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       conferenceId: {
         type: DataTypes.INTEGER,
@@ -28,6 +29,7 @@ function initTopic(sequelize) {
           model: "conferences",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       startTime: {
         type: DataTypes.TIME,

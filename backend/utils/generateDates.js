@@ -8,15 +8,17 @@
  * Exaple output: ['Monday, 31 July 2023', 'Tuesday, 1 August 2023', 'Wednesday, 2 August 2023']
  */
 const createDateArray = (start, end, sessions) => {
+  console.log("createDateArrayFirst", start, end);
   const days = [];
   const startDate = new Date(removeTimeFromDate(start));
   const endDate = new Date(removeTimeFromDate(end));
   const sessionDates = getSessionDates(sessions);
-
+  console.log(sessionDates, "sessionDates");
+  console.log(startDate, endDate, sessionDates, "createDateArray");
   const differencesInMiliseconds = endDate.getTime() - startDate.getTime();
   const dayDifferences =
     Math.ceil(differencesInMiliseconds / (1000 * 3600 * 24)) + 1;
-
+  console.log(dayDifferences, "dayDifferences");
   for (let i = 0; i < dayDifferences; i++) {
     const daysInMiliseconds = 86400000 * i;
     const newDay = new Date(

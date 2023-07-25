@@ -16,6 +16,7 @@ function initConferenceSpeaker(sequelize) {
           model: "conferences",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       speakerId: {
         type: DataTypes.INTEGER,
@@ -24,6 +25,7 @@ function initConferenceSpeaker(sequelize) {
           model: "speakers",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       speakerPostId: {
         type: DataTypes.INTEGER,

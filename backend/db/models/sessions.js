@@ -35,7 +35,7 @@ function initSession(sequelize) {
         references: {
           model: "conferences",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       sessionCode: {
         type: DataTypes.STRING,
@@ -69,7 +69,7 @@ function initSession(sequelize) {
         references: {
           model: "rooms",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
     },
     { underscored: true, timestamps: false }

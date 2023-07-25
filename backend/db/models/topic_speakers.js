@@ -16,7 +16,7 @@ function initTopicSpeaker(sequelize) {
         references: {
           model: "speakers",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
       topicId: {
         type: DataTypes.INTEGER,
@@ -24,7 +24,7 @@ function initTopicSpeaker(sequelize) {
         references: {
           model: "topics",
           key: "id",
-        },
+        },        onDelete: "CASCADE",
       },
     },
     {

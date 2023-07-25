@@ -36,6 +36,7 @@ module.exports = {
           model: "conferences",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
 
       session_code: {
@@ -70,6 +71,7 @@ module.exports = {
           model: "rooms",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
     });
   },
