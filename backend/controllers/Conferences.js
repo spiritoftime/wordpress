@@ -86,7 +86,14 @@ const EditConference = async (req, res) => {
     await Room.bulkCreate(roomItems, { updateOnDuplicate: ["room"] });
     console.log("work2");
     const conference = await Conference.update(
-      { startDate, endDate, name, country, venue, wordpressApi },
+      {
+        startDate,
+        endDate,
+        name,
+        country,
+        venue,
+        wordpressApi,
+      },
       { where: { id: conferenceId } }
     );
     console.log("last");

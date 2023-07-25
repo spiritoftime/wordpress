@@ -343,13 +343,56 @@ const EditSession = async (req, res) => {
   }
 };
 
-const DeleteSession = async (req, res) => {
-  const { conferenceId } = req.params;
+const deleteSession = async (req, res) => {
+  const { sessionId, conferenceId } = req.params;
+  console.log("At deleteSession");
   try {
-    await Conference.destroy({
-      where: { id: conferenceId },
+    // Get the base url from database to determin which wordpress website to update
+    const conferenceWordPressUrl = await getConferenceUrl(conferenceId);
+
+    // Get all speakers that are previously in the session
+    const previousSessionSpeakers = await getSessionSpeaker(
+      sessionId,
+      conferenceId
+    );
+
+    const topicsInSession = await Topic.findAll({
+      where: { sessionId: sessionId },
+      attributes: ["id"],
     });
-    return res.status(200).json("Conference deleted");
+
+    const topicsId = topicsInSession.map((topic) => {
+      return topic.dataValues.id;
+    });
+
+    // Reset the session id for each topics to null so that it can be added else where
+    await Topic.update(
+      { sessionId: null, startTime: null, endTime: null },
+      { where: { id: topicsId } }
+    );
+    console.log("Topics Reset to Null");
+
+    // Remove moderators from SessionSpeaker joint table
+    await SessionSpeaker.destroy({ where: { sessionId: sessionId } });
+    console.log("SessionSpeaker Deleted");
+
+    // Remove session from Session table
+    await Session.destroy({
+      where: { id: sessionId, conferenceId: conferenceId },
+    });
+    console.log("Session Deleted in DB");
+
+    // Update speaker's schedule on wordpress
+    await updateWordPressSpeakers(
+      [],
+      [],
+      conferenceId,
+      conferenceWordPressUrl,
+      [],
+      previousSessionSpeakers
+    );
+
+    return res.status(200).json("Session deleted");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -443,7 +486,7 @@ module.exports = {
   addSession,
   getSessions,
   EditSession,
-  DeleteSession,
+  deleteSession,
   getSession,
   updateProgramOverview,
   getSessionSpeaker,

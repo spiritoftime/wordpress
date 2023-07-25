@@ -7,15 +7,18 @@ import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
 import { RowActions } from "./RowActions";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
-import { useQuery } from "@tanstack/react-query";
-import { getSessions } from "../services/sessions";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { getSessions, deleteSession } from "../services/sessions";
 import Loading from "./Loading";
 import { useAppContext } from "../context/appContext";
 
 const Sessions = () => {
   const { conferenceId } = useParams();
   const { setSession } = useAppContext();
+  const queryClient = useQueryClient();
   const getAccessToken = useGetAccessToken();
+  const navigate = useNavigate();
+
   const {
     data: sessions,
     isLoading: isSessionsLoading,
@@ -29,8 +32,16 @@ const Sessions = () => {
     refetchOnWindowFocus: false, // it is not necessary to keep refetching
   });
   console.log("sessions", sessions);
-  const navigate = useNavigate();
-  const deleteSessionMutation = () => {};
+
+  const { mutate: deleteSessionMutation } = useMutation({
+    mutationFn: async ({ rowData }) => {
+      const accessToken = await getAccessToken();
+      return deleteSession(rowData.id, rowData.conferenceId, accessToken);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["sessions"], { exact: true });
+    },
+  });
 
   const columns = [
     RowCheckBox,
