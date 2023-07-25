@@ -121,7 +121,7 @@ async function updateOnePage(pageId, data, wordPressUrl) {
     console.log(err);
   }
 }
-async function createPage(html, title, sessionCode, wordPressUrl) {
+async function createPage(html, title, wordPressUrl) {
   try {
     const token = await getWordPressToken(wordPressUrl);
     // console.log(token, "token");

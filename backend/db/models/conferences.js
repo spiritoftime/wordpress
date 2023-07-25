@@ -32,6 +32,14 @@ function initConference(sequelize) {
       wordpressApi: {
         type: DataTypes.STRING,
       },
+      wordpressId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      wordpressUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     { underscored: true, timestamps: false }
   );

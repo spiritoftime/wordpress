@@ -27,6 +27,7 @@ const {
   generateSchedule,
 } = require("../utils/postMockup");
 const { minifyHtml } = require("../utils/minifyHTML");
+const { overviewMockup } = require("../utils/overviewMockup");
 
 const getSession = async (req, res) => {
   const { sessionId } = req.params;
@@ -73,6 +74,7 @@ const getSessions = async (req, res) => {
         { model: Conference, attributes: { include: ["country"] } },
       ],
       where: { conferenceId },
+      order: [["date", "ASC"]],
     });
     // console.log("sessions", sessions);
     return res.status(200).json(sessions);
@@ -174,7 +176,6 @@ const addSession = async (req, res) => {
       const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
-        sessionCode,
         conferenceWordPressUrl
       );
       await Session.update(
@@ -254,7 +255,7 @@ const EditSession = async (req, res) => {
     const currSession = await Session.findByPk(sessionId);
     // Get all associated speakers for the session
     const speakersToRemove = await currSession.getSpeakers();
-
+    console.log(speakersToRemove, "speakerstoremove");
     // Remove all speakers from the session
     await currSession.removeSpeakers(speakersToRemove);
     let addSessionSpeakers = [];
@@ -267,6 +268,7 @@ const EditSession = async (req, res) => {
         addSessionSpeakers.push(sessionSpeaker);
       }
     });
+    console.log(addSessionSpeakers, "addSessionSpeakers");
     // console.log(addSessionSpeakers, "addSessionSpeakers");
     await SessionSpeaker.bulkCreate(addSessionSpeakers);
     // to update the session id in the topics table
@@ -284,7 +286,7 @@ const EditSession = async (req, res) => {
     const updatedTopics = await Topic.bulkCreate(addTopics, {
       updateOnDuplicate: ["startTime", "endTime", "sessionId"],
     });
-    // console.log("updatedTopics", updatedTopics);
+    console.log("updatedTopics", updatedTopics);
     if (isPublish) {
       let { wordpressId: currWordpressId } = await Session.findOne({
         where: { id: sessionId },
@@ -315,7 +317,6 @@ const EditSession = async (req, res) => {
         const { wordpressLink, wordpressId } = await createPage(
           minifiedContent,
           title,
-          sessionCode,
           conferenceWordPressUrl
         );
         await Session.update(
@@ -355,16 +356,25 @@ const DeleteSession = async (req, res) => {
 };
 
 const updateProgramOverview = async (req, res) => {
-  // console.log("hello");
   const newContent = req.body;
-  const { conferenceId } = req.params;
-  console.log(newContent);
+  console.log(newContent, "newContent");
+  const conference = await Conference.findByPk(+newContent.conferenceId, {
+    attributes: ["wordpressId"],
+  });
+  const conferenceWordPressUrl = await getConferenceUrl(
+    +newContent.conferenceId
+  );
+  const overviewHtml = await overviewMockup({
+    sessionEvents: newContent.content,
+    startDate: newContent.startDate,
+  });
   console.log("At updateProgram controller");
   try {
-    // Get the base url from database to determin which wordpress website to update
-    const wordPressUrl = await getConferenceUrl(conferenceId);
-
-    await updateOnePage(33323, newContent, wordPressUrl);
+    await updateOnePage(
+      conference.wordpressId,
+      { content: overviewHtml, isPublish: newContent.isChecked ? true : false },
+      conferenceWordPressUrl
+    );
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);

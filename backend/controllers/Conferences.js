@@ -11,6 +11,7 @@ const {
   Room,
 } = db;
 const { Op } = require("sequelize");
+const { createPage } = require("../utils/wordpress");
 
 const getConference = async (req, res) => {
   const { conferenceId } = req.params;
@@ -37,12 +38,20 @@ const addConference = async (req, res) => {
   const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
     req.body;
   try {
+    const { wordpressLink, wordpressId } = await createPage(
+      "draft",
+      "draft",
+      wordpressApi
+    );
+    console.log(wordpressLink, wordpressId, "wallahi");
     const conference = await Conference.create({
       startDate,
       endDate,
       name,
       country,
       venue,
+      wordpressUrl: wordpressLink,
+      wordpressId,
       wordpressApi,
     });
     const conferenceId = conference.dataValues.id;
@@ -53,13 +62,21 @@ const addConference = async (req, res) => {
 
     return res.status(200).json(conference);
   } catch (err) {
+    console.log(err, "error");
     return res.status(500).json(err);
   }
 };
 const EditConference = async (req, res) => {
   const { conferenceId } = req.params;
-  const { startDate, endDate, name, country, venue, wordpressApi, roomItems } =
-    req.body;
+  const {
+    startDate,
+    endDate,
+    conferenceName: name,
+    country,
+    venue,
+    wordpressApi,
+    roomItems,
+  } = req.body;
   console.log("roomitems", roomItems);
 
   try {
