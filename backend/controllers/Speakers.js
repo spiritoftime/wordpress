@@ -542,7 +542,10 @@ const updateWordPressSpeakers = async (
     (oneSpeaker.length > 0 || Object.keys(oneSpeaker).length > 0)
   ) {
     speakersFromForm = oneSpeaker;
-  } else {
+  } else if (
+    speakers &&
+    (speakers.length > 0 || Object.keys(speakers).length > 0)
+  ) {
     speakersFromForm = getSpeakersToUpdate(speakers, topics);
   }
 
