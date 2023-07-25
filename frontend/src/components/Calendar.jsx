@@ -10,27 +10,6 @@ const Calendar = ({ sessionEvents, startDate }) => {
   const [currentEvents, setCurrentEvents] = useState(sessionEvents);
   const [weekendsVisible, setWeekendsVisible] = useState(false);
 
-  // const handleWeekendsToggle = () => {
-  //   setWeekendsVisible(!weekendsVisible);
-  // };
-
-  // const handleDateSelect = (selectInfo) => {
-  //   let title = prompt("Please enter a new title for your event");
-  //   let calendarApi = selectInfo.view.calendar;
-
-  //   calendarApi.unselect(); // clear date selection
-
-  //   if (title) {
-  //     calendarApi.addEvent({
-  //       id: createEventId(),
-  //       title,
-  //       start: selectInfo.startStr,
-  //       end: selectInfo.endStr,
-  //       allDay: selectInfo.allDay,
-  //     });
-  //   }
-  // };
-
   const handleEventClick = (clickInfo) => {
     // console.log(clickInfo, "clickInfo");
     if (confirm(`Do you wish to view the session in more detail?`)) {

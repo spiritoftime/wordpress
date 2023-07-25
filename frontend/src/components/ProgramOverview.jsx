@@ -58,7 +58,7 @@ const ProgramOverview = () => {
     }
     return { events, startDate };
   };
-
+  console.log(sessions, "sessions");
   if (isSessionsFetching) return <Loading />;
   const { events: sessionEvents, startDate } = createEvents(sessions);
   const toggleIsPublish = () => {
