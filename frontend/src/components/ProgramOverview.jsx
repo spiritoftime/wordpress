@@ -55,6 +55,7 @@ const ProgramOverview = () => {
       sessionObj.end = convertTimeToDateObj(session.date, session.endTime);
       sessionObj.description = session.synopsis;
       sessionObj.id = session.id;
+      sessionObj.wordpressUrl = session.wordpressUrl;
       events.push(sessionObj);
     }
     return { events, startDate };

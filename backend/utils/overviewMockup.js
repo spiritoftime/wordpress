@@ -20,6 +20,11 @@ async function overviewMockup({ sessionEvents, startDate }) {
           eventRender: function(info) {
             tippy(info.el, { content: info.event.extendedProps.description });
           },
+          eventClick: function(clickInfo) {
+            if (confirm("Do you wish to view the session in more detail?")) {
+              window.location.href = clickInfo.event._def.extendedProps.wordpressUrl;
+            }
+          },
           initialDate: "${startDate.split("T")[0]}",
         });
         calendar.render();
@@ -33,3 +38,4 @@ async function overviewMockup({ sessionEvents, startDate }) {
   return minifiedContent;
 }
 module.exports = { overviewMockup };
+// clickInfo.event._def.extendedProps.wordpressUrl

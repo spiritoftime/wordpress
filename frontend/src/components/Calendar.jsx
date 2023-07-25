@@ -11,7 +11,7 @@ const Calendar = ({ sessionEvents, startDate }) => {
   const [weekendsVisible, setWeekendsVisible] = useState(false);
 
   const handleEventClick = (clickInfo) => {
-    // console.log(clickInfo, "clickInfo");
+    console.log(clickInfo, "clickInfo");
     if (confirm(`Do you wish to view the session in more detail?`)) {
       window.location.href = `/conferences/sessions/${conferenceId}/${clickInfo.event._def.publicId}`;
     }
