@@ -1,5 +1,6 @@
 const { formatDateToLocale, addTime } = require("./timeDateFunctions");
 const { minifyHtml } = require("./minifyHTML");
+const { createDateArray } = require("./generateDates");
 const generateHTML = (data) => {
   const {
     synopsis,

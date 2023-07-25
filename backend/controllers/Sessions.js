@@ -176,7 +176,6 @@ const addSession = async (req, res) => {
       const { wordpressLink, wordpressId } = await createPage(
         minifiedContent,
         title,
-        sessionCode,
         conferenceWordPressUrl
       );
       await Session.update(
@@ -318,7 +317,6 @@ const EditSession = async (req, res) => {
         const { wordpressLink, wordpressId } = await createPage(
           minifiedContent,
           title,
-          sessionCode,
           conferenceWordPressUrl
         );
         await Session.update(
@@ -361,10 +359,12 @@ const updateProgramOverview = async (req, res) => {
   // console.log("hello");
   let overviewHtml;
   const newContent = req.body;
-  console.log(newContent);
+  const conference = await Conference.findByPk(+newContent.conferenceId, {
+    attributes: ["wordpressId"],
+  });
   console.log("At updateProgram controller");
   try {
-    await updateOnePage(33323, newContent);
+    await updateOnePage(conference.wordpressId, newContent);
     return res.status(200).json("Program Overview Updated");
   } catch (err) {
     return res.status(500).json(err);

@@ -45,6 +45,7 @@ const ProgramOverview = () => {
 
   // const calendarHtml = ReactDOM.createRoot(document.getElementById("calendar"));
   const createEvents = (sessions) => {
+    if (sessions.length === 0) return { events: [], startDate: new Date() };
     const events = [];
     const startDate = new Date(sessions[0].date);
     for (const session of sessions) {
@@ -66,6 +67,7 @@ const ProgramOverview = () => {
     const data = {
       content: sessionEvents,
       type: "page",
+      conferenceId: conferenceId,
       startDate: startDate,
       isChecked: !isChecked,
     };
