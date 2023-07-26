@@ -3,6 +3,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { getSessions, updateProgram } from "../services/sessions";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import Loading from "./Loading";
+import PageHeader from "./PageHeader";
 
 import Calendar from "./Calendar";
 import { useEffect, useMemo, useState } from "react";
@@ -64,21 +65,25 @@ const ProgramOverview = () => {
     updateProgramOverview(data);
   };
   return (
-    <div className="w-full flex flex-col gap-4 m-6">
-      <h1 className="text-2xl font-bold">Program Overview</h1>
+    <div className="w-full flex flex-col gap-4 container py-10 mx-auto">
+      <PageHeader rowType="PROGRAM OVERVIEW" hasButton={false} />
       <div className="flex justify-between mb-5">
-        <h2 className="text-base text-left">
-          WordPress Link:{" "}
-          <a
-            href={sessions[0]?.Conference?.wordpressUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {sessions[0]?.Conference?.wordpressUrl}
-          </a>
-        </h2>
+        <div>
+          {sessions[0]?.Conference?.wordpressUrl && (
+            <h2 className="text-base text-left">
+              WordPress Link:{" "}
+              <a
+                href={sessions[0]?.Conference?.wordpressUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {sessions[0]?.Conference?.wordpressUrl}
+              </a>
+            </h2>
+          )}
+        </div>
         <div className="flex gap-2 ">
-          <label>Publish To Wordpress</label>
+          <label>Publish To WordPress</label>
           <Switch checked={isChecked} onCheckedChange={toggleIsPublish} />
         </div>
       </div>

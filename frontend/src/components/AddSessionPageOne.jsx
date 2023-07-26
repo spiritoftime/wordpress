@@ -378,7 +378,7 @@ const AddSessionPageOne = ({ control, moderators, append, remove }) => {
             <FormItem>
               <div className="flex flex-wrap w-full">
                 <div className="w-full">
-                  <FormLabel>Publish To Wordpress</FormLabel>
+                  <FormLabel>Publish To WordPress</FormLabel>
                 </div>
                 <div className="w-full">
                   <FormControl>
