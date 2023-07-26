@@ -9,16 +9,23 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 
-const FormExitAlert = ({ navigate, conferenceId, open, onOpenChange }) => {
+const FormExitAlert = ({
+  navigate,
+  conferenceId,
+  open,
+  onOpenChange,
+  title,
+  description,
+}) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to leave this page?
+            {title ? title : " Are you sure you want to leave this page?"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone.
+            {description ? description : "This action cannot be undone."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
