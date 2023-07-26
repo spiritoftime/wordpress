@@ -65,11 +65,18 @@ const ProgramOverview = () => {
   };
   return (
     <div className="w-full flex flex-col gap-4 m-6">
-      <h2 className="text-xl font-bold text-center">
-        Conference page: {sessions[0]?.Conference?.wordpressUrl}
-      </h2>
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold">Overview</h1>
+      <h1 className="text-2xl font-bold">Program Overview</h1>
+      <div className="flex justify-between mb-5">
+        <h2 className="text-base text-left">
+          WordPress Link:{" "}
+          <a
+            href={sessions[0]?.Conference?.wordpressUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {sessions[0]?.Conference?.wordpressUrl}
+          </a>
+        </h2>
         <div className="flex gap-2 ">
           <label>Publish To Wordpress</label>
           <Switch checked={isChecked} onCheckedChange={toggleIsPublish} />
