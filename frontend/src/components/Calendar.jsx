@@ -89,5 +89,3 @@ const Calendar = ({ sessionEvents, startDate }) => {
 };
 
 export default Calendar;
-
-// https://codesandbox.io/s/purple-https-954kvw?file=/src/FullCalendar.js:564-678

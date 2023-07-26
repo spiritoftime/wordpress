@@ -1,9 +1,9 @@
 const axios = require("axios").default;
 
-async function getWordPressToken(getWordPressToken) {
+async function getWordPressToken(wordPressUrl) {
   const token = await axios({
     method: "POST",
-    url: `${getWordPressToken}/wp-json/api/v1/token `,
+    url: `${wordPressUrl}/wp-json/api/v1/token `,
     data: {
       username: `${process.env.WORDPRESS_NAME}`,
       password: `${process.env.WORDPRESS_PW}`,
