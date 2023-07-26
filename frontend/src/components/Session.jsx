@@ -6,6 +6,7 @@ import { addTime } from "../utils/addTime";
 import { Button } from "./ui/button";
 import { formatDateToLocale } from "../utils/convertDate";
 import Loading from "./Loading";
+import { Fragment } from "react";
 const Session = () => {
   const { conferenceId, sessionId } = useParams();
   const getAccessToken = useGetAccessToken();
@@ -63,7 +64,7 @@ const Session = () => {
         </thead>
         <tbody>
           {session.Topics.map(
-            ({ endTime, startTime, title: topic, Speakers }) => {
+            ({ endTime, startTime, title: topic, Speakers }, index) => {
               const speakerNames = Speakers.map(
                 ({ fullName }) => `${fullName}`
               ).join(",");
@@ -71,7 +72,7 @@ const Session = () => {
                 ({ country }) => `${country}`
               ).join(",");
               return (
-                <>
+                <Fragment key={index}>
                   <tr className=" presentation">
                     <td className="presentation-duration text-center">
                       {startTime.substring(0, 5)} - {endTime.substring(0, 5)}{" "}
@@ -103,7 +104,7 @@ const Session = () => {
                     <td className="topic font-bold">Discussion</td>
                     <td className="speaker-name"></td>
                   </tr>
-                </>
+                </Fragment>
               );
             }
           )}
