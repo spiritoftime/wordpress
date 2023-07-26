@@ -19,7 +19,7 @@ const TopicFieldArray = ({ control, fields: topicDetails }) => {
   // console.log("topicdetails", topicDetails);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mb-5">
       {topicDetails.map((field, index) => (
         <div
           className={`w-full flex items-center gap-3  ${

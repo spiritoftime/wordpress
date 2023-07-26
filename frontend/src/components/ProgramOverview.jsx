@@ -14,7 +14,7 @@ const ProgramOverview = () => {
   const getAccessToken = useGetAccessToken();
   const [isChecked, setIsChecked] = useState(false);
   const { conferenceId } = useParams();
-  const html = renderToStaticMarkup(<Calendar />);
+  // const html = renderToStaticMarkup(<Calendar />);
   const {
     data: sessions,
     isLoading: isSessionsLoading,
