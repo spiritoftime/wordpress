@@ -66,7 +66,7 @@ const ProgramOverview = () => {
   return (
     <div className="w-full flex flex-col gap-4 m-6">
       <h2 className="text-xl font-bold text-center">
-        Conference page: {sessions[0].Conference.wordpressUrl}
+        Conference page: {sessions[0]?.Conference?.wordpressUrl}
       </h2>
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold">Overview</h1>
