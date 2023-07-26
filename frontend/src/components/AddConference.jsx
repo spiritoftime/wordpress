@@ -244,6 +244,7 @@ const AddConference = () => {
                     <div className="w-[5%] mt-6 pl-3">
                       <Trash
                         type="button"
+                        className=" cursor-pointer"
                         size={18}
                         onClick={() => {
                           remove(index);
@@ -256,6 +257,7 @@ const AddConference = () => {
               <Button
                 type="button"
                 variant="ghost"
+                className="mt-3"
                 onClick={() => {
                   append({
                     room: "",

@@ -14,11 +14,12 @@ import { getSession, updateSession } from "../services/sessions";
 import { allocateTime } from "../utils/allocateTime";
 import { useAppContext } from "../context/appContext";
 import { CopySlash } from "lucide-react";
+import FormExitAlert from "./FormExitAlert";
 
 const EditSession = () => {
   const { conferenceId, sessionId } = useParams();
   const [isAllocated, setIsAllocated] = useState(false);
-
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const { showToaster } = useAppContext();
   const navigate = useNavigate();
   const [topicsToAppend, setTopicsToAppend] = useState([]);
@@ -264,13 +265,23 @@ const EditSession = () => {
               Save
             </Button>
 
-            <Button type="button" variant="outline">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowDeleteAlert(true)}
+            >
               Cancel
             </Button>
           </div>
         </form>
       </Form>
       <pre>{JSON.stringify(watch(), null, 2)}</pre>
+      <FormExitAlert
+        conferenceId={conferenceId}
+        navigate={() => navigate(`/conferences/sessions/${conferenceId}`)}
+        open={showDeleteAlert}
+        onOpenChange={setShowDeleteAlert}
+      />
     </div>
   );
 };

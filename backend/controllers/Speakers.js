@@ -425,10 +425,34 @@ const addSpeakersToConference = async (req, res) => {
 const deleteSpeaker = async (req, res) => {
   const { speakerId } = req.params;
   const { isAdmin, email } = req.body;
+  console.log("speakerId: ", speakerId);
   try {
+    const latestConference = await getLatestConference();
+
+    console.log("latest Conference", latestConference);
+
+    const wordPressUrl = latestConference[0].wordpressApi;
+    console.log("WordPress Url:", wordPressUrl);
+
+    const speakerDetails = await ConferenceSpeaker.findAll({
+      where: {
+        [Op.and]: [
+          { speakerId: speakerId },
+          { conferenceId: latestConference[0].id },
+        ],
+      },
+    });
+
+    const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
+
+    console.log("speakerPostId:", speakerPostId);
+
+    await deletePost(speakerPostId, wordPressUrl);
+
     await Speaker.destroy({
       where: { id: speakerId },
     });
+
     if (isAdmin) {
       const userId = await getUserFromAuth(email);
       const response = await deleteUserFromAuth(userId);

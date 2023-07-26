@@ -1,8 +1,11 @@
-import React from "react";
+import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAppContext } from "../context/appContext";
 import { FormProgress } from "./FormProgress";
+import { useNavigate, useParams } from "react-router-dom";
+import FormExitAlert from "./FormExitAlert";
+
 const MAX_STEPS = 3;
 
 const MultiPageForm = ({
@@ -15,6 +18,10 @@ const MultiPageForm = ({
 }) => {
   const { progress, setProgress, selectedTopics } = useAppContext();
   // console.log(selectedTopics);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const navigate = useNavigate();
+  const { conferenceId } = useParams();
+
   return (
     <div>
       {currentStep < MAX_STEPS && (
@@ -74,11 +81,20 @@ const MultiPageForm = ({
             )}
           </Button>
         )}
-        {/* on cancel pop out the dialog, then navigate */}
-        <Button type="button" variant="outline">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setShowDeleteAlert(true)}
+        >
           Cancel
         </Button>
       </div>
+      <FormExitAlert
+        conferenceId={conferenceId}
+        navigate={() => navigate(`/conferences/sessions/${conferenceId}`)}
+        open={showDeleteAlert}
+        onOpenChange={setShowDeleteAlert}
+      />
     </div>
   );
 };
