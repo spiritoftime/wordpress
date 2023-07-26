@@ -39,7 +39,7 @@ const Calendar = ({ sessionEvents, startDate }) => {
             right: "timeGridDay",
           }}
           initialView="timeGridDay"
-          editable={true}
+          editable={false}
           selectable={true}
           initialDate={startDate}
           selectMirror={true}
