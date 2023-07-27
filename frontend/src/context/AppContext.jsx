@@ -17,16 +17,6 @@ const AppProvider = ({ children }) => {
 
   const { toast } = useToast();
 
-  // const comboBoxRef = useRef("");
-  // let comboBoxValue = comboBoxRef.current;
-
-  // const setComboBoxValue = (value) => {
-  //   console.log("inside set combobox value");
-  //   comboBoxRef.current = value;
-  //   comboBoxValue = comboBoxRef.current;
-  //   console.log("ComboBoxValue after set value: ", comboBoxValue);
-  // };
-
   /**
    * Function to show toaster
    * @param {string} title Title for toaster. Indicate null if not required.
