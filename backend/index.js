@@ -48,11 +48,11 @@ app.use(
 
 app.use(checkJwt);
 
-app.use("/conferences", conferenceRouter);
-app.use("/speakers", speakerRouter);
-app.use("/topics", topicRouter);
-app.use("/sessions", sessionRouter);
-app.use("/rooms", roomRouter);
+app.use("/api/conferences", conferenceRouter);
+app.use("/api/speakers", speakerRouter);
+app.use("/api/topics", topicRouter);
+app.use("/api/sessions", sessionRouter);
+app.use("/api/rooms", roomRouter);
 
 const port =
   process.env.NODE_ENV === "production"
