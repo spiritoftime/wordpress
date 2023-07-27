@@ -1,4 +1,7 @@
 require("dotenv").config();
+const path = require("path");
+const _dirname = path.dirname("");
+const buildPath = path.join(_dirname, "../frontend/dist");
 
 const express = require("express");
 
@@ -20,6 +23,18 @@ const checkJwt = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.BASEURL,
   tokenSigningAlg: "RS256",
+});
+
+app.use(express.static(buildPath));
+app.get("/*", function (req, res) {
+  res.sendFile(
+    path.join(__dirname, "../frontend/dist/index.html"), // route it to wherever your build index.html is at
+    function (err) {
+      if (err) {
+        res.status(500).send(err);
+      }
+    }
+  );
 });
 
 app.use(

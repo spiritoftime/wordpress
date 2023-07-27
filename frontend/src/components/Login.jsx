@@ -8,7 +8,7 @@ const Login = () => {
     <div className="grid min-h-screen place-items-center">
       <div className="text-center">
         <img
-          src="../../../src/assets/logo-transparent.png"
+          src="assets/logo-transparent.png"
           alt="auto mate logo"
           width="45%"
           className="mx-auto mb-5"
