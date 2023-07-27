@@ -32,7 +32,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "../lib/utils";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { useAppContext } from "../context/appContext";
+import { useAppContext } from "../context/AppContext";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
