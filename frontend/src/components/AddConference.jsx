@@ -16,7 +16,7 @@ import { Trash, Loader2 } from "lucide-react";
 import Combobox from "./Combobox";
 import PageHeader from "./PageHeader";
 import DatePicker from "./DatePicker";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/appContext";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, useFieldArray } from "react-hook-form";
