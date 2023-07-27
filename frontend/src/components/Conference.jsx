@@ -347,7 +347,7 @@ const Conference = () => {
         </Form>
         <Toaster />
       </div>
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
+      {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
     </div>
   );
 };

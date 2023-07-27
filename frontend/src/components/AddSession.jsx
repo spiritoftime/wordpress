@@ -172,7 +172,7 @@ const AddSession = () => {
           </form>
         </Form>
       </div>
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
+      {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
     </div>
   );
 };

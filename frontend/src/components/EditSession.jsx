@@ -275,7 +275,7 @@ const EditSession = () => {
           </div>
         </form>
       </Form>
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
+      {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
       <FormExitAlert
         conferenceId={conferenceId}
         navigate={() => navigate(`/conferences/sessions/${conferenceId}`)}
