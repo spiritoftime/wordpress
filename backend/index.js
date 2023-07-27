@@ -39,7 +39,8 @@ app.get("/*", function (req, res) {
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5173"],
+    origin: "*",
+    // origin: ["http://127.0.0.1:5173"],
     credentials: true,
   })
 );
