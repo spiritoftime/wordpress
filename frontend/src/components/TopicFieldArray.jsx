@@ -12,7 +12,6 @@ import { Input } from "./ui/input";
 import FormMultiSelect from "./FormMultiSelect";
 import { Trash } from "lucide-react";
 import { Button } from "./ui/button";
-import { useAppContext } from "../context/appContext";
 
 const TopicFieldArray = ({ control, fields: topicDetails }) => {
   const noOptions = [{ value: "", label: "" }];

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { DataTable } from "./DataTable";
 import { SortableHeader } from "./SortableHeader";
 import { RowCheckBox } from "./RowCheckBox";
-import { useAppContext } from "../context/appContext";
 import useGetAccessToken from "../custom_hooks/useGetAccessToken";
 import { useQuery } from "@tanstack/react-query";
 import { getTopicsForAddingToSession } from "../services/topics";
