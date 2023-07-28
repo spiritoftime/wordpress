@@ -39,6 +39,7 @@ const {
 const { getSpeakersToUpdate, removeDuplicates } = require("../utils/speakers");
 
 const { minifyHtml } = require("../utils/minifyHTML");
+const { claimIncludes } = require("express-oauth2-jwt-bearer");
 
 // Function to get a specific contact
 // Includes all participated conference and sessions
@@ -427,13 +428,12 @@ const deleteSpeaker = async (req, res) => {
   const { isAdmin, email } = req.body;
   console.log("speakerId: ", speakerId);
   try {
+    // Get latest wordpress conference url
     const latestConference = await getLatestConference();
 
-    console.log("latest Conference", latestConference);
-
     const wordPressUrl = latestConference[0].wordpressApi;
-    console.log("WordPress Url:", wordPressUrl);
 
+    // Find if speaker has been published to latest wordpress site
     const speakerDetails = await ConferenceSpeaker.findAll({
       where: {
         [Op.and]: [
@@ -442,17 +442,20 @@ const deleteSpeaker = async (req, res) => {
         ],
       },
     });
+    console.log("speakerDetails:", speakerDetails);
 
-    const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
+    // If speaker has been published to wordpress, delete speaker from wordpress
+    if (speakerDetails.length > 0) {
+      const speakerPostId = speakerDetails[0].dataValues.speakerPostId;
+      deletePost(speakerPostId, wordPressUrl);
+    }
 
-    console.log("speakerPostId:", speakerPostId);
-
-    await deletePost(speakerPostId, wordPressUrl);
-
+    // Remove speaker from database
     await Speaker.destroy({
       where: { id: speakerId },
     });
 
+    // Remove speaker from Auth0 is speaker is and admin
     if (isAdmin) {
       const userId = await getUserFromAuth(email);
       const response = await deleteUserFromAuth(userId);
@@ -620,6 +623,7 @@ const updateWordPressSpeakers = async (
 
 async function updateSpeaker(req, res) {
   const { speakerId } = req.params;
+  console.log("at update speaker");
   const {
     firstName,
     lastName,
@@ -632,6 +636,7 @@ async function updateSpeaker(req, res) {
     isAdmin,
     adminChanged,
   } = req.body;
+
   try {
     const latestConference = await getLatestConference();
     const conferenceId = latestConference[0].id;
@@ -654,18 +659,6 @@ async function updateSpeaker(req, res) {
       }
     );
 
-    // Get the latest conference id and url
-    // Update wordpress speakers
-    const speakerToUpdate = await ConferenceSpeaker.findOne({
-      where: {
-        conferenceId: conferenceId,
-        speakerId: speakerId,
-      },
-      attributes: ["speakerId", "speakerPostId", "speakerLink"],
-    });
-
-    const wordPressSpeakerToUpdate = speakerToUpdate.toJSON();
-
     // Check if there is a change in admin status and update the database accordingly
     if (adminChanged) {
       if (isAdmin) {
@@ -679,10 +672,24 @@ async function updateSpeaker(req, res) {
       const response = await updateUserInAuth(userId, firstName);
     }
 
-    // Update speaker info on wordpress. Only update to the latest conference.
-    await updateWordPressSpeakers([], [], conferenceId, wordPressUrl, [
-      wordPressSpeakerToUpdate,
-    ]);
+    // Get the latest conference id and url
+    // Update wordpress speakers
+    const speakerToUpdate = await ConferenceSpeaker.findOne({
+      where: {
+        conferenceId: conferenceId,
+        speakerId: speakerId,
+      },
+      attributes: ["speakerId", "speakerPostId", "speakerLink"],
+    });
+
+    if (speakerToUpdate) {
+      const wordPressSpeakerToUpdate = speakerToUpdate.toJSON();
+
+      // Update speaker info on wordpress. Only update to the latest conference.
+      await updateWordPressSpeakers([], [], conferenceId, wordPressUrl, [
+        wordPressSpeakerToUpdate,
+      ]);
+    }
 
     return res.json(updatedSpeaker);
   } catch (err) {

@@ -25,18 +25,6 @@ const checkJwt = auth({
   tokenSigningAlg: "RS256",
 });
 
-app.use(express.static(buildPath));
-app.get("/*", function (req, res) {
-  res.sendFile(
-    path.join(__dirname, "../frontend/dist/index.html"), // route it to wherever your build index.html is at
-    function (err) {
-      if (err) {
-        res.status(500).send(err);
-      }
-    }
-  );
-});
-
 app.use(
   cors({
     origin: "*",
@@ -54,6 +42,18 @@ app.use("/api/speakers", speakerRouter);
 app.use("/api/topics", topicRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/rooms", roomRouter);
+
+app.use(express.static(buildPath));
+app.get("/*", function (req, res) {
+  res.sendFile(
+    path.join(__dirname, "../frontend/dist/index.html"), // route it to wherever your build index.html is at
+    function (err) {
+      if (err) {
+        res.status(500).send(err);
+      }
+    }
+  );
+});
 
 const port =
   process.env.NODE_ENV === "production"
