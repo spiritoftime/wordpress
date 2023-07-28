@@ -73,7 +73,7 @@ const EditConference = async (req, res) => {
     conferenceName: name,
     country,
     venue,
-    wordpressApi,
+    api: wordpressApi,
     roomItems,
   } = req.body;
   console.log("roomitems", roomItems);
