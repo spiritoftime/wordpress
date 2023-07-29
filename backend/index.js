@@ -35,13 +35,13 @@ const checkJwt = auth({
 
 app.use(cors());
 
-app.use(checkJwt);
+// app.use(checkJwt);
 
-app.use("/api/conferences", conferenceRouter);
-app.use("/api/speakers", speakerRouter);
-app.use("/api/topics", topicRouter);
-app.use("/api/sessions", sessionRouter);
-app.use("/api/rooms", roomRouter);
+app.use("/api/conferences", checkJwt, conferenceRouter);
+app.use("/api/speakers", checkJwt, speakerRouter);
+app.use("/api/topics", checkJwt, topicRouter);
+app.use("/api/sessions", checkJwt, sessionRouter);
+app.use("/api/rooms", checkJwt, roomRouter);
 
 app.use(express.static(buildPath));
 app.get("/*", function (req, res) {
