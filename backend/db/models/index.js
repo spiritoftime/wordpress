@@ -9,28 +9,43 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../../config/database.js")[env];
 const db = {};
 let sequelize;
-if (env === "production" && config.use_env_variable) {
-  // If use_env_variable is specified in config, use it to get the connection string
-  sequelize = new Sequelize(process.env[config.use_env_variable], {
-    define: {
-      // The `timestamps` field specify whether or not the `createdAt` and `updatedAt` fields will be created.
-      // This was true by default, but now is false by default
-      timestamps: false,
-    },
-    dialect: "postgres", // Specify the dialect explicitly
+// if (env === "production" && config.use_env_variable) {
+//   // If use_env_variable is specified in config, use it to get the connection string
+//   sequelize = new Sequelize(process.env[config.use_env_variable], {
+//     define: {
+//       // The `timestamps` field specify whether or not the `createdAt` and `updatedAt` fields will be created.
+//       // This was true by default, but now is false by default
+//       timestamps: false,
+//     },
+//     dialect: "postgres", // Specify the dialect explicitly
+//   });
+// } else {
+//   // Fall back to separate environment variables in development
+//   sequelize = new Sequelize(config.database, config.username, config.password, {
+//     define: {
+//       // The `timestamps` field specify whether or not the `createdAt` and `updatedAt` fields will be created.
+//       // This was true by default, but now is false by default
+//       timestamps: false,
+//     },
+//     dialect: "postgres", // Specify the dialect explicitly
+//     ...config, // Include other configuration options
+//   });
+// }
+
+if (env === "production") {
+  sequelize = new Sequelize(config.database, config.username, config.password, {
+    host: config.host,
+    dialect: "postgres",
+    ...config,
   });
 } else {
   // Fall back to separate environment variables in development
   sequelize = new Sequelize(config.database, config.username, config.password, {
-    define: {
-      // The `timestamps` field specify whether or not the `createdAt` and `updatedAt` fields will be created.
-      // This was true by default, but now is false by default
-      timestamps: false,
-    },
     dialect: "postgres", // Specify the dialect explicitly
     ...config, // Include other configuration options
   });
 }
+
 const initConference = require("./conferences");
 const initConferenceSpeaker = require("./conference_speakers");
 const initRole = require("./roles");
