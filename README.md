@@ -105,3 +105,7 @@ PW: geNie@89757
 
 - Notify user if there is a conflict in speaker's presentation schedule when adding a speaker to a session
 - Reorganise topics in each session with drag-and-drop
+
+## Contributors
+- [Me, Huang Weitian](https://github.com/hWeitian)
+- [Choo Liang Yi](https://github.com/spiritoftime)
