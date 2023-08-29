@@ -107,5 +107,5 @@ PW: geNie@89757
 - Reorganise topics in each session with drag-and-drop
 
 ## Contributors
-- [Me, Huang Weitian](https://github.com/hWeitian)
-- [Choo Liang Yi](https://github.com/spiritoftime)
+- [Me, Choo Liang Yi](https://github.com/spiritoftime)
+- [Huang Weitian](https://github.com/hWeitian)
